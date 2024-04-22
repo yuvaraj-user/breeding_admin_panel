@@ -134,6 +134,33 @@ if($Action=="FinalsubmittionAssumption_Div")
 	$FinalsubmittionAssumption_Div=$Common_Filter_Div->FinalsubmittionAssumption_Div($_POST);
 	echo json_encode($FinalsubmittionAssumption_Div);exit;
 }
+if($Action=="InsertMainSubTableData")
+{
+	$InsertMainSubTableData=$Common_Filter_Div->InsertMainSubTableData($_POST);
+	echo json_encode($InsertMainSubTableData);exit;
+}
+
+if($Action=="UpdateMainSubTableData")
+{
+	$UpdateMainSubTableData=$Common_Filter_Div->UpdateMainSubTableData($_POST);
+	echo json_encode($UpdateMainSubTableData);exit;
+}
+if($Action=="getBreederDetailsManCount")
+{
+	$getBreederDetailsManCount=$Common_Filter_Div->getBreederDetailsManCount($_POST);
+	echo json_encode($getBreederDetailsManCount);exit;
+}
+if($Action=="InsertManCountTableData")
+{
+	$InsertManCountTableData=$Common_Filter_Div->InsertManCountTableData($_POST);
+	echo json_encode($InsertManCountTableData);exit;
+}
+
+if($Action=="UpdateManCountTableData")
+{
+	$UpdateManCountTableData=$Common_Filter_Div->UpdateManCountTableData($_POST);
+	echo json_encode($UpdateManCountTableData);exit;
+}
 
 if($Action=="consumablesreport")
 {

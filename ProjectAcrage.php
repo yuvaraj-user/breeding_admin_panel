@@ -40,8 +40,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataT
 href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 
 
-<link href="assets/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
 
 <!-- DataTables -->
@@ -931,10 +929,24 @@ input[type=number]::-webkit-outer-spin-button {
 
 
     $(document).on("blur", ".monthinputbox", function() {
-        if(isNaN($(this).val())) {
+        if(isNaN($(this).val()) || $(this).val() == '') {
             $(this).val('');
         } else {
             var Total=0;
+
+            var Total_standing_1=parseFloat($(".stand_acrage").val(),10);
+            if (isNaN(Total_standing_1) ) {
+                var Total_standing_1=0;
+            }
+            var Total_standing_2=parseFloat($(".stand_acrage_harvesting").val(),10);
+            if (isNaN(Total_standing_2) ) {
+                var Total_standing_2=0;
+            }
+            var amt=(Total_standing_1)-(Total_standing_2);
+            $(".stand_acrage_netsatanding").val(amt);
+
+
+
             var Total_1=parseFloat($(".jun_acrage").val(),10);
             if (isNaN(Total_1) ) {
                 var Total_1=0;
@@ -943,12 +955,10 @@ input[type=number]::-webkit-outer-spin-button {
             if (isNaN(Total_2) ) {
                 var Total_2=0;
             }
-            var amt=(Total_1)-(Total_2);
+            var amtjun=(amt+Total_1)-(Total_2);
     //console.log('amt;'+amt);
-            $(".jun_acrage_netsatanding").val(amt);
-
-
-
+            $(".jun_acrage_netsatanding").val(amtjun);
+            var decreased_harvest_count = Total_1 + Total_2;
 
 
             var Total_jul_1=parseFloat($(".jul_acrage").val(),10);
@@ -959,11 +969,10 @@ input[type=number]::-webkit-outer-spin-button {
             if (isNaN(Total_jul_2) ) {
                 var Total_jul_2=0;
             }
-            var amtjul=(amt+Total_jul_1)-(Total_jul_2);
+            var amtjul=(amtjun+Total_jul_1)-(Total_jul_2);
     //console.log('jul;'+jul);
             $(".jul_acrage_netsatanding").val(amtjul);
-
-
+            decreased_harvest_count = Total_jul_1 + Total_jul_2;
 
 
             var Total_aug_1=parseFloat($(".aug_acrage").val(),10);
@@ -977,7 +986,7 @@ input[type=number]::-webkit-outer-spin-button {
             var amtaug=(amtjul+Total_aug_1)-(Total_aug_2);
     //console.log('aug;'+aug);
             $(".aug_acrage_netsatanding").val(amtaug);
-
+            decreased_harvest_count = Total_aug_1 + Total_aug_2;
 
 
             var Total_sep_1=parseFloat($(".sep_acrage").val(),10);
@@ -991,6 +1000,7 @@ input[type=number]::-webkit-outer-spin-button {
             var amtsep=(amtaug+Total_sep_1)-(Total_sep_2);
 
             $(".sep_acrage_netsatanding").val(amtsep);
+            decreased_harvest_count = Total_sep_1 + Total_sep_2;
 
 
             var Total_oct_1=parseFloat($(".oct_acrage").val(),10);
@@ -1001,9 +1011,10 @@ input[type=number]::-webkit-outer-spin-button {
             if (isNaN(Total_oct_2) ) {
                 var Total_oct_2=0;
             }
-            var amtoct=(amtsep+Total_oct_1)-(Total_oct_2);
+            var amtoct=(amtsep+Total_oct_1)-(Total_oct_1);
 
             $(".oct_acrage_netsatanding").val(amtoct);
+            decreased_harvest_count = Total_oct_1 + Total_oct_1;
 
 
             var Total_nov_1=parseFloat($(".nov_acrage").val(),10);
@@ -1017,6 +1028,7 @@ input[type=number]::-webkit-outer-spin-button {
             var amtnov=(amtoct+Total_nov_1)-(Total_nov_2);
 
             $(".nov_acrage_netsatanding").val(amtnov);
+            decreased_harvest_count = Total_nov_1 + Total_nov_2;
 
 
             var Total_dec_1=parseFloat($(".dec_acrage").val(),10);
@@ -1030,6 +1042,7 @@ input[type=number]::-webkit-outer-spin-button {
             var amtdec=(amtnov+Total_dec_1)-(Total_dec_2);
 
             $(".dec_acrage_netsatanding").val(amtdec);
+            decreased_harvest_count = Total_dec_1 + Total_dec_2;
 
 
             var Total_jan_1=parseFloat($(".jan_acrage").val(),10);
@@ -1043,6 +1056,7 @@ input[type=number]::-webkit-outer-spin-button {
             var amtjan=(amtdec+Total_jan_1)-(Total_jan_2);
 
             $(".jan_acrage_netsatanding").val(amtjan);
+            decreased_harvest_count = Total_jan_1 + Total_jan_2;            
 
 
             var Total_feb_1=parseFloat($(".feb_acrage").val(),10);
@@ -1056,8 +1070,7 @@ input[type=number]::-webkit-outer-spin-button {
             var amtfeb=(amtjan+Total_feb_1)-(Total_feb_2);
 
             $(".feb_acrage_netsatanding").val(amtfeb);
-
-
+            decreased_harvest_count = Total_feb_1 + Total_feb_2;            
 
 
             var Total_mar_1=parseFloat($(".mar_acrage").val(),10);
@@ -1072,8 +1085,7 @@ input[type=number]::-webkit-outer-spin-button {
 
             $(".mar_acrage_netsatanding").val(amtmar);
 
-
-
+            decreased_harvest_count = Total_mar_1 + Total_mar_2;            
 
 
             var Total_apr_1=parseFloat($(".apr_acrage").val(),10);
@@ -1087,6 +1099,8 @@ input[type=number]::-webkit-outer-spin-button {
             var amtapr=(amtmar+Total_apr_1)-(Total_apr_2);
 
             $(".apr_acrage_netsatanding").val(amtapr);
+            decreased_harvest_count = Total_apr_1 + Total_apr_2;            
+
 
 
             var Total_may_1=parseFloat($(".may_acrage").val(),10);
@@ -1100,6 +1114,8 @@ input[type=number]::-webkit-outer-spin-button {
             var amtmay=(amtapr+Total_may_1)-(Total_may_2);
 
             $(".may_acrage_netsatanding").val(amtmay);
+            decreased_harvest_count = Total_may_1 + Total_may_2;            
+            $('.decreased_harvest_count').val(decreased_harvest_count);
 
         }
 
@@ -1111,66 +1127,255 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 $(document).on("keyup", ".validatetotalacr", function() {
-
-
-  //alert("hai");
   validatevalue=$(this).val();
 
-  //alert(validatevalue);
+  if(validatevalue != '') {
+      var Total_acrage  =  $(this).parents('tr').find('.Total_acrage').val();
 
-  var Total_acrage  =  $(this).parents('tr').find('.Total_acrage').val();
+      var totWgt = 0;
 
-  var totWgt = 0;
+      $(".validatetotalacr").each(function(index, el) {
+        wgt =  parseFloat($(el).val(),10);
 
+        if(wgt!="" && !isNaN(wgt) && $(el).val()!="" && !isNaN($(el).val())){
+            totWgt += wgt;
+        }
 
-  $(".validatetotalacr").each(function(index, el) {
-    wgt =  parseFloat($(el).val(),10);
-
-
-       // console.log(wgt[0].last()[0]);
-    
-
-
+    });
 
 
+      if(totWgt > Total_acrage)
+      {
+          Alert_Msg("Greater Than Total Acreage Value.Please Check.","warning");
+          $(this).val(0);
+          $('.net_input').val(Total_acrage);
+      }
 
-    if(wgt!="" && !isNaN(wgt) && $(el).val()!="" && !isNaN($(el).val())){
-
-
-        totWgt += wgt;
-
-             // console.log(totWgt);
-
-
-
-    }
-
-
+  }
 });
 
+$(document).on('keyup','.Harvesting',function(){
+            var input = $(this).data('input'); 
+            var Total_acrage  =  $('.'+input+'_acrage').val();
 
-//alert(totWgt);
+            var Total_standing_1=parseFloat($(".stand_acrage").val(),10);
+            if (isNaN(Total_standing_1) ) {
+                var Total_standing_1=0;
+            }
+            var Total_standing_2=parseFloat($(".stand_acrage_harvesting").val(),10);
+            if (isNaN(Total_standing_2) ) {
+                var Total_standing_2=0;
+            }
+            var amt=(Total_standing_1)-(Total_standing_2);
+            var tot_amount =  amt;
+            var decreased_harvest_count = Total_acrage;
 
-  if(totWgt > Total_acrage)
 
-  {
 
-             // alert("Greater Than Total Acreage Value.Please Check");
-      Alert_Msg("Greater Than Total Acreage Value.Please Check.","warning");
-      $(this).val(0);
-      // var exceed_col_class = $(this).attr('class').split(' ');
-      // $('.'+exceed_col_class[0]+'_netsatanding').val(Total_acrage);
-      $('.net_input').val(Total_acrage);
-  }
+            var Total_1=parseFloat($(".jun_acrage").val(),10);
+            if (isNaN(Total_1) ) {
+                var Total_1=0;
+            }
+            var Total_2=parseFloat($(".jun_acrage_harvesting").val(),10);
+            if (isNaN(Total_2) ) {
+                var Total_2=0;
+            }
+            var amtjun=(amt+Total_1)-(Total_2);
+            tot_amount =  amtjun;
 
+            if(Total_1 > 0 && Total_2 > 0) {
+                 decreased_harvest_count = amt+Total_1;
+            }
+
+
+            var Total_jul_1=parseFloat($(".jul_acrage").val(),10);
+            if (isNaN(Total_jul_1) ) {
+                var Total_jul_1=0;
+            }
+            var Total_jul_2=parseFloat($(".jul_acrage_harvesting").val(),10);
+            if (isNaN(Total_jul_2) ) {
+                var Total_jul_2=0;
+            }
+            var amtjul=(amtjun+Total_jul_1)-(Total_jul_2);
+            tot_amount =  amtjul;
+
+            if(Total_jul_1 > 0 && Total_jul_2 > 0) {
+                decreased_harvest_count = amtjun+Total_jul_1;
+            }
+
+
+            var Total_aug_1=parseFloat($(".aug_acrage").val(),10);
+            if (isNaN(Total_aug_1) ) {
+                var Total_aug_1=0;
+            }
+            var Total_aug_2=parseFloat($(".aug_acrage_harvesting").val(),10);
+            if (isNaN(Total_aug_2) ) {
+                var Total_aug_2=0;
+            }
+            var amtaug=(amtjul+Total_aug_1)-(Total_aug_2);
+            tot_amount =  amtaug;
+            
+            if(Total_aug_1 > 0 && Total_aug_2 > 0) {
+                decreased_harvest_count = amtjul+Total_aug_1;
+            }
+
+
+            var Total_sep_1=parseFloat($(".sep_acrage").val(),10);
+            if (isNaN(Total_sep_1) ) {
+                var Total_sep_1=0;
+            }
+            var Total_sep_2=parseFloat($(".sep_acrage_harvesting").val(),10);
+            if (isNaN(Total_sep_2) ) {
+                var Total_sep_2=0;
+            }
+            var amtsep=(amtaug+Total_sep_1)-(Total_sep_2);
+            tot_amount =  amtsep;
+
+            if(Total_sep_1 > 0 && Total_sep_2 > 0) {
+                decreased_harvest_count = amtaug+Total_sep_1;
+            }
+
+
+            var Total_oct_1=parseFloat($(".oct_acrage").val(),10);
+            if (isNaN(Total_oct_1) ) {
+                var Total_oct_1=0;
+            }
+            var Total_oct_2=parseFloat($(".oct_acrage_harvesting").val(),10);
+            if (isNaN(Total_oct_2) ) {
+                var Total_oct_2=0;
+            }
+            var amtoct=(amtsep+Total_oct_1)-(Total_oct_2);
+            tot_amount =  amtoct;
+
+            if(Total_oct_1 > 0 && Total_oct_2 > 0) {
+                decreased_harvest_count = amtsep+Total_oct_1;
+            }
+
+            var Total_nov_1=parseFloat($(".nov_acrage").val(),10);
+            if (isNaN(Total_nov_1) ) {
+                var Total_nov_1=0;
+            }
+            var Total_nov_2=parseFloat($(".nov_acrage_harvesting").val(),10);
+            if (isNaN(Total_nov_2) ) {
+                var Total_nov_2=0;
+            }
+            var amtnov=(amtoct+Total_nov_1)-(Total_nov_2);
+            tot_amount =  amtnov;
+
+            if(Total_nov_1 > 0 && Total_nov_1 > 0) {
+                decreased_harvest_count = amtoct+Total_nov_1;
+            }
+
+
+            var Total_dec_1=parseFloat($(".dec_acrage").val(),10);
+            if (isNaN(Total_dec_1) ) {
+                var Total_dec_1=0;
+            }
+            var Total_dec_2=parseFloat($(".dec_acrage_harvesting").val(),10);
+            if (isNaN(Total_dec_2) ) {
+                var Total_dec_2=0;
+            }
+            var amtdec=(amtnov+Total_dec_1)-(Total_dec_2);
+            tot_amount =  amtdec;
+            
+            if(Total_dec_1 > 0 && Total_dec_2 > 0) {
+                decreased_harvest_count = amtnov+Total_dec_1;
+            }
+
+
+            var Total_jan_1=parseFloat($(".jan_acrage").val(),10);
+            if (isNaN(Total_jan_1) ) {
+                var Total_jan_1=0;
+            }
+            var Total_jan_2=parseFloat($(".jan_acrage_harvesting").val(),10);
+            if (isNaN(Total_jan_2) ) {
+                var Total_jan_2=0;
+            }
+            var amtjan=(amtdec+Total_jan_1)-(Total_jan_2);
+            tot_amount =  amtjan;
+
+            if(Total_jan_1 > 0 && Total_jan_2 > 0) {
+                decreased_harvest_count = amtdec+Total_jan_1;            
+            }
+
+            var Total_feb_1=parseFloat($(".feb_acrage").val(),10);
+            if (isNaN(Total_feb_1) ) {
+                var Total_feb_1=0;
+            }
+            var Total_feb_2=parseFloat($(".feb_acrage_harvesting").val(),10);
+            if (isNaN(Total_feb_2) ) {
+                var Total_feb_2=0;
+            }
+            var amtfeb=(amtjan+Total_feb_1)-(Total_feb_2);
+            tot_amount =  amtfeb;
+
+            if(Total_feb_1 > 0 && Total_feb_2 > 0) {
+                decreased_harvest_count = amtjan+Total_feb_1;            
+            }
+
+
+            var Total_mar_1=parseFloat($(".mar_acrage").val(),10);
+            if (isNaN(Total_mar_1) ) {
+                var Total_mar_1=0;
+            }
+            var Total_mar_2=parseFloat($(".mar_acrage_harvesting").val(),10);
+            if (isNaN(Total_mar_2) ) {
+                var Total_mar_2=0;
+            }
+            var amtmar=(amtfeb+Total_mar_1)-(Total_mar_2);
+            tot_amount =  amtmar;
+
+            if(Total_mar_1 > 0 && Total_mar_2 > 0) {
+                decreased_harvest_count = amtfeb+Total_mar_1; 
+            }           
+
+
+            var Total_apr_1=parseFloat($(".apr_acrage").val(),10);
+            if (isNaN(Total_apr_1) ) {
+                var Total_apr_1=0;
+            }
+            var Total_apr_2=parseFloat($(".apr_acrage_harvesting").val(),10);
+            if (isNaN(Total_apr_2) ) {
+                var Total_apr_2=0;
+            }
+            var amtapr=(amtmar+Total_apr_1)-(Total_apr_2);
+            tot_amount =  amtapr;
+
+            if(Total_apr_1 > 0 && Total_apr_2 > 0) {
+                decreased_harvest_count = amtmar+Total_apr_1;            
+            }
+
+
+            var Total_may_1=parseFloat($(".may_acrage").val(),10);
+            if (isNaN(Total_may_1) ) {
+                var Total_may_1=0;
+            }
+            var Total_may_2=parseFloat($(".may_acrage_harvesting").val(),10);
+            if (isNaN(Total_may_2) ) {
+                var Total_may_2=0;
+            }
+            var amtmay=(amtapr+Total_may_1)-(Total_may_2);
+            tot_amount =  amtmay;
+
+            if(Total_may_1 > 0 && Total_may_2 > 0) {
+                decreased_harvest_count = amtapr+Total_may_1;    
+            }
+
+
+            $('.decreased_harvest_count').val(decreased_harvest_count);
+            var h_count       = parseInt($('.decreased_harvest_count').val());
+            var entered_count = parseInt($(this).val());
+
+            if(entered_count > h_count) {
+                Alert_Msg("Greater Than available Acreage Value.Please Check.","warning");
+                $(this).val(0);
+                $('.'+input+'_acrage_netsatanding').val(decreased_harvest_count);
+            }
 
 });
 
 
 $(document).on("click",".Savemonthvalue",function(){
-
-
-
 
    let Uset_Input=$(".monthwisedetails").serializeArray();
 
@@ -1395,11 +1600,13 @@ $(document).on("click",".editbutton",function(){
 
 
 $(document).on("click",".finalsubmittion",function(){
-
-
-   let Uset_Input=$(".Finaltabledetails").serializeArray();
-
-   Uset_Input.push({"name":"Action","value":"Finalsubmittiondetails"});
+    $('.locationwise').DataTable().page.len(50000).draw();
+    var table = $('.locationwise').DataTable();
+    table.on('draw.dt', function () {
+        let Uset_Input=$(".Finaltabledetails").serializeArray();
+        Uset_Input.push({"name":"Action","value":"Finalsubmittiondetails"});
+        acrage_final_submit(Uset_Input);
+    });
 
    var acrage_is_empty = false;
    var c = 0; 
@@ -1412,17 +1619,21 @@ $(document).on("click",".finalsubmittion",function(){
 
    console.log(c);
 
-   $.ajax 
-   ({
-      type: "POST",
-      url: "Common_Ajax.php",
-      data:Uset_Input,
+});
+
+function acrage_final_submit(Uset_Input)
+{
+ $.ajax 
+ ({
+  type: "POST",
+  url: "Common_Ajax.php",
+  data:Uset_Input,
        async:false,//
        success: function(data){
 
-           result=JSON.parse(data);
+         result=JSON.parse(data);
 
-           if(result.Status == 1){
+         if(result.Status == 1){
 
 
             Alert_Msg("Submitted.","success");
@@ -1447,24 +1658,19 @@ $(document).on("click",".finalsubmittion",function(){
         }else{
 
            // alert("Wrong");
-         Alert_Msg("Something Went Wrong.","error");
-         return false;
-     }
- }
+           // Alert_Msg("Something Went Wrong.","error");
+        swal({
+            title: "Something Went Wrong.",
+            icon: "error"
+          }).then(function(isConfirmed) {
+              if(isConfirmed) {
+                location.reload();
+              }
+          });
+       }
+   }
 });
-
-
-
-
-   return false;
-
-
-
-
-
-
-});
-
+}
 
 
 $(document).on("click",".finalsubmittioncompleted",function(){
@@ -1573,7 +1779,7 @@ success: function (output) {
       user_input.autoid=autoid;
 
       LocationwiseprojectDetails("yes",user_input);
-
+LocationwiscompletedeprojectDetails("yes",user_input);
 
 
 

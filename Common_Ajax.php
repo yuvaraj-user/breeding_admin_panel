@@ -180,8 +180,71 @@ if($Action=="assumption_malefemale_amount_update")
 {
 	$Finaltabledetailsland=$Common_Filter->Finaltabledetailsland($_POST);
 	echo json_encode($Finaltabledetailsland);exit;
+}if($Action=="land_lease_keyup_update")
+{
+	$land_lease_update_data=$Common_Filter->land_lease_keyup_update($_POST);
+	echo json_encode($land_lease_update_data);exit;
+}if($Action=="Add_Travel")
+{
+	$add_travel_data=$Common_Filter->Add_Travel($_POST);
+	echo json_encode($add_travel_data);exit;
+}if($Action=="Get_Travel_Details")
+{
+	$Get_Travel_data=$Common_Filter->Get_Travel_Details($_POST);
+	echo json_encode($Get_Travel_data);exit;
+}if($Action=="travel_per_visit_update")
+{
+	$travel_visit_update =$Common_Filter->travel_per_visit_update($_POST);
+	echo json_encode($travel_visit_update);exit;
+}if($Action=="Add_Travel_expense")
+{
+	$Add_Travel_expense  =$Common_Filter->Add_Travel_expense($_POST);
+	echo json_encode($Add_Travel_expense);exit;
+}if($Action=="Get_Travel_expense")
+{
+	$Get_Travel_expense  =$Common_Filter->Get_Travel_expense($_POST);
+	echo json_encode($Get_Travel_expense);exit;
+}if($Action=="Delete_Travel_expense")
+{
+	$deletion_status =$Common_Filter->Delete_Travel_expense($_POST);
+	echo json_encode($deletion_status);exit;
+}if($Action=="Travel_finaldata")
+{
+	$final_travel_submit =$Common_Filter->Travel_finaldata($_POST);
+	echo json_encode($final_travel_submit);exit;
+}if($Action=="exppostingvalue")
+{
+	$exppostingvalue=$Common_Filter->exppostingvalue($_POST);
+	echo json_encode($exppostingvalue);exit;
+}if($Action=="Otherexptablerecord")
+{
+	$Otherexptablerecord=$Common_Filter->Otherexptablerecord($_POST);
+	echo json_encode($Otherexptablerecord);exit;
+}if($Action=="Add_Others_expense")
+{
+	$Add_Others_expense  =$Common_Filter->Add_Others_expense($_POST);
+	echo json_encode($Add_Others_expense);exit;
+}if($Action=="Get_Others_expense")
+{
+	$Get_Others_expense  =$Common_Filter->Get_Others_expense($_POST);
+	echo json_encode($Get_Others_expense);exit;
+}if($Action=="Delete_Others_expense")
+{
+	$deletion_status =$Common_Filter->Delete_Others_expense($_POST);
+	echo json_encode($deletion_status);exit;
+}if($Action=="Others_finaldata")
+{
+	$final_others_submit =$Common_Filter->Others_finaldata($_POST);
+	echo json_encode($final_others_submit);exit;
+}if($Action=="monthwisestoreconsumables")
+{
+	$monthwisestoreconsumables=$Common_Filter->monthwisestoreconsumables($_POST);
+	echo json_encode($monthwisestoreconsumables);exit;
+}if($Action=="ConsumablesMaster")
+{
+	$ConsumablesMaster=$Common_Filter->ConsumablesMaster($_POST);
+	echo json_encode($ConsumablesMaster);exit;
 }
-
 
 
 

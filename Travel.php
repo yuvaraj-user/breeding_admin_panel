@@ -20,18 +20,6 @@ function Generate_Document_No($id)
   $Doc_No_Auto_Generation_Result["PrimaryId"];
 }
 $Doc_No = Generate_Document_No(0);
-
-
-
-
-  /*$sql="SELECT COUNT(*) as count FROM BreedingAdmin_Type Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Currentstatus ='1'";
-$stmt = sqlsrv_query($conn, $sql);
-   $Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
-
-*/
-
-
-
    ?>
 
    <link rel="stylesheet"
@@ -40,7 +28,6 @@ $stmt = sqlsrv_query($conn, $sql);
    href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 
 
-   
    <link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
 
    <!-- DataTables -->
@@ -223,7 +210,7 @@ input[type=number]::-webkit-outer-spin-button {
   flex-direction: column;
 }
 
-#select2-location-container {
+#select2-employee_id-container {
   margin-top: 6px;
 }
 </style>
@@ -239,16 +226,16 @@ input[type=number]::-webkit-outer-spin-button {
 </script>
 
 <!-- Modal -->
-<div class="modal fade" id="labour_rate_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2000;">
+<div class="modal fade" id="travel_expense_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2000;">
   <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Labour Rate(Month Wise)</h6>
+        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Travel Expense(Month Wise)</h6>
       </div>
-      <div class="modal-body" id="labour_rate_modal_body">
+      <div class="modal-body" id="travel_expense_modal_body">
 
       </div>
       <div class="modal-footer">
@@ -261,7 +248,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 <!-- Modal -->
-<div class="modal fade" id="Completedrecordpopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="Completedrecordpopup">
   <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
     <div class="modal-content">
       <div class="modal-header">
@@ -271,16 +258,16 @@ input[type=number]::-webkit-outer-spin-button {
         <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Completed Data</h6>
       </div>
       <div class="modal-body">
-       <form method="POST" class="Completed_TFA_tablewisedata">   
+       <form method="POST" class="Completed_Travel_tablewisedata">   
          <div class="row">
           <div class="col-lg-12">
             <div class="card">
               <div class="card-body">
 
-                <h4 class="mt-0 header-title ml-5">Labour rate</h4>
+                <h4 class="mt-0 header-title ml-5">Travel Expenses</h4>
 
                 <div class="table-responsive">
-                  <table class="table table-bordered" id="TFA_completed_table" style="border-collapse: collapse; border-spacing: 0; width: 100%!important;">
+                  <table class="table table-bordered" id="Travel_completed_table" style="border-collapse: collapse; border-spacing: 0; width: 100%!important;">
                     <thead >
                       <tr>                    
                         <th style="font-size: 11px !important;">S.No</th>
@@ -292,7 +279,7 @@ input[type=number]::-webkit-outer-spin-button {
                     </thead >
 
 
-                    <tbody class="Completed_TFA_tablewisedata_body">
+                    <tbody class="Completed_Travel_tablewisedata_body">
 
 
                     </tbody>
@@ -307,7 +294,7 @@ input[type=number]::-webkit-outer-spin-button {
         </div> <!-- end row -->
       </form>
       <div align="center">
-        <button type="button" class="btn btn-sm btn-success finalassumptionsubmit">Submit</button>
+        <button type="button" class="btn btn-sm btn-success completed_final_travel_submit">Submit</button>
         <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton" data-dismiss="modal">Cancel</button>
       </div>
       </div>
@@ -336,7 +323,7 @@ input[type=number]::-webkit-outer-spin-button {
           <div class="btn-group mt-2">
             <ol class="breadcrumb hide-phone p-0 m-0">
               <li class="breadcrumb-item"><a href="#">Breeding</a></li>
-              <li class="breadcrumb-item active">TFA/PCL</li>
+              <li class="breadcrumb-item active">Travel</li>
             </ol>
           </div>
 
@@ -355,29 +342,29 @@ input[type=number]::-webkit-outer-spin-button {
         <div class="card">
           <div class="card-body bootstrap-select-1">
 
-            <form method="POST"  class="TFA_add_form" >  
+            <form method="POST"  class="travel_add_form" >  
 
               <!-- <h4 class="header-title mt-0">Activity Wise  </h4> -->
 
 
               <div class="row">
                 <div class="col-md-4">
-                  <h6 class="input-title mt-0">Location</h6>
-                  <select class="select2 mb-3" name="location" id="location" style="width: 100%; height:36px;" data-placeholder="Choose">
-                    <option value="">Choose Loaction</option>
+                  <h6 class="input-title mt-0">Employee</h6>
+                  <select class="select2 mb-3" name="employee_id" id="employee_id" style="width: 100%; height:36px;" data-placeholder="Choose">
+                    <option value="">Choose Employee</option>
 
                     <?php
-                    $Sql   = "SELECT Distinct Territory from Budget_CostCenter_Mapping_Finance where Territory!='-'";
+                    $Sql   = "SELECT DISTINCT Employee_Code,Employee_Name,Department from HR_Master_Table WHERE Employee_Code IS NOT NULL ORDER BY Employee_Name";
                     $Sql_Connection = sqlsrv_query($conn,$Sql);
                     while($row = sqlsrv_fetch_array($Sql_Connection)){
                       ?>
-                      <option value="<?php echo trim($row['Territory']); ?>"> <?php echo $row['Territory']; ?> </option>
+                      <option value="<?php echo trim($row['Employee_Code']); ?>"> <?php echo $row['Employee_Name'].' - '.$row['Department']; ?> </option>
                     <?php } ?>
 
                   </select>
                 </div>     
 
-                <div class="row">
+               <!--  <div class="row">
                   <div class="col-md-12">
                     <h6 class="input-title mt-0">Name</h6>
                     <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" autocomplete="off">
@@ -389,7 +376,7 @@ input[type=number]::-webkit-outer-spin-button {
                     <h6 class="input-title mt-0">No of Persons</h6>
                     <input type="number" class="form-control" name="no_of_persons" id="no_of_persons" placeholder="Enter no of persons">
                   </div>
-                </div>                             
+                </div>   -->                           
 
 
                 <div class="col-md-4">
@@ -417,7 +404,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
-       <form method="POST" class="TFA_tablewisedata">   
+       <form method="POST" class="Travel_tablewisedata">   
 
          <div class="row">
 
@@ -426,18 +413,18 @@ input[type=number]::-webkit-outer-spin-button {
             <div class="card">
               <div class="card-body">
 
-                <h4 class="mt-0 header-title ml-5">Labour rate</h4>
+                <h4 class="mt-0 header-title ml-5">Travel Expenses</h4>
 
 
                 <div class="table-responsive">
-                  <table class="table table-bordered nowrap" id="TFA_labour_rate_tbl" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                  <table class="table table-bordered nowrap" id="travel_tbl" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                     <thead >
                       <tr>                    
                         <th style="font-size: 11px !important;">S.No</th>
-                        <th style="font-size: 11px !important;">Location</th>
-                        <th style="font-size: 11px !important;">Name</th>
-                        <th style="font-size: 11px !important;">No of persons</th>
-                        <th style="font-size: 11px !important;">Labour Rate</th>
+                        <th style="font-size: 11px !important;">Employee</th>
+                        <th style="font-size: 11px !important;">Expenses Name</th>
+                        <th style="font-size: 11px !important;">Per Visit</th>
+                        <th style="font-size: 11px !important;">Action</th>
                       </tr>
                     </thead >
 
@@ -459,7 +446,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 
       <div align="center">
-        <button type="button" class="btn btn-sm btn-success finalassumptionsubmit">Submit</button>
+        <button type="button" class="btn btn-sm btn-success final_travel_submit">Submit</button>
         <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton">Cancel</button>
       </div>
 
@@ -543,48 +530,32 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 <script>
-
-$(document).ready(function(){
- $('.js-example-basic-single').select2();
-
-
- var user_input={};
+  $(document).ready(function(){
+   $('.js-example-basic-single').select2();
 
 
- Get_TFA_Details("no");
- Get_Completed_TFA_Details("no");
+   var user_input={};
 
-});
+
+   Get_Travel_Details("no");
+   Get_Completed_TFA_Details("no");
+
+ });
 
 
   $(document).on("click",".addbtn",function(){
 
-    var locationvalue=$("#location").val();
+    var employee_id=$("#employee_id").val();
 
-    var name=$("#name").val();
+    if(employee_id ==''){
 
-    var no_of_persons=$("#no_of_persons").val();
-
-    if(locationvalue ==''){
-
-     Alert_Msg("Please Select Location.","warning");
+     Alert_Msg("Please Select Employee Name.","warning");
      return false;
    }
 
-   if(name ==''){
+   let Uset_Input=$(".travel_add_form").serializeArray();
 
-     Alert_Msg("Please enter name.","warning");
-     return false;
-   }
-   if(no_of_persons ==''){
-
-     Alert_Msg("Please enter no of persons.","warning");
-     return false;
-   }
-
-   let Uset_Input=$(".TFA_add_form").serializeArray();
-
-   Uset_Input.push({"name":"Action","value":"Add_TFA"});
+   Uset_Input.push({"name":"Action","value":"Add_Travel"});
 
    $.ajax 
    ({
@@ -604,9 +575,7 @@ $(document).ready(function(){
 
           var user_input={};
 
-          Get_TFA_Details("yes");
-
-          window.location.href ='TFA.php';
+          window.location.href ='Travel.php';
 
         }else{
          Alert_Msg("Something Went Wrong.","error");
@@ -620,13 +589,13 @@ $(document).ready(function(){
 
 
 
-  function Get_TFA_Details(destroy_status)
+  function Get_Travel_Details(destroy_status)
   {
 
     // Autoincnum=user_input.Autoincnum;
     // autoid=user_input.autoid;
 
-    var data_table='TFA_labour_rate_tbl'
+    var data_table='travel_tbl'
     if(destroy_status == "yes")
     {
       $('#'+data_table).DataTable().destroy();
@@ -646,26 +615,27 @@ $(document).ready(function(){
       {
         "url": "Common_Ajax.php", 
         "type": "POST",
-        "data": {Action:"Get_TFA_Details"}         
+        "data": {Action:"Get_Travel_Details"}         
       }
     });
 
   }
 
 
-  $(document).on('click','.labour_rate_add',function(){
-    var tfa_id = $(this).data('tfaid');
-    var location = $(this).data('loc');
-    var name = $(this).data('name');
-    var no_of_persons = $(this).data('nop');
+  $(document).on('click','.travel_expense_add',function(){
+    var travel_id = $(this).data('travelid');
+    var employee = $(this).data('employee');
+    var expenses = $(this).data('expenses');
+    var pervisit = $(this).data('pervisit');
     var action = $(this).data('action');
+    var from_action = $(this).data('fromaction');    
 
     
-    var html =  `<form method="POST" class="monthwisedetails"><input type="hidden" name="tfa_id" value="${ tfa_id }">`;
+    var html =  `<form method="POST" class="monthwisedetails"><input type="hidden" name="travel_id" value="${ travel_id }">`;
     html += `<div class='row pop-req'>
-    <div class='col-md-4 py-7' style='text-align: center;'> <span > Location : </span>${ location }</div>
-    <div class='col-md-5 py-7' style='text-align: center;'> <span> Name : </span>${ name }</div>
-    <div class='col-md-3 py-7' style='text-align: center;'> <span> No of persons : </span>${ no_of_persons }</div>
+    <div class='col-md-4 py-7' style='text-align: center;'> <span > Employee : </span>${ employee }</div>
+    <div class='col-md-5 py-7' style='text-align: center;'> <span> Expense Name : </span>${ expenses }</div>
+    <div class='col-md-3 py-7' style='text-align: center;'> <span> Per Visit : </span>${ pervisit }</div>
 
     </div>
     <div>
@@ -790,7 +760,7 @@ $(document).ready(function(){
     </div>
     </form>`;  
 
-    $('#labour_rate_modal_body').html(html);
+    $('#travel_expense_modal_body').html(html);
     var text = "Add"; 
     $('.tfa_month_det_save').removeClass('Editmonthvaue');
     $('.tfa_month_det_save').addClass('Addmonthvaue');
@@ -802,34 +772,34 @@ $(document).ready(function(){
       $('.tfa_month_det_save').text(text);
     }
 
-    $('#labour_rate_modal').modal('show');
+    $('#travel_expense_modal').modal('show');
 
   });
 
 
-$(document).on('click','.labour_rate_edit',function(){
-  var tfa_id = $(this).data('tfaid');
-  var location = $(this).data('loc');
-  var name = $(this).data('name');
-  var no_of_persons = $(this).data('nop');
-  var action = $(this).data('action');
-  var from_action = $(this).data('fromaction');
+$(document).on('click','.travel_expense_edit',function(){
+    var travel_id = $(this).data('travelid');
+    var employee = $(this).data('employee');
+    var expenses = $(this).data('expenses');
+    var pervisit = $(this).data('pervisit');
+    var action = $(this).data('action');
+    var from_action = $(this).data('fromaction');    
 
   $.ajax 
   ({
     type: "POST",
     url: "Common_Ajax.php",
-    data: { Action: "Get_TFA_labour_rate",tfa_id : tfa_id,function : from_action},
+    data: { Action: "Get_Travel_expense",travel_id : travel_id,function : from_action},
     success: function(data){
      result=JSON.parse(data);
      
      if(result.Status == 1){
 
-      var html =  `<form method="POST" class="monthwisedetails"><input type="hidden" name="tfa_id" value="${ tfa_id }">`;
-      html += `<div class='row pop-req'>
-      <div class='col-md-4 py-7' style='text-align: center;'> <span > Location : </span>${ location }</div>
-      <div class='col-md-5 py-7' style='text-align: center;'> <span> Name : </span>${ name }</div>
-      <div class='col-md-3 py-7' style='text-align: center;'> <span> No of persons : </span>${ no_of_persons }</div>
+      var html =  `<form method="POST" class="monthwisedetails"><input type="hidden" name="travel_id" value="${ travel_id }">`;
+    html += `<div class='row pop-req'>
+    <div class='col-md-4 py-7' style='text-align: center;'> <span > Employee : </span>${ employee }</div>
+    <div class='col-md-5 py-7' style='text-align: center;'> <span> Expense Name : </span>${ expenses }</div>
+    <div class='col-md-3 py-7' style='text-align: center;'> <span> Per Visit : </span>${ pervisit }</div>
 
       </div>
       <div>
@@ -954,7 +924,7 @@ $(document).on('click','.labour_rate_edit',function(){
       </div>
       </form>`;  
 
-      $('#labour_rate_modal_body').html(html);
+      $('#travel_expense_modal_body').html(html);
       var text = "Add"; 
       $('.tfa_month_det_save').removeClass('Editmonthvaue');
       $('.tfa_month_det_save').addClass('Addmonthvaue');
@@ -966,11 +936,11 @@ $(document).on('click','.labour_rate_edit',function(){
         $('.tfa_month_det_save').text(text);
       }
 
-      $('#labour_rate_modal').modal('show');
+      $('#travel_expense_modal').modal('show');
 
 
     }else{
-      $('#labour_rate_modal').modal('hide');
+      $('#travel_expense_modal').modal('hide');
       Alert_Msg("Something Went Wrong.","error");
       return false;
     }
@@ -984,7 +954,7 @@ $(document).on('click','.labour_rate_edit',function(){
 $(document).on('click','.Addmonthvaue',function(){
   let Uset_Input=$(".monthwisedetails").serializeArray();
 
-  Uset_Input.push({"name":"Action","value":"Add_TFA_labour_rate"},{"name":"function","value":"Add"}); 
+  Uset_Input.push({"name":"Action","value":"Add_Travel_expense"},{"name":"function","value":"Add"}); 
 
   $.ajax 
   ({
@@ -996,14 +966,14 @@ $(document).on('click','.Addmonthvaue',function(){
 
      if(result.Status == 1){
 
-      $('#labour_rate_modal').modal('hide');
+      $('#travel_expense_modal').modal('hide');
 
-      Alert_Msg("Labour rate added successfully.","success");
+      Alert_Msg("Travel Expense added successfully.","success");
 
-      window.location.href ='TFA.php';
+      window.location.href ='Travel.php';
 
     }else{
-      $('#labour_rate_modal').modal('hide');
+      $('#travel_expense_modal').modal('hide');
       Alert_Msg("Something Went Wrong.","error");
       return false;
     }
@@ -1014,7 +984,7 @@ $(document).on('click','.Addmonthvaue',function(){
 $(document).on('click','.Editmonthvaue',function(){
   let Uset_Input=$(".monthwisedetails").serializeArray();
 
-  Uset_Input.push({"name":"Action","value":"Add_TFA_labour_rate"},{"name":"function","value":"Edit"}); 
+  Uset_Input.push({"name":"Action","value":"Add_Travel_expense"},{"name":"function","value":"Edit"}); 
 
   $.ajax 
   ({
@@ -1026,14 +996,14 @@ $(document).on('click','.Editmonthvaue',function(){
 
      if(result.Status == 1){
 
-      $('#labour_rate_modal').modal('hide');
+      $('#travel_expense_modal').modal('hide');
 
-      Alert_Msg("Labour rate updated successfully.","success");
+      Alert_Msg("Travel Expense updated successfully.","success");
 
-      window.location.href ='TFA.php';
+      window.location.href ='Travel.php';
 
     }else{
-      $('#labour_rate_modal').modal('hide');
+      $('#travel_expense_modal').modal('hide');
       Alert_Msg("Something Went Wrong.","error");
       return false;
     }
@@ -1042,14 +1012,14 @@ $(document).on('click','.Editmonthvaue',function(){
 });
 
 
-$(document).on('click','.labour_rate_delete',function(){
-  var tfa_id = $(this).data('tfaid');
+$(document).on('click','.travel_expense_delete',function(){
+  var travel_id = $(this).data('travelid');
 
   $.ajax 
   ({
     type: "POST",
     url: "Common_Ajax.php",
-    data: { Action: "Delete_TFA_labour_rate", tfa_id : tfa_id },
+    data: { Action: "Delete_Travel_expense", travel_id : travel_id },
     success: function(data){
      result=JSON.parse(data);
 
@@ -1057,7 +1027,7 @@ $(document).on('click','.labour_rate_delete',function(){
 
       Alert_Msg("Labour rate deleted successfully.","success");
 
-      window.location.href ='TFA.php';
+      window.location.href ='Travel.php';
 
     }else{
       Alert_Msg("Something Went Wrong.","error");
@@ -1067,67 +1037,43 @@ $(document).on('click','.labour_rate_delete',function(){
 });
 });
 
-$(document).on("click",".finalassumptionsubmit",function(){
-   $('#ajax_loader').show();
-   $('#TFA_labour_rate_tbl').DataTable().page.len(50000).draw();
-   var table = $('#TFA_labour_rate_tbl').DataTable();
+
+
+$(document).on("click",".final_travel_submit",function(){
+  $('#ajax_loader').show();
+   $('#travel_tbl').DataTable().page.len(50000).draw();
+   var table = $('#travel_tbl').DataTable();
    table.on('draw.dt', function () {
-      let Uset_Input=$(".TFA_tablewisedata").serializeArray();
+     let Uset_Input=$(".Travel_tablewisedata").serializeArray();
+     Uset_Input.push({"name":"Action","value":"Travel_finaldata"});
+     submit_travel_finaldata(Uset_Input)
+  });
+});
 
-      Uset_Input.push({"name":"Action","value":"TFA_finaldata"});
-
-      submit_tfa_finaldata(Uset_Input);
-    });
+$(document).on("click",".completed_final_travel_submit",function(){
+  $('#ajax_loader').show();
+   $('#Travel_completed_table').DataTable().page.len(50000).draw();
+   var table = $('#Travel_completed_table').DataTable();
+   table.on('draw.dt', function () {
+     let Uset_Input=$(".Completed_Travel_tablewisedata").serializeArray();
+     Uset_Input.push({"name":"Action","value":"Travel_finaldata"});
+     submit_travel_finaldata(Uset_Input,'completed')
+  });
 
 });
 
-function submit_tfa_finaldata(Uset_Input)
-{
-    $.ajax 
-    ({
-      type: "POST",
-      url: "Common_Ajax.php",
-      data:Uset_Input,
-      success: function(data){
-         $('#ajax_loader').hide();
-         result=JSON.parse(data);
-         
-         if(result.Status == 1){
-          swal({
-            title: "TFA details submitted successfully.",
-            icon: "success",
-          }).then(function(isConfirmed) {
-              if(isConfirmed) {
-                location.reload();
-              }
-          });
-        }else{
-          swal({
-            title: "Something Went Wrong.",
-            icon: "error",
-          }).then(function(isConfirmed) {
-              if(isConfirmed) {
-                location.reload();
-              }
-          });
-       }
-     }
-   });
-}
-
 
 $(document).on("click", ".completedrecord", function (){
-
-
-  Get_Completed_TFA_Details("yes");
+  Get_Completed_Travel_Details("yes");
 
   $("#Completedrecordpopup").modal('show');
 
 });
 
-  function Get_Completed_TFA_Details(destroy_status)
+
+  function Get_Completed_Travel_Details(destroy_status)
   {
-    var data_table='TFA_completed_table'
+    var data_table='Travel_completed_table'
     if(destroy_status == "yes")
     {
       $('#'+data_table).DataTable().destroy();
@@ -1146,13 +1092,68 @@ $(document).on("click", ".completedrecord", function (){
         {
           "url": "Common_Ajax.php", 
           "type": "POST",
-          "data": {Action:"Get_TFA_Details",function: "get_completed_TFA"}         
+          "data": {Action:"Get_Travel_Details",function: "get_completed_Travel"}         
         }
       });
     // },500);
 
 
   }
+
+
+
+
+
+function submit_travel_finaldata(Uset_Input,from = '')
+{
+    $.ajax 
+    ({
+      type: "POST",
+      url: "Common_Ajax.php",
+      data:Uset_Input,
+      success: function(data){
+        $('#ajax_loader').hide();
+         result=JSON.parse(data);
+         
+         if(result.Status == 1){
+          if(from == 'completed') {
+            $('#Completedrecordpopup').modal('hide');
+          }
+          swal({
+            title: "Travel Expense submitted successfully.",
+            icon: "success"
+          }).then(function(isConfirmed) {
+            if(isConfirmed) {
+              location.reload();
+            }
+          });
+        }else{
+          // Alert_Msg('Something Went Wrong.','error');
+          swal({
+            title: "Something Went Wrong.",
+            icon: "error"
+          }).then(function(isConfirmed) {
+              if(isConfirmed) {
+                location.reload();
+              }
+          });
+       }
+     }
+   });
+}
+
+$(document).on('keyup','.per_visit',function(){
+  var per_visit_val = $(this).val();
+  var travel_id = $(this).parents('tr').find('.travel_id').val();
+  $.ajax ({
+    type: "POST",
+    url: "Common_Ajax.php",
+    data: { Action: 'travel_per_visit_update',travel_id : travel_id,per_visit_val : per_visit_val },
+    success: function(data){
+    }
+  });
+});
+
 
 
 </script>

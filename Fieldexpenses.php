@@ -40,8 +40,6 @@ $stmt = sqlsrv_query($conn, $sql);
     href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 
 
-<link href="assets/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
-   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
 
                  <!-- DataTables -->
@@ -507,6 +505,9 @@ function Alert_Msg(Msg,Type){
 
 
   $(document).ready(function(){
+
+    var extractedValues=[];
+    var subTableArr=[];
      //$('.js-example-basic-single').select2();  
 
 
@@ -532,6 +533,39 @@ function Alert_Msg(Msg,Type){
 //   ];
 
     function format(data, tr, row) {
+
+        // var InsertData = data;
+
+        // console.log(data)
+
+     // Extract specific values from the data array
+        const [sno, location, crop, activity, type, value1, value2, buttonHtml, buttonHtml2] = data;
+
+        // Extract values associated with specific HTML elements
+        const passingIdLoc = buttonHtml.match(/value="([^"]+)"/)[1]; // Extract value from passing_id_loc
+        const passingId = buttonHtml.match(/value="([^"]+)"/)[1]; // Extract value from passing_id
+        const passingIdProj = buttonHtml.match(/value="([^"]+)"/)[1]; // Extract value from passing_id_proj
+
+        // Create an array of objects with named keys
+        extractedValues = [
+          {
+            'sno': sno,
+            'location': location,
+            'project': crop,
+            'activity': activity,
+            'type': type,
+            'maleAmount': value1,
+            'femaleAmount': value2,
+            'passing_id_loc': passingIdLoc,
+            'passing_id': passingId,
+            'passing_id_proj': passingIdProj
+          }
+        ];
+
+        //console.log(extractedValues);
+
+
+
     $.ajax({
         url: 'Common_Ajax_Div.php',
         type: 'POST',
@@ -546,10 +580,10 @@ function Alert_Msg(Msg,Type){
 
                 var months = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'];
 
-                var tableHtml = '<table cellpadding="0" cellspacing="0" border="0" class="details-table">' +
+                var tableHtml = '<table cellpadding="0" cellspacing="0" border="0" class="details-table" style="width:100%; table-layout:fixed;">' +
                     '<tr>' +
                     '<td>Month</td>' +
-                    '<td>Counts</td>';
+                     '<td>Counts</td>';
 
                 // Loop through months to create table headers
                 months.forEach(function(month) {
@@ -557,7 +591,7 @@ function Alert_Msg(Msg,Type){
                 });
 
                 // Add Total column
-                tableHtml += '<td>Total</td></tr>';
+                tableHtml += '<td>Total</td><td><button class="btn btn-primary btn-sm edit-subtable">Edit</button></td></tr>';
 
                 // Function to calculate total for male
                 function calculateTotal(data) {
@@ -577,18 +611,18 @@ function Alert_Msg(Msg,Type){
                     return total.toFixed(2);
                 }
 
-                tableHtml += '<tr class="mchild"><td>Male</td><td>' + maleData.malecount + '</td>';
+                tableHtml += '<tr class="mchild"><td>Male</td><td><input type="text" style="width:55px" class="male_count" value="' + maleData.malecount + '" disabled readonly></td>';
                 months.forEach(function(month) {
-                    tableHtml += '<td>' + parseFloat(maleData[month + '_Male_value']).toFixed(2) + '</td>';
+                    tableHtml += '<td><input type="text" style="width:70px" value="' + parseFloat(maleData[month + '_Male_value']).toFixed(2) + '" disabled readonly></td>';
                 });
-                tableHtml += '<td>' + calculateTotal(maleData) + '</td></tr>';
+                tableHtml += '<td><input type="text" id="mtotal" style="width:71px" value="' + calculateTotal(maleData) + '" disabled readonly></td></tr>';
 
-                tableHtml += '<tr class="fchild"><td>Female</td><td>' + femaleData.femalecount + '</td>';
+                tableHtml += '<tr class="fchild"><td>Female</td><td><input type="text" style="width:55px" value="' + femaleData.femalecount + '" disabled readonly></td>';
                 months.forEach(function(month) {
-                    tableHtml += '<td>' + parseFloat(femaleData[month + '_femalevalue']).toFixed(2) + '</td>';
+                    tableHtml += '<td><input type="text" style="width:70px" value="' + parseFloat(femaleData[month + '_femalevalue']).toFixed(2) + '" disabled readonly></td>';
                 });
-                tableHtml += '<td>' + calculateTotalF(femaleData) + '</td></tr>';
-
+                tableHtml += '<td><input type="text" id="ftotal" style="width:71px" value="' + calculateTotalF(femaleData) + '" disabled readonly></td></tr>';
+                tableHtml +='<tr><td><button class="btn btn-primary btn-sm update-subtable" style="display:none">Save</button></td></tr>';
                 tableHtml += '</table>';
 
                 row.child(tableHtml).show();
@@ -611,8 +645,227 @@ function Alert_Msg(Msg,Type){
         }
     });
 }
-  
 
+
+$(document).on('click','.edit-subtable', function() {
+
+
+    // Initialize arrays to store values
+    var valuesArray = [];
+    var inputs = $('.details-table').closest('tr').find('input[type="text"]');
+
+    // Iterate over each input element to extract its value
+    inputs.each(function() {
+        // Push the value of each input into the valuesArray
+        valuesArray.push($(this).val());
+    });
+
+    // Display the extracted values in the console
+   // console.log(valuesArray);
+    
+
+    subTableArr['male']=[{
+        'Count':valuesArray[0],
+        'Jun':valuesArray[1],
+        'Jul':valuesArray[2],
+        'Aug':valuesArray[3],
+        'Sep':valuesArray[4],
+        'Oct':valuesArray[5],
+        'Nov':valuesArray[6],
+        'Dec':valuesArray[7],
+        'Jan':valuesArray[8],
+        'Feb':valuesArray[9],
+        'Mar':valuesArray[10],
+        'Apr':valuesArray[11],
+        'May':valuesArray[12],
+        'Total':valuesArray[13]
+
+        }];
+
+     subTableArr['female']=[{
+        'Count':valuesArray[14],
+        'Jun':valuesArray[15],
+        'Jul':valuesArray[16],
+        'Aug':valuesArray[17],
+        'Sep':valuesArray[18],
+        'Oct':valuesArray[19],
+        'Nov':valuesArray[20],
+        'Dec':valuesArray[21],
+        'Jan':valuesArray[22],
+        'Feb':valuesArray[23],
+        'Mar':valuesArray[24],
+        'Apr':valuesArray[25],
+        'May':valuesArray[26],
+        'Total':valuesArray[27]
+
+        }];
+
+    console.log(subTableArr)
+// subTableArr=JSON.stringify(subTableArr)
+      var requestData = {
+        'Action': 'InsertMainSubTableData',
+        'extractedValues': extractedValues,
+        'Male': subTableArr['male'],
+        'Female': subTableArr['female']
+    };
+
+    //console.log(requestData) 
+
+     $.ajax({
+    url: 'Common_Ajax_Div.php',
+    type: 'POST',
+    dataType: 'json',
+    data: requestData,
+    success: function(res) {
+         Alert_Msg(res.Status);
+
+        //  setTimeout(function() {
+        //     // Redirect to 'Fieldexpensestest_Div.php' after 2 seconds (adjust delay as needed)
+        //     window.location.href = 'Fieldexpensestest_Div.php';
+        // }, 2000); 
+
+    }
+});
+    //console.log(extractedValues);
+
+    inputs.prop('disabled', false).removeAttr('readonly');
+    $('#mtotal').prop('disabled', true).attr('readonly');
+    $('#ftotal').prop('disabled', true).attr('readonly');
+    $('.update-subtable').css('display','block');
+});
+
+
+$(document).on('click','.update-subtable', function() {
+
+console.log('Update Function')
+    // Initialize arrays to store values
+    var valuesArray = [];
+    var inputs = $('.details-table').closest('tr').find('input[type="text"]');
+
+    // Iterate over each input element to extract its value
+    inputs.each(function() {
+        // Push the value of each input into the valuesArray
+        valuesArray.push($(this).val());
+    });
+
+    // Display the extracted values in the console
+    //console.log(valuesArray);
+
+    var subTableArrUpdate=[];
+
+    subTableArrUpdate['male']=[{
+        'Count':valuesArray[0],
+        'Jun':valuesArray[1],
+        'Jul':valuesArray[2],
+        'Aug':valuesArray[3],
+        'Sep':valuesArray[4],
+        'Oct':valuesArray[5],
+        'Nov':valuesArray[6],
+        'Dec':valuesArray[7],
+        'Jan':valuesArray[8],
+        'Feb':valuesArray[9],
+        'Mar':valuesArray[10],
+        'Apr':valuesArray[11],
+        'May':valuesArray[12],
+        'Total':valuesArray[13]
+        }];
+
+     subTableArrUpdate['female']=[{
+        'Count':valuesArray[14],
+        'Jun':valuesArray[15],
+        'Jul':valuesArray[16],
+        'Aug':valuesArray[17],
+        'Sep':valuesArray[18],
+        'Oct':valuesArray[19],
+        'Nov':valuesArray[20],
+        'Dec':valuesArray[21],
+        'Jan':valuesArray[22],
+        'Feb':valuesArray[23],
+        'Mar':valuesArray[24],
+        'Apr':valuesArray[25],
+        'May':valuesArray[26],
+        'Total':valuesArray[27]
+        }];
+
+     var isTotalEqualMale;
+     var isTotalEqualFemale;
+
+     function checkMonthlyTotalEqualityMale(data) {
+        var totalSum = 0;
+
+        for (var month in data) {
+        if (month !== 'Count' && month !== 'Total' && data.hasOwnProperty(month)) {
+            totalSum += parseFloat(data[month]);
+        }
+    }    
+        // Compare the calculated total sum with the 'Total' value
+
+        return totalSum === parseFloat(data['Total']);
+    }
+
+    subTableArrUpdate['male'].forEach(function(item) {
+         isTotalEqualMale = checkMonthlyTotalEqualityMale(item);
+    });
+
+    function checkMonthlyTotalEqualityFemale(data) {
+        var totalSum = 0;
+
+        // Calculate the sum of monthly amounts
+        for (var month in data) {
+        if (month !== 'Count' && month !== 'Total' && data.hasOwnProperty(month)) {
+            totalSum += parseFloat(data[month]);
+        }
+    }    
+
+        // Compare the calculated total sum with the 'Total' value
+        return totalSum === parseFloat(data['Total']);
+    }
+
+    subTableArrUpdate['female'].forEach(function(item1) {
+         isTotalEqualFemale = checkMonthlyTotalEqualityFemale(item1);
+    });
+
+    if(isTotalEqualFemale && isTotalEqualMale)
+    {
+
+
+
+         var requestData = {
+            'Action': 'UpdateMainSubTableData',
+            'extractedValues': extractedValues,
+            'Male': subTableArrUpdate['male'],
+            'Female': subTableArrUpdate['female']
+        };
+
+        //console.log(requestData) 
+
+         $.ajax({
+        url: 'Common_Ajax_Div.php',
+        type: 'POST',
+        dataType: 'json',
+        data: requestData,
+        success: function(res) {
+             Alert_Msg(res.Status);
+             //location.reload();
+
+             setTimeout(function() {
+                // Redirect to 'Fieldexpensestest_Div.php' after 2 seconds (adjust delay as needed)
+                window.location.href = 'Fieldexpensestest_Div.php';
+            }, 2000); 
+
+        }
+    });
+     }
+     else
+     {
+        alert('MonthWise Total and Total Not Equal');
+        //location.reload();
+     }
+
+
+    
+    });
+            
   
  $.ajax({
     url: 'Common_Ajax_Div.php',
@@ -647,7 +900,7 @@ function Alert_Msg(Msg,Type){
                     row += '<input type="hidden" class="passing_id_proj" name="passing_id_proj[]" value="' + (res.data[i].passing_id_proj || '') + '">';
                     row += '<input type="hidden" class="passing_id" name="passing_id[]" value="' + (res.data[i].passing_id || '') + '">';
                     row += '</td>';
-                    row += '<td class="labour_rate_per_month"><button type="button" class="btn btn-danger labour_rate_per_month"> Labour Rate </button></td>';
+                    row += '<td class="labour_rate_per_month"><button type="button" class="btn btn-danger labour_rate_per_month"> Labour rate </button></td>';
                     // row += '<td></td>';
                     // row += '<td></td>';
 
@@ -667,6 +920,7 @@ function Alert_Msg(Msg,Type){
                 thousands: ',',
                 loadingRecords: 'Loading...',
                 search: 'Search:',
+               // ScrollX: true,
                 paginate: {
                     next: 'Next',
                     previous: 'Previous'

@@ -40,8 +40,7 @@ $stmt = sqlsrv_query($conn, $sql);
     href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 
 
-<link href="assets/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
-   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
         <link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
 
                  <!-- DataTables -->
@@ -193,6 +192,37 @@ $stmt = sqlsrv_query($conn, $sql);
 
 }
 
+#manDaysCountTable th{
+    font-size: 10px;
+}
+
+#manDaysCountTable td{
+    font-size: 10px;
+}
+
+
+/*#manDaysCountTable{
+      max-height: 300px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+*/
+
+
+.col-sm-12 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.input_no_border {
+    width: 46px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    text-align: center;
+}
+
+
 
     </style>
 
@@ -259,59 +289,145 @@ function Alert_Msg(Msg,Type){
 
 
 
-   <div class="row">
+    <div>
+        <ul class="nav nav-tabs" id="expenseTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link fieldTab active" id="fieldExpenses-tab" data-toggle="tab" href="#fieldExpenses" role="tab" aria-controls="fieldExpenses" aria-selected="true">Field Expenses</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fieldTab" id="manDaysCount-tab" data-toggle="tab" href="#manDaysCount" role="tab" aria-controls="manDaysCount" aria-selected="false">ManDays Count</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link fieldTab" id="viewReport-tab" data-toggle="tab" href="#viewReport" role="tab" aria-controls="viewReport" aria-selected="false">View</a>
+            </li>
+
+        </ul>
+        <div class="tab-content mt-3" id="expenseTabsContent">
+            <!-- Field Expenses Tab -->
+            <div class="tab-pane fade show active" id="fieldExpenses" role="tabpanel" aria-labelledby="fieldExpenses-tab">
+                <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-
                                 <h4 class="mt-0 header-title">Field Expenses</h4>
-                              
-
-                             <div class="cf">
-    <div class="panel panel-default">        
-        <div class="panel-body">
-<!-- Dynamic table was here -->
-<table id="dt-example" class="stripe row-border order-column cl-table dataTable no-footer" cellspacing="0" width="100%">
-  <thead>
-    <tr>
-<th>Sno</th>
-<th>Location</th>
-<th>Project</th>
-<th>Activity</th>
-<th>Type</th>
-<th>MaleAmount</th>
-<th>FemaleAmount</th>
-<th>Acerage</th>
-<th>MF</th>
-<!-- <th>Invoice</th>
-<th>Actions</th> -->
-    </tr>
-  </thead>
-  <tbody id = "getDynamicData">
-    <!-- <tr>
-      <td>1</td>
-      <td>22</td>
-      <td>10</td>
-      <td>12</td>
-      <td>23 Feb 2017</td>
-      <td>Active</td>
-      <td>5,290</td>
-      <td>7,245m</td>
-      <td>$2,275.75</td>
-      <td>[V][E]</td>
-    </tr> -->
-    
-  </tbody>
-</table>
-  </div>
-                
- </div>
-</div>
-
+                                <div class="cf">
+                                    <div class="panel panel-default">        
+                                        <div class="panel-body">
+                                            <table id="fieldExpensesTable" class="stripe row-border order-column cl-table dataTable no-footer" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sno</th>
+                                                        <th>Location</th>
+                                                        <th>Project</th>
+                                                        <th>Activity</th>
+                                                        <th>Type</th>
+                                                        <th>MaleAmount</th>
+                                                        <th>FemaleAmount</th>
+                                                        <th>Average</th>
+                                                        <th>MF</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="fieldExpensesData">
+                                                    <!-- Populate this with dynamic data -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div> <!-- end col -->
-                </div> <!-- end row -->
+                    </div>
+                </div>
+            </div>
+            <!-- ManDays Count Tab -->
+            <div class="tab-pane fade" id="manDaysCount" role="tabpanel" aria-labelledby="manDaysCount-tab">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mt-0 header-title">ManDays Count</h4>
+                                <div class="cf">
+                                    <div class="panel panel-default">        
+                                        <div class="panel-body">
+                                            <table id="manDaysCountTable" class="stripe row-border order-column cl-table dataTable no-footer" cellspacing="0" style="width:100%; table-layout: fixed;">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sno</th>
+                                                        <th>Location</th>
+                                                        <th>Project</th>
+                                                        <th>Activity</th>
+                                                        <th>Type</th>
+                                                        <th>Gender</th>
+                                                        <th>Count</th>
+                                                        <th>Jun</th>
+                                                        <th>Jul</th>
+                                                        <th>Aug</th>
+                                                        <th>Sep</th>
+                                                        <th>Oct</th>
+                                                        <th>Nov</th>
+                                                        <th>Dec</th>
+                                                        <th>Jan</th>
+                                                        <th>Feb</th>
+                                                        <th>Mar</th>
+                                                        <th>Apr</th>
+                                                        <th>May</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="manDaysCountData">
+                                                    <!-- Populate this with dynamic data -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+    <!-- View Report Tab -->
+           <div class="tab-pane fade" id="viewReport" role="tabpanel" aria-labelledby="viewReport-tab">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="mt-0 header-title">View Report</h4>
+                                <div class="cf">
+                                    <div class="panel panel-default">        
+                                        <div class="panel-body">
+                                            <table id="viewReportTable" class="stripe row-border order-column cl-table dataTable no-footer" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Sno</th>
+                                                        <th>Location</th>
+                                                        <th>Project</th>
+                                                        <th>Activity</th>
+                                                        <th>Type</th>
+                                                        <th>MaleAmount</th>
+                                                        <th>FemaleAmount</th>
+                                                        <!-- <th>Average</th>
+                                                        <th>MF</th> -->
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="viewReportData">
+                                                    <!-- Populate this with dynamic data -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+      </div>
+  </div>
 
 
                        
@@ -507,10 +623,18 @@ function Alert_Msg(Msg,Type){
 
 
   $(document).ready(function(){
+
+    var extractedValues=[];
+    var subTableArr=[];
      //$('.js-example-basic-single').select2();  
 
 
-    $('#data-table').dataTable();
+   // $('#data-table').dataTable();
+
+    var table = $('#data-table').DataTable({
+       // scrollX: true
+    });
+
         $(".dataTable").on("draw.dt", function (e) {
           //console.log("drawing");
           setCustomPagingSigns.call($(this));
@@ -522,6 +646,7 @@ function Alert_Msg(Msg,Type){
           wrapper.find("a.previous").text("<");
           wrapper.find("a.next").text(">");
         }
+
 // =============Display details onclick===============
 
         
@@ -532,6 +657,39 @@ function Alert_Msg(Msg,Type){
 //   ];
 
     function format(data, tr, row) {
+
+        // var InsertData = data;
+
+        // console.log(data)
+
+     // Extract specific values from the data array
+        const [sno, location, crop, activity, type, value1, value2, buttonHtml, buttonHtml2] = data;
+
+        // Extract values associated with specific HTML elements
+        const passingIdLoc = buttonHtml.match(/value="([^"]+)"/)[1]; // Extract value from passing_id_loc
+        const passingId = buttonHtml.match(/value="([^"]+)"/)[1]; // Extract value from passing_id
+        const passingIdProj = buttonHtml.match(/value="([^"]+)"/)[1]; // Extract value from passing_id_proj
+
+        // Create an array of objects with named keys
+        extractedValues = [
+          {
+            'sno': sno,
+            'location': location,
+            'project': crop,
+            'activity': activity,
+            'type': type,
+            'maleAmount': value1,
+            'femaleAmount': value2,
+            'passing_id_loc': passingIdLoc,
+            'passing_id': passingId,
+            'passing_id_proj': passingIdProj
+          }
+        ];
+
+        //console.log(extractedValues);
+
+
+
     $.ajax({
         url: 'Common_Ajax_Div.php',
         type: 'POST',
@@ -546,10 +704,10 @@ function Alert_Msg(Msg,Type){
 
                 var months = ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'];
 
-                var tableHtml = '<table cellpadding="0" cellspacing="0" border="0" class="details-table">' +
-                    '<tr>' +
+                var tableHtml = '<table cellpadding="0" cellspacing="0" border="0" class="details-table" style="width:100%; table-layout:fixed;">' +
+                    '<tr style="background: #8FC2E2;">' +
                     '<td>Month</td>' +
-                    '<td>Counts</td>';
+                     '<td>Counts</td>';
 
                 // Loop through months to create table headers
                 months.forEach(function(month) {
@@ -557,7 +715,7 @@ function Alert_Msg(Msg,Type){
                 });
 
                 // Add Total column
-                tableHtml += '<td>Total</td></tr>';
+                tableHtml += '<td>Total</td><td><button class="btn btn-primary btn-sm edit-subtable">Edit</button></td></tr>';
 
                 // Function to calculate total for male
                 function calculateTotal(data) {
@@ -577,18 +735,18 @@ function Alert_Msg(Msg,Type){
                     return total.toFixed(2);
                 }
 
-                tableHtml += '<tr class="mchild"><td>Male</td><td>' + maleData.malecount + '</td>';
+                tableHtml += '<tr class="mchild"><td>Male</td><td><input type="text" style="width:55px" class="male_count" value="' + maleData.malecount + '" disabled readonly></td>';
                 months.forEach(function(month) {
-                    tableHtml += '<td>' + parseFloat(maleData[month + '_Male_value']).toFixed(2) + '</td>';
+                    tableHtml += '<td><input type="text" style="width:70px" value="' + parseFloat(maleData[month + '_Male_value']).toFixed(2) + '" disabled readonly></td>';
                 });
-                tableHtml += '<td>' + calculateTotal(maleData) + '</td></tr>';
+                tableHtml += '<td><input type="text" id="mtotal" style="width:71px" value="' + calculateTotal(maleData) + '" disabled readonly></td></tr>';
 
-                tableHtml += '<tr class="fchild"><td>Female</td><td>' + femaleData.femalecount + '</td>';
+                tableHtml += '<tr class="fchild"><td>Female</td><td><input type="text" style="width:55px" value="' + femaleData.femalecount + '" disabled readonly></td>';
                 months.forEach(function(month) {
-                    tableHtml += '<td>' + parseFloat(femaleData[month + '_femalevalue']).toFixed(2) + '</td>';
+                    tableHtml += '<td><input type="text" style="width:70px" value="' + parseFloat(femaleData[month + '_femalevalue']).toFixed(2) + '" disabled readonly></td>';
                 });
-                tableHtml += '<td>' + calculateTotalF(femaleData) + '</td></tr>';
-
+                tableHtml += '<td><input type="text" id="ftotal" style="width:71px" value="' + calculateTotalF(femaleData) + '" disabled readonly></td></tr>';
+                tableHtml +='<tr><td><button class="btn btn-primary btn-sm update-subtable" style="display:none">Save</button></td></tr>';
                 tableHtml += '</table>';
 
                 row.child(tableHtml).show();
@@ -611,8 +769,330 @@ function Alert_Msg(Msg,Type){
         }
     });
 }
-  
 
+
+$(document).on('click','.edit-subtable', function() {
+
+
+    // Initialize arrays to store values
+    var valuesArray = [];
+    var inputs = $('.details-table').closest('tr').find('input[type="text"]');
+
+    // Iterate over each input element to extract its value
+    inputs.each(function() {
+        // Push the value of each input into the valuesArray
+        valuesArray.push($(this).val());
+    });
+
+    // Display the extracted values in the console
+   // console.log(valuesArray);
+    
+
+    subTableArr['male']=[{
+        'Count':valuesArray[0],
+        'Jun':valuesArray[1],
+        'Jul':valuesArray[2],
+        'Aug':valuesArray[3],
+        'Sep':valuesArray[4],
+        'Oct':valuesArray[5],
+        'Nov':valuesArray[6],
+        'Dec':valuesArray[7],
+        'Jan':valuesArray[8],
+        'Feb':valuesArray[9],
+        'Mar':valuesArray[10],
+        'Apr':valuesArray[11],
+        'May':valuesArray[12],
+        'Total':valuesArray[13]
+
+        }];
+
+     subTableArr['female']=[{
+        'Count':valuesArray[14],
+        'Jun':valuesArray[15],
+        'Jul':valuesArray[16],
+        'Aug':valuesArray[17],
+        'Sep':valuesArray[18],
+        'Oct':valuesArray[19],
+        'Nov':valuesArray[20],
+        'Dec':valuesArray[21],
+        'Jan':valuesArray[22],
+        'Feb':valuesArray[23],
+        'Mar':valuesArray[24],
+        'Apr':valuesArray[25],
+        'May':valuesArray[26],
+        'Total':valuesArray[27]
+
+        }];
+
+    console.log(subTableArr)
+// subTableArr=JSON.stringify(subTableArr)
+      var requestData = {
+        'Action': 'InsertMainSubTableData',
+        'extractedValues': extractedValues,
+        'Male': subTableArr['male'],
+        'Female': subTableArr['female']
+    };
+
+    //console.log(requestData) 
+
+     $.ajax({
+    url: 'Common_Ajax_Div.php',
+    type: 'POST',
+    dataType: 'json',
+    data: requestData,
+    success: function(res) {
+         Alert_Msg(res.Status);
+
+        //  setTimeout(function() {
+        //     // Redirect to 'Fieldexpensestest_Div.php' after 2 seconds (adjust delay as needed)
+        //     window.location.href = 'Fieldexpensestest_Div.php';
+        // }, 2000); 
+
+    }
+});
+    //console.log(extractedValues);
+
+    inputs.prop('disabled', false).removeAttr('readonly');
+    $('#mtotal').prop('disabled', true).attr('readonly');
+    $('#ftotal').prop('disabled', true).attr('readonly');
+    $('.update-subtable').css('display','block');
+});
+
+
+$(document).on('click','.update-subtable', function() {
+
+console.log('Update Function')
+    // Initialize arrays to store values
+    var valuesArray = [];
+    var inputs = $('.details-table').closest('tr').find('input[type="text"]');
+
+    // Iterate over each input element to extract its value
+    inputs.each(function() {
+        // Push the value of each input into the valuesArray
+        valuesArray.push($(this).val());
+    });
+
+    // Display the extracted values in the console
+    //console.log(valuesArray);
+
+    var subTableArrUpdate=[];
+
+    subTableArrUpdate['male']=[{
+        'Count':valuesArray[0],
+        'Jun':valuesArray[1],
+        'Jul':valuesArray[2],
+        'Aug':valuesArray[3],
+        'Sep':valuesArray[4],
+        'Oct':valuesArray[5],
+        'Nov':valuesArray[6],
+        'Dec':valuesArray[7],
+        'Jan':valuesArray[8],
+        'Feb':valuesArray[9],
+        'Mar':valuesArray[10],
+        'Apr':valuesArray[11],
+        'May':valuesArray[12],
+        'Total':valuesArray[13]
+        }];
+
+     subTableArrUpdate['female']=[{
+        'Count':valuesArray[14],
+        'Jun':valuesArray[15],
+        'Jul':valuesArray[16],
+        'Aug':valuesArray[17],
+        'Sep':valuesArray[18],
+        'Oct':valuesArray[19],
+        'Nov':valuesArray[20],
+        'Dec':valuesArray[21],
+        'Jan':valuesArray[22],
+        'Feb':valuesArray[23],
+        'Mar':valuesArray[24],
+        'Apr':valuesArray[25],
+        'May':valuesArray[26],
+        'Total':valuesArray[27]
+        }];
+
+     var isTotalEqualMale;
+     var isTotalEqualFemale;
+
+     function checkMonthlyTotalEqualityMale(data) {
+        var totalSum = 0;
+
+        for (var month in data) {
+        if (month !== 'Count' && month !== 'Total' && data.hasOwnProperty(month)) {
+            totalSum += parseFloat(data[month]);
+        }
+    }    
+        // Compare the calculated total sum with the 'Total' value
+
+        return totalSum === parseFloat(data['Total']);
+    }
+
+    subTableArrUpdate['male'].forEach(function(item) {
+         isTotalEqualMale = checkMonthlyTotalEqualityMale(item);
+    });
+
+    function checkMonthlyTotalEqualityFemale(data) {
+        var totalSum = 0;
+
+        // Calculate the sum of monthly amounts
+        for (var month in data) {
+        if (month !== 'Count' && month !== 'Total' && data.hasOwnProperty(month)) {
+            totalSum += parseFloat(data[month]);
+        }
+    }    
+
+        // Compare the calculated total sum with the 'Total' value
+        return totalSum === parseFloat(data['Total']);
+    }
+
+    subTableArrUpdate['female'].forEach(function(item1) {
+         isTotalEqualFemale = checkMonthlyTotalEqualityFemale(item1);
+    });
+
+    if(isTotalEqualFemale && isTotalEqualMale)
+    {
+
+
+
+         var requestData = {
+            'Action': 'UpdateMainSubTableData',
+            'extractedValues': extractedValues,
+            'Male': subTableArrUpdate['male'],
+            'Female': subTableArrUpdate['female']
+        };
+
+        //console.log(requestData) 
+
+         $.ajax({
+        url: 'Common_Ajax_Div.php',
+        type: 'POST',
+        dataType: 'json',
+        data: requestData,
+        success: function(res) {
+             Alert_Msg(res.Status);
+             //location.reload();
+
+             setTimeout(function() {
+                // Redirect to 'Fieldexpensestest_Div.php' after 2 seconds (adjust delay as needed)
+                window.location.href = 'Fieldexpensestest_Div.php';
+            }, 2000); 
+
+        }
+    });
+     }
+     else
+     {
+        alert('MonthWise Total and Total Not Equal');
+        //location.reload();
+     }
+
+
+    
+    });
+
+function getViewReport()
+{
+     $.ajax({
+    url: 'Common_Ajax_Div.php',
+    type: 'POST',
+    dataType: 'json',
+    data: { Action: 'getBreederDetails' },
+    success: function(res) {
+        //var tableData = res.data;
+
+        //console.log(res.data)
+
+
+        var htmlTable = $("#viewReportData");
+        htmlTable.empty();
+
+         // Loop through the response data and append rows to the table
+        var sno=1;
+        for (var i = 0; i < res.data.length; i++) {
+            var row = '<tr>';
+
+                    row += '<td>' + sno + '</td>';
+                    row += '<td class="details-control" id="details-control' + sno + '" style="cursor: pointer;">' + (res.data[i].BreedingLocation || '') + '</td>';
+                    row += '<td>' + (res.data[i].Project || '') + '</td>';
+                    row += '<td>' + (res.data[i].BreedingActivity || '') + '</td>';
+                    row += '<td>' + (res.data[i].Breedingtype || '') + '</td>';
+                    row += '<td>' + (res.data[i].MaleAmount || '') + '</td>';
+                    row += '<td>' + (res.data[i].FemaleAmount || '') + '</td>';
+                    // Adding hidden input fields with unique names to hold additional data
+                    // row += '<td class="View_Month_wise_popup_Completed" id="View_Month_wise_popup_Completed">';
+                    // row += '<button type="button" class="btn btn-xs btn-danger View_Month_wise_popup_Completed">View</button>';
+                    // row += '<input type="hidden" class="passing_id_loc" name="passing_id_loc[]" value="' + (res.data[i].passing_id_loc || '') + '">';
+                    // row += '<input type="hidden" class="passing_id_proj" name="passing_id_proj[]" value="' + (res.data[i].passing_id_proj || '') + '">';
+                    // row += '<input type="hidden" class="passing_id" name="passing_id[]" value="' + (res.data[i].passing_id || '') + '">';
+                    // row += '</td>';
+                    // row += '<td class="labour_rate_per_month"><button type="button" class="btn btn-danger labour_rate_per_month"> Labour Rate </button></td>';
+                    // row += '<td></td>';
+                    // row += '<td></td>';
+
+                   
+                    row += '</tr>';
+                    sno++;
+                   // console.log(row);
+                    htmlTable.append(row);
+                    
+                }
+
+
+        // var table = $('.dataTable').DataTable({
+        //     pagingType: 'full_numbers',
+        //     language: {
+        //         emptyTable: 'No data to display.',
+        //         zeroRecords: 'No records found!',
+        //         thousands: ',',
+        //         loadingRecords: 'Loading...',
+        //         search: 'Search:',
+        //        // ScrollX: true,
+        //         paginate: {
+        //             next: 'Next',
+        //             previous: 'Previous'
+        //         }
+        //     }
+        // });
+
+         $('.dataTable tbody').on('click', 'td.details-control', function () {
+    var tr = $(this).closest('tr'),
+        row = table.row(tr);
+
+    if (row.child.isShown()) {
+        tr.next('tr').removeClass('details-row');
+        row.child.hide();
+        tr.removeClass('shown');
+    } else {
+        // Call format function to fetch and display the details
+        format(row.data(), tr, row);
+    }
+});
+
+         },
+    error: function(xhr, status, error) {
+        console.error("Error fetching data:", error);
+    }
+
+
+
+});
+
+}
+
+$(document).on('click', '.nav-link.fieldTab', function() {
+    var href = $(this).attr('href');
+
+    if(href == '#manDaysCount')
+    {
+        getManCountDays();
+    }
+    else if(href == '#viewReport')
+    {
+        getViewReport();
+    }
+    console.log(href)
+});
+            
   
  $.ajax({
     url: 'Common_Ajax_Div.php',
@@ -625,7 +1105,7 @@ function Alert_Msg(Msg,Type){
         //console.log(res.data)
 
 
-        var htmlTable = $("#getDynamicData");
+        var htmlTable = $("#fieldExpensesData");
         htmlTable.empty();
 
          // Loop through the response data and append rows to the table
@@ -634,7 +1114,7 @@ function Alert_Msg(Msg,Type){
             var row = '<tr>';
 
                     row += '<td>' + sno + '</td>';
-                    row += '<td class="details-control" id="details-control' + sno + '">' + (res.data[i].BreedingLocation || '') + '</td>';
+                    row += '<td class="details-control" id="details-control' + sno + '" style="cursor: pointer;">' + (res.data[i].BreedingLocation || '') + '</td>';
                     row += '<td>' + (res.data[i].Project || '') + '</td>';
                     row += '<td>' + (res.data[i].BreedingActivity || '') + '</td>';
                     row += '<td>' + (res.data[i].Breedingtype || '') + '</td>';
@@ -647,7 +1127,7 @@ function Alert_Msg(Msg,Type){
                     row += '<input type="hidden" class="passing_id_proj" name="passing_id_proj[]" value="' + (res.data[i].passing_id_proj || '') + '">';
                     row += '<input type="hidden" class="passing_id" name="passing_id[]" value="' + (res.data[i].passing_id || '') + '">';
                     row += '</td>';
-                    row += '<td class="labour_rate_per_month"><button type="button" class="btn btn-danger labour_rate_per_month"> LbRtPrMnth </button></td>';
+                    row += '<td class="labour_rate_per_month"><button type="button" class="btn btn-danger labour_rate_per_month"> Labour Rate </button></td>';
                     // row += '<td></td>';
                     // row += '<td></td>';
 
@@ -667,6 +1147,7 @@ function Alert_Msg(Msg,Type){
                 thousands: ',',
                 loadingRecords: 'Loading...',
                 search: 'Search:',
+               // ScrollX: true,
                 paginate: {
                     next: 'Next',
                     previous: 'Previous'
@@ -1255,6 +1736,330 @@ setTimeout(function(){
 
 
   });
+
+var resData = null;
+
+function getManCountDays() {
+
+    $.ajax({
+        url: 'Common_Ajax_Div.php',
+        type: 'POST',
+        dataType: 'json',
+        data: { Action: 'getBreederDetailsManCount' },
+        success: function(res) {
+            console.log(res.male);
+
+           resData = res;
+
+            // Select the table body to populate
+            var tableBody = $('#manDaysCountData');
+            tableBody.empty();
+
+            var sno = 1;
+
+            // Iterate over the 'data' array
+            for (var i = 0; i < res.data.length; i++) {
+                var dataRow = res.data[i];
+                var maleRow = res.male[i];
+                var femaleRow = res.female[i];
+
+                var maleRowHtml = '<tr class="male_details'+i+'">' +
+                    '<td>' + sno + '</td>' +
+                    '<td>' + dataRow.BreedingLocation + '</td>' +
+                    '<td>' + dataRow.Project + '</td>' +
+                    '<td>' + dataRow.BreedingActivity + '</td>' +
+                    '<td>' + dataRow.Breedingtype + '</td>' +
+                    '<td>' + maleRow.gender + '</td>' +
+                    '<td>' + maleRow.malecount + '</td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Jun_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Jul_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Aug_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Sep_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Oct_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Nov_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Dec_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Jan_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Feb_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Mar_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.Apr_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(maleRow.May_Male_value).toFixed(2) + '" disabled></td>' +
+                    '<td><button class="btn btn-primary btn-sm updateCount" data-type="male" data-index="' + i + '">Edit</button></td>' +
+                    '<input type="hidden" name="passing_id[]" value="' + dataRow.passing_id + '">' +
+                    '<input type="hidden" name="passing_id_loc[]" value="' + dataRow.passing_id_loc + '">' +
+                    '<input type="hidden" name="passing_id_proj[]" value="' + dataRow.passing_id_proj + '">' +
+                    '</tr>';
+
+                // Append the male row to the table
+                tableBody.append(maleRowHtml);
+
+                sno++;
+
+                // Create a new row for female data
+                 var femaleRowHtml = '<tr class="female_details'+i+'">' +
+                    '<td>' + sno + '</td>' +
+                    '<td>' + dataRow.BreedingLocation + '</td>' +
+                    '<td>' + dataRow.Project + '</td>' +
+                    '<td>' + dataRow.BreedingActivity + '</td>' +
+                    '<td>' + dataRow.Breedingtype + '</td>' +
+                    '<td>' + femaleRow.gender + '</td>' +
+                    '<td>' + femaleRow.femalecount + '</td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Jun_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Jul_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Aug_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Sep_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Oct_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Nov_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Dec_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Jan_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Feb_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Mar_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.Apr_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><input type="text" class="input_no_border" style="width:46px;" value="' + parseFloat(femaleRow.May_femalevalue).toFixed(2) + '" disabled></td>' +
+                    '<td><button class="btn btn-primary btn-sm updateCount" data-type="female" data-index="' + i + '">Edit</button></td>' +
+                    '<input type="hidden" name="passing_id[]" value="' + dataRow.passing_id + '">' +
+                    '<input type="hidden" name="passing_id_loc[]" value="' + dataRow.passing_id_loc + '">' +
+                    '<input type="hidden" name="passing_id_proj[]" value="' + dataRow.passing_id_proj + '">' +
+
+                    '</tr>';
+
+                // Append the female row to the table
+                tableBody.append(femaleRowHtml);
+
+                sno++;
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+// Click event handler for updateCount buttons
+$(document).on('click', '.updateCount', function() {
+    // Ensure that resData is defined and contains the response data
+    if (!resData) {
+        console.error('Response data is not available.');
+        return;
+    }
+
+    var type = $(this).data('type');
+    var dataIndex = $(this).data('index');
+    var dataDet = resData.data[dataIndex];
+    var dataRow = (type === 'male') ? resData.male[dataIndex] : resData.female[dataIndex];
+    var requestData='';
+    var trName='';
+
+
+    if(type === 'male')
+    {
+        trName='.male_details'+dataIndex;
+         requestData = {
+            Action: 'InsertManCountTableData',
+            Location: dataDet.BreedingLocation,
+            Project: dataDet.Project,
+            Activity: dataDet.BreedingActivity,
+            Type: dataDet.Breedingtype,
+            passing_id: dataDet.passing_id,
+            passing_id_loc: dataDet.passing_id_loc,
+            passing_id_proj: dataDet.passing_id_proj,
+            Gender: dataRow.gender,
+            Count: dataRow.malecount,
+            Jun: dataRow.Jun_Male_value,
+            Jul: dataRow.Jul_Male_value,
+            Aug: dataRow.Aug_Male_value,
+            Sep: dataRow.Sep_Male_value,
+            Oct: dataRow.Oct_Male_value,
+            Nov: dataRow.Nov_Male_value,
+            Dec: dataRow.Dec_Male_value,
+            Jan: dataRow.Jan_Male_value,
+            Feb: dataRow.Feb_Male_value,
+            Mar: dataRow.Mar_Male_value,
+            Apr: dataRow.Apr_Male_value,
+            May: dataRow.May_Male_value,
+        };
+}else
+{
+    trName='.female_details'+dataIndex;
+    requestData = {
+            Action: 'InsertManCountTableData',
+            Location: dataDet.BreedingLocation,
+            Project: dataDet.Project,
+            Activity: dataDet.BreedingActivity,
+            Type: dataDet.Breedingtype,
+            passing_id: dataDet.passing_id,
+            passing_id_loc: dataDet.passing_id_loc,
+            passing_id_proj: dataDet.passing_id_proj,
+            Gender: dataRow.gender,
+            Count: dataRow.femalecount,
+            Jun: dataRow.Jun_femalevalue,
+            Jul: dataRow.Jul_femalevalue,
+            Aug: dataRow.Aug_femalevalue,
+            Sep: dataRow.Sep_femalevalue,
+            Oct: dataRow.Oct_femalevalue,
+            Nov: dataRow.Nov_femalevalue,
+            Dec: dataRow.Dec_femalevalue,
+            Jan: dataRow.Jan_femalevalue,
+            Feb: dataRow.Feb_femalevalue,
+            Mar: dataRow.Mar_femalevalue,
+            Apr: dataRow.Apr_femalevalue,
+            May: dataRow.May_femalevalue,
+        };
+}
+
+    //console.log(requestData);
+
+    // Perform AJAX POST request to update the count
+    $.ajax({
+        url: 'Common_Ajax_Div.php',
+        type: 'POST',
+        dataType: 'json',
+        data: requestData,
+        success: function(response) {
+            // Handle success response (e.g., show alert)
+             Alert_Msg(response.Status);
+
+             $(trName).find('.updateCount').text('Update').removeClass('updateCount').addClass('saveManCount');
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('Failed to Insert count details!');
+        }
+    });
+
+    var inputs = $(trName).closest('tr').find('input[type="text"]');
+     inputs.prop('disabled', false)
+});
+
+$(document).on('click', '.saveManCount', function() {
+    // Retrieve the parent table row of the clicked button
+    var tableRow = $(this).closest('tr');
+
+    // Retrieve the updated values from input fields within this table row
+    var location = tableRow.find('td:eq(1)').text();
+    var project = tableRow.find('td:eq(2)').text();
+    var activity = tableRow.find('td:eq(3)').text();
+    var type = tableRow.find('td:eq(4)').text();
+    var passing_id = tableRow.find('input[name="passing_id[]"]').val();
+    var passing_id_loc = tableRow.find('input[name="passing_id_loc[]"]').val();
+    var passing_id_proj = tableRow.find('input[name="passing_id_proj[]"]').val();
+    var gender = tableRow.find('td:eq(5)').text();
+    var count = tableRow.find('td:eq(6)').text();
+    
+    var Jun = tableRow.find('input:eq(0)').val();
+    var Jul = tableRow.find('input:eq(1)').val();
+    var Aug = tableRow.find('input:eq(2)').val();
+    var Sep = tableRow.find('input:eq(3)').val();
+    var Oct = tableRow.find('input:eq(4)').val();
+    var Nov = tableRow.find('input:eq(5)').val();
+    var Dec = tableRow.find('input:eq(6)').val();
+    var Jan = tableRow.find('input:eq(7)').val();
+    var Feb = tableRow.find('input:eq(8)').val();
+    var Mar = tableRow.find('input:eq(9)').val();
+    var Apr = tableRow.find('input:eq(10)').val();
+    var May = tableRow.find('input:eq(11)').val();
+
+    // Prepare the request data for updating
+    var requestData = {
+        Action: 'UpdateManCountTableData',
+        Location: location,
+        Project: project,
+        Activity: activity,
+        Type: type,
+        passing_id: passing_id,
+        passing_id_loc: passing_id_loc,
+        passing_id_proj: passing_id_proj,
+        Gender: gender,
+        Count: count,
+        Jun: Jun,
+        Jul: Jul,
+        Aug: Aug,
+        Sep: Sep,
+        Oct: Oct,
+        Nov: Nov,
+        Dec: Dec,
+        Jan: Jan,
+        Feb: Feb,
+        Mar: Mar,
+        Apr: Apr,
+        May: May,
+    };
+
+    console.log(requestData)
+
+    // Perform AJAX POST request to update the count
+    $.ajax({
+        url: 'Common_Ajax_Div.php',
+        type: 'POST',
+        dataType: 'json',
+        data: requestData,
+        success: function(response) {
+            Alert_Msg(response.Status);
+
+            // Reload the page after a delay (2 seconds in this example)
+            setTimeout(function() {
+                window.location.href = 'Fieldexpensestest_Div.php';
+            }, 2000);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('Failed to update count!');
+        }
+    });
+});
+
+
+
+
+// function getManCountDays()
+// {
+//     //console.log('entered')
+//      $.ajax({
+//     url: 'Common_Ajax_Div.php',
+//     type: 'POST',
+//     dataType: 'json',
+//     data: { Action: 'getBreederDetailsManCount' },
+//     success: function(res) {
+//         //var tableData = res.data;
+
+//         console.log(res)
+
+
+//         // var htmlTable = $("#manDaysCountData");
+//         // htmlTable.empty();
+
+//         //  // Loop through the response data and append rows to the table
+//         // var sno=1;
+//         // for (var i = 0; i < res.data.length; i++) {
+//         //     var row = '<tr>';
+
+//         //             row += '<td>' + sno + '</td>';
+//         //             row += '<td class="details-control" id="details-control' + sno + '" style="cursor: pointer;">' + (res.data[i].location || '') + '</td>';
+//         //             row += '<td>' + (res.data[i].Project || '') + '</td>';
+//         //             row += '<td>' + (res.data[i].BreedingActivity || '') + '</td>';
+//         //             row += '<td>' + (res.data[i].Breedingtype || '') + '</td>';
+//         //             row += '<td>' + (res.data[i].MaleAmount || '') + '</td>';
+//         //             row += '<td>' + (res.data[i].FemaleAmount || '') + '</td>';
+//         //             // Adding hidden input fields with unique names to hold additional data
+//         //             row += '<td class="View_Month_wise_popup_Completed" id="View_Month_wise_popup_Completed">';
+//         //             row += '<button type="button" class="btn btn-xs btn-danger View_Month_wise_popup_Completed">View</button>';
+//         //             row += '<input type="hidden" class="passing_id_loc" name="passing_id_loc[]" value="' + (res.data[i].passing_id_loc || '') + '">';
+//         //             row += '<input type="hidden" class="passing_id_proj" name="passing_id_proj[]" value="' + (res.data[i].passing_id_proj || '') + '">';
+//         //             row += '<input type="hidden" class="passing_id" name="passing_id[]" value="' + (res.data[i].passing_id || '') + '">';
+//         //             row += '</td>';
+//         //             row += '<td class="labour_rate_per_month"><button type="button" class="btn btn-danger labour_rate_per_month"> LbRtPrMnth </button></td>';
+//         //             // row += '<td></td>';
+//         //             // row += '<td></td>';
+
+                   
+//         //             row += '</tr>';
+//         //             sno++;
+//         //            // console.log(row);
+//         //             htmlTable.append(row);
+                    
+//         //         }
+//             }
+//         });
+// }
 
 
 // var table = $('.dataTable').DataTable({

@@ -40,7 +40,8 @@ $stmt = sqlsrv_query($conn, $sql);
     href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 
 
-
+<link href="assets/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
+   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
 
                  <!-- DataTables -->
@@ -208,19 +209,6 @@ input[type=number]::-webkit-outer-spin-button {
 }.swal-text {
     font-size: 13px !important;
 
-}table td{
-    font-size: 10px;
-}table th{
-    font-size: 11px;
-}.nav {
-    display: -ms-flexbox;
-    display: contents !important;
-    -ms-flex-wrap: wrap;
-    flex-wrap: nowrap;
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
-    flex-direction: column;
 }
 </style>
 
@@ -260,7 +248,7 @@ function Alert_Msg(Msg,Type){
                             <div class="btn-group mt-2">
                                 <ol class="breadcrumb hide-phone p-0 m-0">
                                     <li class="breadcrumb-item"><a href="#">Breeding</a></li>
-                                    <li class="breadcrumb-item active">Assumption</li>
+                                    <li class="breadcrumb-item active">Project Acrage</li>
                                 </ol>
                             </div>
                             
@@ -282,7 +270,7 @@ function Alert_Msg(Msg,Type){
 
 
 
-                                    <form method="POST"  class="Assumptionwisemalefemale" >
+                                    <form method="POST"  class="Fieldexpensedataform" >
 
 
                   <input type="hidden" class="autonum" name="autonum" value="<?php echo $Doc_No;  ?>">  
@@ -305,14 +293,14 @@ function Alert_Msg(Msg,Type){
 
 
 
-                                <h4 class="header-title mt-0">Activity Wise  </h4>
+                                <h4 class="header-title mt-0">Location Wise Acreage </h4>
 
                                  
                                 
-                                <div class="row">
+                               <!-- <div class="row">
                                     <div class="col-md-3">
                                         <h6 class="input-title mt-0">Location</h6>
-                                        <select class="select2 mb-3 select2-single locationvalue" name="location" id="location"   style="width: 100%; height:36px;" >
+                                        <select class="select2 mb-3 select2-multiple " name="location" id="location" multiple="multiple"   style="width: 100%; height:36px;" >
 
                                           <option value="">Choose Location</option>
 
@@ -320,22 +308,13 @@ function Alert_Msg(Msg,Type){
 
 
 
-                                                                    $Sql   = "SELECT  DISTINCT BreedingAdmin_Location.BreedingLocation   from BreedingAdmin_Location
-
-LEFT Join BreedingAdmin_Project On BreedingAdmin_Project.Docid=BreedingAdmin_Location.Docid
-
-
-
-Left Join BreedingAdmin_Assumption On BreedingAdmin_Assumption.AssumProject=BreedingAdmin_Project.Project  and BreedingAdmin_Location.BreedingLocation=BreedingAdmin_Assumption.AssumLocation
-
-
-where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and BreedingAdmin_Assumption.AssumProject is NULL";
+                                                                    $Sql   = "SELECT  DISTINCT BreedingLocation from BreedingAdmin_Location where CreatedBy='" . @$_SESSION['EmpID']. "'";
                                                                     $Sql_Connection = sqlsrv_query($conn,$Sql);
                                                                     while($row = sqlsrv_fetch_array($Sql_Connection)){
                                                                     ?>
 
                                                                       
-                                                                    <option value="<?php echo trim($row['BreedingLocation']); ?>"> <?php echo $row['BreedingLocation']; ?> </option>
+                                                                    <option value="<?php echo trim($row['BreedingLocation']); ?>" selected> <?php echo $row['BreedingLocation']; ?> </option>
                                                                     <?php } ?>
                                             
                                         </select>
@@ -346,11 +325,11 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
                                         <select class="select2 mb-3 select2-multiple locbaseprojectvalue" name="project[]" id="project" style="width: 100%" multiple="multiple" data-placeholder="Choose">
 
                                             <?php
-                                                                    $Sql   = "SELECT  DISTINCT BPM.internal_Order_Description FROM Budget_project_Master AS BPM";
+                                                                    $Sql   = "SELECT  DISTINCT AssumProject FROM BreedingAdmin_Assumption AS BPM where CreatedBy='" . @$_SESSION['EmpID']. "'";
                                                                     $Sql_Connection = sqlsrv_query($conn,$Sql);
                                                                     while($row = sqlsrv_fetch_array($Sql_Connection)){
                                                                     ?>
-                                                                    <option value="<?php echo trim($row['internal_Order_Description']); ?>"> <?php echo $row['internal_Order_Description']; ?> </option>
+                                                                    <option value="<?php echo trim($row['AssumProject']); ?>" selected> <?php echo $row['AssumProject']; ?> </option>
                                                                     <?php } ?>
                                             
                                         </select> 
@@ -358,17 +337,17 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
 
-                                      <div class="col-md-2">
+                                      <div class="col-md-3">
                                         <h6 class="mt-lg-0 input-title">Activity</h6>
 
                                         <select class="select2 mb-3 select2-multiple WorkActivity" name="WorkActivity[]" id="WorkActivity" style="width: 100%" multiple="multiple" data-placeholder="Choose">
 
                                             <?php
-                                                                    $Sql   = "Select DISTINCT work from Farm_DRS_New_Labour_Workcode_DETAILS";
+                                                                    $Sql   = "Select DISTINCT BreedingActivity from BreedingAdmin_Activity where CreatedBy='" . @$_SESSION['EmpID']. "'";
                                                                     $Sql_Connection = sqlsrv_query($conn,$Sql);
                                                                     while($row = sqlsrv_fetch_array($Sql_Connection)){
                                                                     ?>
-                                                                    <option value="<?php echo trim($row['work']); ?>"> <?php echo $row['work']; ?> </option>
+                                                                    <option value="<?php echo trim($row['BreedingActivity']); ?>" selected> <?php echo $row['BreedingActivity']; ?> </option>
                                                                     <?php } ?>
                                             
                                         </select> 
@@ -378,26 +357,20 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
 
-                                     <div class="col-md-4">
+                                     <div class="col-md-3">
 
 
 
                                                                        <button type="button" class="btn btn-primary addbtn" id="addbtn" style="margin-top: 20px;"> Add </button>
 
-                                                                       <button type="button" class="btn btn-info singleseletion" id="singleseletion" style="margin-top: 20px;"> Single </button>
+                                                                      
 
 
-
-                                                                        <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button> 
-
-
-                                                                         <button type="button" class="btn btn-danger completedrecord" style="margin-top: 20px;"> Completed </button>  
-
-
+                                                                        <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button>    
 
 
                                      </div>                                             
-                                </div>
+                                </div>-->
                             </div>
 
 
@@ -406,201 +379,55 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
 
-<div class="modal" id="Assumptionpopup" role="dialog">
 
 
-    
-
-    <div class="modal-dialog modal-lg" style="max-width: 400px !important">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
-          <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 100px;">Male and Female Count</h6> 
-        </div>
-        <div class="Conformation-body">
-
-          
-                                        <div class="general-label">
-                                            <form class="form-horizontal">
-                                              
-                                                                                                               
-                                                  
-                                                    <div class="col-sm-12 ml-auto input-group input-group-sm mt-3">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text" id="inputGroup-sizing-sm">Male Count</span>
-                                                        </div>
-                                                        <input type="text" class="form-control" name="malecount"  aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                                                    </div>
-
-
-                                                      <div class="col-sm-12 ml-auto input-group input-group-sm mt-3">
-                                                        <div class="input-group-prepend">
-                                                            <span class="input-group-text" id="inputGroup-sizing-sm">Female Count</span>
-                                                        </div>
-                                                        <input type="text" class="form-control" name="femalecount" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                                                    </div>
-
-                                                    <div>
-                                                        <br><br>
-
-                                                    </div>
-
-
-  </form>
-                                                   
-                 <div align="center">
-                    <button type="button" class="btn btn-sm btn-success savemalefemale">Submit</button>
-
-
-
-                     <button type='button' class='btn btn-default closebutton' data-dismiss='modal'>Close</button>
-
-                    </div>
-                                                
-                                            </form>
-                                        </div>
-
-
-                                        <div>
-                                                        <br><br>
-
-                                                    </div>
-                                   
-
-            </div>
-        </div>
-
-      </div>
-    </div>
-
-  </form>
-
-
-  </div>
-
-
-
-  <form method="POST" class="tablewisedataassumption">   
-
-                       <div class="row">
-
-
-                    <div class="col-lg-7">
+   <div class="row">
+                    <div class="col-12">
                         <div class="card">
                             <div class="card-body">
 
-                                <h4 class="mt-0 header-title">Mandays Per Acre</h4>
+                                <h4 class="mt-0 header-title">Field Expenses</h4>
                               
 
-                                <div class="table-responsive">
+                                <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap fieldexpensedata" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead>
+                                    <tr>
+                                        <th>Location</th>
+                                        <th>Project</th>
+                                        <th>Activity</th>
+                                        <th>Male</th>
+                                        <th>Female</th>
+                                        <th>Jun</th>
+                                        <th>Jul</th>
+                                        <th>Aug</th>
+                                        <th>Sep</th>
+                                        <th>Oct</th>
+                                        <th>Nov</th>
+                                        <th>Dec</th>
+                                        <th>Jan</th>
+                                        <th>Feb</th>
+                                        <th>Mar</th>
+                                        <th>Apr</th>
+                                        <th>May</th>
 
 
-                                  
 
-                            
-
-                                      <table  class="table table-bordered  nowrap assumptionwise" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              <thead  >
-                  <tr>                    
-                   
-                    <th style="font-size: 11px !important;">Location</th>
-                    <th style="font-size: 11px !important;"> Project</th>
-                    <th style="font-size: 11px !important;"> Activity</th>
-
-                    <th style="font-size: 11px !important;"> Male</th>
-                    <th style="font-size: 11px !important;"> Female</th>
-
-                   
+                                    </tr>
+                                    </thead>
 
 
+                                   <tbody>
 
-                 
-                   
-        
-                    
-                  </tr>
-              </thead >
+                                   </tbody>
+                                </table>
 
-
-              <tbody class="">
-
-
-              </tbody>
-             
-              </table>
-                           
-
-                           
-                                   
-                                </div>
-                                
                             </div>
                         </div>
                     </div> <!-- end col -->
-
-                  
-
-
-
-
-
-  <div class="col-lg-5">
-                        <div class="card">
-                            <div class="card-body">
-
-                                <h4 class="mt-0 header-title">Labour Rate Per Month</h4>
-                               
-
-                                <div class="table-responsive">
-
-
-<p><button class='Add_Popup' id="Add_Popup" style="display: none;">Add new row</button></p>
-                                         <table  class="table table-bordered  nowrap assumptionwise_Amount" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              <thead >
-                  <tr>                    
-                   
-                            <th>Location</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Male</th>
-                            <th>Female</th>
-
-                  </tr>
-              </thead >
-
-
-              <tbody class="">
-
-
-              </tbody>
-             
-              </table>
-
-
-               
-
-
-  
-                              
-
-                                </div>
-                                
-                            </div>
-                        </div>
-                    </div> <!-- end col -->
-                    
-
-
-
                 </div> <!-- end row -->
 
 
-
- 
-</form>
-
-
-
+                       
 
 
 
@@ -613,7 +440,7 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
                  <div align="center">
-                    <button type="button" class="btn btn-sm btn-success finalassumptionsubmit">Submit</button>
+                    <button type="button" class="btn btn-sm btn-success ">Submit</button>
 
 
 
@@ -626,131 +453,7 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
                     </div> <!-- end col -->
                 </div> <!-- end row --> 
 
-         
-
-
-
-
-
-
-
-  <div class="modal" id="Completedrecordpopup" role="dialog">
-
-
-    <form method="POST" class="Completedrecordpopup">
-
-    <div class="modal-dialog modal-lg" style="max-width: 1200px !important">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
-          <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Completed Record</h6> 
-        </div>
-        <div class="Conformation-body-completed">
-
-    <div class="col-md-12 col-lg-12 col-xl-12">
-                        <div class="card">
-                            <div class="card-body">
-
-                                
-                              
-
-                                <!-- Nav tabs -->
-                                <ul class="nav nav-pills nav-justified" role="tablist">
-                                    <li class="nav-item waves-effect waves-light">
-                                        <a class="nav-link active" data-toggle="tab" href="#home-1" role="tab">MANDAYS PER ACRE</a>
-                                    </li>
-                                    <li class="nav-item waves-effect waves-light">
-                                        <a class="nav-link labourratedesign" data-toggle="tab" href="#profile-1" role="tab">LABOUR RATE PER MONTH</a>
-                                    </li>
-                                  
-                                </ul>
-
-                                <!-- Tab panes -->
-                                <div class="tab-content">
-                                    <div class="tab-pane active p-3" id="home-1" role="tabpanel">
-                                       
-                                      <table  class="table table-bordered  nowrap assumptionwisecompleted" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              <thead  >
-                  <tr>                    
-                   
-                    <th style="font-size: 11px !important;">Location</th>
-                    <th style="font-size: 11px !important;"> Project</th>
-                    <th style="font-size: 11px !important;"> Activity</th>
-
-                    <th style="font-size: 11px !important;"> Male</th>
-                    <th style="font-size: 11px !important;"> Female</th>
-
-                   
-
-
-
-                 
-                   
-        
-                    
-                  </tr>
-              </thead >
-
-
-              <tbody class="">
-
-
-              </tbody>
-             
-              </table>
-                                    </div>
-                                    <div class="tab-pane p-3" id="profile-1" role="tabpanel">
-                                         <table  class="table table-bordered  nowrap assumptionwise_Amount_completed" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              <thead >
-                  <tr>                    
-                   
-                            <th>Location</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Male</th>
-                            <th>Female</th>
-
-                  </tr>
-              </thead >
-
-
-              <tbody class="">
-
-
-              </tbody>
-             
-              </table>
-                                    </div>
-                                  
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-
-                            <div align="center">
-                    <button type="button" class="btn btn-sm btn-success finalsubmittioncompleted">Submit</button>
-
-
-
-                    <button type="button" class="btn btn-sm btn-danger " data-dismiss='modal'>Cancel</button>
-
-                  
-
-                    </div>
-        </div>
-
-      </div>
-    </div>
-
-  </form>
-
-
-  </div>  
-
-
-
+            
               
           
 
@@ -859,9 +562,9 @@ if(projectnvalue ==''){
 //alert("Hai");
          // return false;
 
- let Uset_Input=$(".Assumptionwisemalefemale").serializeArray();
+ let Uset_Input=$(".Fieldexpensedataform").serializeArray();
     
-    Uset_Input.push({"name":"Action","value":"Assumptionwisemalefemale"});
+    Uset_Input.push({"name":"Action","value":"Fieldexpensedataform"});
     
       $.ajax 
       ({
@@ -889,14 +592,9 @@ if(projectnvalue ==''){
 
 
   
-   assumptionwiseprojectDetails("yes",user_input);
+   fieldexpensewiseprojectDetails("yes",user_input);
 
-       assumptionwiseprojectDetails_month_amount("yes",user_input);
-
-
-       window.location.href ='Assumptions.php';
-
-
+     //  assumptionwiseprojectDetails_month_amount("yes",user_input);
             return false;
          }else{
 
@@ -1050,20 +748,23 @@ $(document).on("change",".locationvalue",function(){
 
 
 
-function assumptionwiseprojectDetails(destroy_status,user_input)
+function fieldexpensewiseprojectDetails(destroy_status,user_input)
 {
+
 
 Autoincnum=user_input.Autoincnum;
 autoid=user_input.autoid;
 
-   var data_table='assumptionwise'
+   var data_table='fieldexpensedata'
    if(destroy_status == "yes")
   {
     $('.'+data_table).DataTable().destroy();
   }
- var table = $('.' + data_table).DataTable({
+ $('.' + data_table).DataTable({
 
     "dom": 'Bfrtip',
+
+ 
   
    //"columnDefs": [{ "className":"y desine", "targets": [1] }],
     "scrollX": true,
@@ -1076,11 +777,11 @@ autoid=user_input.autoid;
     {
       "url": "Common_Ajax.php", 
       "type": "POST",
-      "data": {Action:"AssumptionEnrty"}         
+      "data": {Action:"FiledExpensesEnrty"}
     }
   });
-
 }
+
 
 
 
@@ -1131,7 +832,7 @@ autoid=user_input.autoid;
    var user_input={};
 
   
-      assumptionwiseprojectDetails("no",user_input);
+   assumptionwiseprojectDetails("no",user_input);
      assumptionwiseprojectDetails_month_amount("no",user_input);
 
 
@@ -1246,6 +947,7 @@ $(document).on("click", ".Add_Popup", function (){
 
 $(document).on("click",".finalsubmittion",function(){
 
+
  let Uset_Input=$(".tablewisedataassumption").serializeArray();
     
     Uset_Input.push({"name":"Action","value":"FinalsubmittionAssumption"});
@@ -1325,6 +1027,14 @@ if(projectnvalue ==''){
 
 
 
+ 
+
+
+
+
+
+
+
 });
 
 
@@ -1334,7 +1044,7 @@ if(projectnvalue ==''){
 
         $(document).on("click",".savemalefemale",function(){
 
-//alert("Hai");
+alert("Hai");
 
 //return false;
 
@@ -1412,238 +1122,25 @@ if(projectnvalue ==''){
 
 
 
-return false;      
-});
+return false;
 
 
-$(document).on("click",".finalassumptionsubmit",function(){
-   $('#ajax_loader').show();
-   $('.assumptionwise').DataTable().page.len(50000).draw();
-   $('.assumptionwise_Amount').DataTable().page.len(50000).draw();
+
+      
+
+
+
+
    
-   var table = $('.assumptionwise').DataTable();
-   var table1 = $('.assumptionwise_Amount').DataTable();
-   table.on('draw.dt', function () {
-    table1.on('draw.dt', function () {
-       let Uset_Input=$(".tablewisedataassumption").serializeArray();
-
-       Uset_Input.push({"name":"Action","value":"finalassumptiondata"});
-       assumption_submit(Uset_Input);
-   });
-
-});
-    
-
+      
+      
 });
 
-function assumption_submit(Uset_Input)
-{
-  $.ajax 
-  ({
-      type: "POST",
-      url: "Common_Ajax.php",
-      data:Uset_Input,
-       async:false,//
-       success: function(data){
-            $('#ajax_loader').hide();
 
-           result=JSON.parse(data);
 
-           if(result.Status == 1){
 
 
-            Alert_Msg("Submitted.","success");
-
-
-            $(".close").trigger('click'); 
-
-
-            var Autoincnum=$(".Autonumloc").val();
-            var  autoid=$(".Autonumid").val();
-            window.location.href ='Assumptions.php';
-            var user_input={};
-
-
-            user_input.Autoincnum=Autoincnum;
-            user_input.autoid=autoid;
-
-            assumptionwiseprojectDetails("yes",user_input);
-
-            assumptionwiseprojectDetails_month_amount("yes",user_input);
-
-
-            return false;
-        }else{
-
-           // alert("Wrong");
-         Alert_Msg("Something Went Wrong.","error");
-         return false;
-     }
- }
-});
-}
-
-
-
-
-$(document).on("click", ".completedrecord", function (){
-
-    
-
-    $("#Completedrecordpopup").modal('show');
-var user_input={};
-
-
- user_input.Autoincnum=Autoincnum;
- user_input.autoid=autoid;
-  
-  assumptionwiseCompletedprojectDetails("yes",user_input);
-
-assumptionwiseprojectDetails_month_amount_Completed("yes",user_input);
-
-    });
-
-
-$(document).on("click", ".labourratedesign", function (){
-
-    
-
-    ///$("#Completedrecordpopup").modal('show');
-var user_input={};
-
-
- user_input.Autoincnum=Autoincnum;
- user_input.autoid=autoid;
-  
- 
-
-assumptionwiseprojectDetails_month_amount_Completed("yes",user_input);
-
-    });
-
-
-
-
-
-
-
-function assumptionwiseCompletedprojectDetails(destroy_status,user_input)
-{
-
-
-Autoincnum=user_input.Autoincnum;
-autoid=user_input.autoid;
-
-   var data_table='assumptionwisecompleted'
-   if(destroy_status == "yes")
-  {
-    $('.'+data_table).DataTable().destroy();
-  }
- $('.' + data_table).DataTable({
-
-    "dom": 'Bfrtip',
-
- 
-  
-   //"columnDefs": [{ "className":"y desine", "targets": [1] }],
-    "scrollX": true,
-    "buttons": ['copy', 'csv', 'excel', 'pdf', 'print'],
-    "bprocessing": true,
-    "serverSide": true,
-    "pageLength": 5,
-      "searching": false,
-    "ajax": 
-    {
-      "url": "Common_Ajax.php", 
-      "type": "POST",
-      "data": {Action:"AssumptionEnrtyCompleted"}
-    }
-  });
-}
-
-
-
-
-
-
-
-function assumptionwiseprojectDetails_month_amount_Completed(destroy_status,user_input)
-{
-
-
-Autoincnum=user_input.Autoincnum;
-autoid=user_input.autoid;
-
-   var data_table='assumptionwise_Amount_completed'
-   if(destroy_status == "yes")
-  {
-    $('.'+data_table).DataTable().destroy();
-  }
- $('.' + data_table).DataTable({
-
-    "dom": 'Bfrtip',
-
- 
-  
-  //"columnDefs": [{ "className":"y desine", "targets": [1,2,3,4,5] }],
-    "scrollX": true,
-    "buttons": ['copy', 'csv', 'excel', 'pdf', 'print'],
-    "bprocessing": true,
-    "serverSide": true,
-    "pageLength": 5,
-      "searching": false,
-    "ajax": 
-    {
-      "url": "Common_Ajax.php", 
-      "type": "POST",
-      "data": {Action:"AssumptionEnrty_malefemaleamount_completed"}
-    }
-  });
-}
-
-$(document).on('keyup','.count_num',function(){
-    var gender = $(this).data('gender');
-    var activity_id = $(this).parents('tr').find('.activeid').val();
-    var count = $(this).val();
-    $.ajax ({
-      type: "POST",
-      url: "Common_Ajax.php",
-      data: { Action: 'assumption_malefemale_count_update',id : activity_id,count : count,gender : gender },
-      success: function(data){
-      }
-    });
-
-});
-
-$(document).on('change','.month',function(){
-    var m_type      = $(this).data('monthtype');
-    var id          = $(this).parents('tr').find('.monthwise_amt_id').val();
-    var date        = $(this).val();
-    $.ajax ({
-      type: "POST",
-      url: "Common_Ajax.php",
-      data: { Action: 'assumption_malefemale_amount_update',id : id,date : date,month_type : m_type },
-      success: function(data){
-      }
-    });
-
-});
-
-$(document).on('keyup','.amount',function(){
-    var gender      = $(this).data('gender');
-    var id          = $(this).parents('tr').find('.monthwise_amt_id').val();
-    var amount      = $(this).val();
-    $.ajax ({
-      type: "POST",
-      url: "Common_Ajax.php",
-      data: { Action: 'assumption_malefemale_amount_update',id : id,amount : amount,gender : gender },
-      success: function(data){
-      }
-    });
-
-});
-
-</script>
+    </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
  <!-- jQuery  -->
      

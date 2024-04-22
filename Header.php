@@ -28,6 +28,7 @@ if(!isset($_SESSION['EmpID']) && $_SESSION['Dcode']!='ADMIN'){
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
         <link href="assets/css/icons.css" rel="stylesheet" type="text/css">
         <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     </head>
 <style>
@@ -36,12 +37,25 @@ if(!isset($_SESSION['EmpID']) && $_SESSION['Dcode']!='ADMIN'){
     height: 51px !important;
  
 }
+#ajax_loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f5f5f5;
+    z-index: 9999999;
+    opacity: 0.8;
+}
   </style>
 
     <body>
 
         <!-- Loader -->
         <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
+
+        <div id="ajax_loader" style="display: none;"><div id="status"><div class="spinner"></div></div></div>
+
 
 <?php include "Topmenubar.php"; ?>
 

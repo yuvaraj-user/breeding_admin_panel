@@ -562,6 +562,7 @@ margin: 200px auto;
                     <th style="font-size: 11px !important;"> Consumables</th>
 
                     <th style="font-size: 11px !important;"><span>Consumables<span><br> Acreage</th>
+                        <th>Action</th>
                     
 
 
@@ -653,7 +654,7 @@ margin: 200px auto;
 
 
  
-  
+ 
                     
 
 
@@ -691,6 +692,8 @@ margin: 200px auto;
                     <th style="font-size: 11px !important;"><span>Consumables<span><br> Acreage</th>
                     <th style="font-size: 11px !important;"> Acreage</th>
                     <th style="font-size: 11px !important;"> Total</th>
+                    <th style="font-size: 11px !important;"> Action</th>
+
 
                     
 
@@ -771,7 +774,33 @@ margin: 200px auto;
 
 
                 
+ <div class="modal" id="monthwisedetails" role="dialog">
 
+
+    <form method="POST" class="monthwisedetails">
+
+        <div class="modal-dialog modal-lg" style="max-width: 1200px !important">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
+              <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Consumables(Month Wise)</h6> 
+          </div>
+          <div class="Conformation-body">
+
+
+
+
+
+
+          </div>
+
+      </div>
+  </div>
+
+</form>
+
+
+</div>
 
 
 
@@ -1129,7 +1158,7 @@ $(document).on("change",".locationvalue",function(){
       ({
       type: "POST",
       url: "AutoFill_Details.php",
-      data:{"Action":"Get_Location_Based_Project","locbaseproject":locbaseproject},
+      data:{"Action":"Get_Location_Based_Project_Consumables","locbaseproject":locbaseproject},
        async:false,
      
 
@@ -1635,7 +1664,7 @@ var user_input={};
   
  
 
-assumptionwiseprojectDetails_month_amount_Completed("yes",user_input);
+Consumbaleslocationwisetableuom_confirm("yes",user_input);
 
     });
 
@@ -1798,6 +1827,113 @@ $('.onofbutton').on('change', function(){
   $(document).ready(function(){
 
 $(".hiddenalueshow").css("display","none");
+
+});
+
+
+
+
+
+
+
+    $(document).on("click", ".Add_Consmables_monthwise", function (){
+
+   // $("#monthwisedetails").modal('show'); 
+    var passing_id = $(this).attr("attributeid");
+    var currentRequest = $.ajax({
+        type: "POST",
+        url: "ajax_popup_details_View.php",
+        beforeSend: function() {
+            var sdata = checkSession();
+            if(sdata.status=='expired')
+              currentRequest.abort();
+      },
+      data: {
+        passing_id: passing_id,
+       
+        action_type:"monthwiseconsumbales"
+    },
+    success: function (output) {
+      var rowdata = JSON.parse(output);
+      $("#monthwisedetails").modal('show');
+      $(".Conformation-body").html(rowdata);
+
+      //$(".Total_acrage").val(passing_total_acrage);
+  }
+});
+
+
+
+
+});
+
+
+
+$(document).on("click",".Savemonthvalue",function(){
+
+
+
+
+   let Uset_Input=$(".monthwisedetails").serializeArray();
+
+   Uset_Input.push({"name":"Action","value":"monthwisestoreconsumables"});
+
+   $.ajax 
+   ({
+      type: "POST",
+      url: "Common_Ajax.php",
+      data:Uset_Input,
+       async:false,//
+       success: function(data){
+
+           result=JSON.parse(data);
+
+           if(result.Status == 1){
+
+
+            Alert_Msg("Added Month Wise.","success");
+
+
+            $(".close").trigger('click'); 
+
+
+            var Autoincnum=$(".Autonumloc").val();
+            var  autoid=$(".Autonumid").val();
+         // window.location.href ='VechicleRequest.php';
+            var user_input={};
+
+
+            user_input.Autoincnum=Autoincnum;
+            user_input.autoid=autoid;
+
+            //LocationwiseprojectDetails("yes",user_input);
+
+
+            return false;
+        }else if(result.Status == 2){
+
+
+            Alert_Msg("Updated Month Wise.","success");
+
+
+            $(".close").trigger('click'); 
+
+
+
+            return false;
+        }
+
+
+        else{
+
+           // alert("Wrong");
+         Alert_Msg("Something Went Wrong.","error");
+         return false;
+     }
+ }
+});
+
+   return false;
 
 });
 
