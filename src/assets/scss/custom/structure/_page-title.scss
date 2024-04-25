@@ -1,0 +1,70 @@
+
+// 
+// Page-title
+// 
+
+
+.page-title-box {
+    padding-bottom: $grid-gutter-width;
+
+    .page-title {
+        font-size: 16px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .breadcrumb {
+        padding:  0rem;
+    }
+
+    .dropdown {
+        .show.header-item {
+            background-color: rgba($gray-100, 0.1);
+        }
+
+        .flag-img {
+            max-width: 25px;
+        }
+    }
+
+    .dropdown-menu.show:before {
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: $dropdown-bg;
+        top: -6px;
+        right: 18px;
+        transform: rotate(45deg);
+        box-shadow: -2px -4px 0.5rem rgba(108, 118, 134, 0.1);
+    }
+}
+
+body[data-layout="horizontal"] .page-title-box {
+    margin-top: 0px;
+
+    .page-title {
+        color: $white;
+    }
+
+    .breadcrumb {
+        color: $white !important;
+    }
+
+    .breadcrumb-item {
+        >a {
+            color: rgba($white, 0.5);
+        }
+
+        +.breadcrumb-item {
+            &::before {
+                color: rgba($white, 0.5);
+
+            }
+        }
+
+        &.active {
+            color: $white;
+        }
+    }
+}

@@ -1,7 +1,7 @@
-
-
-<?php include "Header.php"; 
-
+<?php 
+include "header.php";
+include "topmenubar.php";
+include "sidebarmenu.php";
 function Generate_Document_No($id)
 {
     global $conn;
@@ -29,27 +29,18 @@ $stmt = sqlsrv_query($conn, $sql);
 $Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
 
 
-
-
-
 ?>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css">
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 
+<script>
+    function Alert_Msg(Msg,Type){
+        swal({
+          title: Msg,
+          icon: Type,
+      });
+    }
 
-<link href="assets/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
-
-<!-- DataTables -->
-<link href="assets/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="assets/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<!-- Responsive datatable examples -->
-<link href="assets/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
+</script>
 
 <style>
     .bg-secondary {
@@ -132,16 +123,16 @@ href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 .close {
   color: white;
   float: right;
-  font-size: 28px;
+  font-size: 14px;
   font-weight: bold;
 }
 
-.close:hover,
+/*.close:hover,
 .close:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
-}
+}*/
 
 .modal-header {
 
@@ -208,255 +199,180 @@ input[type=number]::-webkit-outer-spin-button {
 #select2-expensegroup-container {
   margin-top: 6px;
 }
+input:focus {
+        outline: none;
+}.multiselect.dropdown-toggle{
+    width: 80% !important;
+    height: 36px !important;
+    border: 1px solid #000 !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+  }
 </style>
 
-<script>
-    function Alert_Msg(Msg,Type){
-        swal({
-          title: Msg,
-          icon: Type,
-      });
-    }
 
-</script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.css"/>
+<body data-sidebar="colored" class="sidebar-enable vertical-collpsed">
+    <!-- Loader -->
+    <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
 
-<!-- Modal -->
-<div class="modal fade" id="other_expense_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2000;">
-  <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Other Expense(Month Wise)</h6>
-      </div>
-      <div class="modal-body" id="other_expense_modal_body">
+    <!-- Begin page -->
+    <div id="layout-wrapper">
 
-      </div>
-      <div class="modal-footer">
-       <button type='button'  class='btn btn-success tfa_month_det_save Addmonthvaue'>Add</button>
-       <button type='button' class='btn btn-default close' data-dismiss='modal'>Close</button>
-     </div>
-   </div>
- </div>
-</div>
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
 
+            <div class="page-content">
 
-<!-- Modal -->
-<div class="modal fade" id="Completedrecordpopup">
-  <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Completed Data</h6>
-      </div>
-      <div class="modal-body">
-       <form method="POST" class="Completed_Others_tablewisedata">   
-         <div class="row">
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-body">
+              <!-- Modal -->
+              <div class="modal fade" id="other_expense_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2000;">
+                <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Other Expense(Month Wise)</h6>
+                    </div>
+                    <div class="modal-body" id="other_expense_modal_body">
 
-                <h4 class="mt-0 header-title ml-5">Travel Expenses</h4>
-
-                <div class="table-responsive">
-                  <table class="table table-bordered" id="Others_completed_table" style="border-collapse: collapse; border-spacing: 0; width: 100%!important;">
-                    <thead >
-                      <tr>                    
-                        <th style="font-size: 11px !important;">S.No</th>
-                        <th style="font-size: 11px !important;">Location</th>
-                        <th style="font-size: 11px !important;">Name</th>
-                        <th style="font-size: 11px !important;">No of persons</th>
-                        <th style="font-size: 11px !important;">Labour Rate</th>
-                      </tr>
-                    </thead >
-
-
-                    <tbody class="Completed_Others_tablewisedata_body">
-
-
-                    </tbody>
-
-                  </table>
+                    </div>
+                    <div class="modal-footer">
+                       <button type='button'  class='btn btn-success tfa_month_det_save Addmonthvaue'>Add</button>
+                       <button type='button' class='btn btn-default close' data-bs-dismiss='modal'>Close</button>
+                    </div>
+                  </div>
                 </div>
-
               </div>
-            </div>
-          </div> <!-- end col -->
-
-        </div> <!-- end row -->
-      </form>
-      <div align="center">
-        <button type="button" class="btn btn-sm btn-success completed_final_others_submit">Submit</button>
-        <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton" data-dismiss="modal">Cancel</button>
-      </div>
-      </div>
-   </div>
- </div>
-</div>
 
 
-
-
-
-
-<div class="wrapper">
-    <div class="container-fluid">
-
-        <!-- Page-Title -->
-
-
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="page-title-box">
-                    <div class="float-right hide-phone">
-                        <ul class="list-inline">
-
-
-                        </ul>                                
+              <!-- Modal -->
+              <div class="modal fade" id="Completedrecordpopup">
+                <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Completed Data</h6>
                     </div>
-
-                    <div class="btn-group mt-2">
-                        <ol class="breadcrumb hide-phone p-0 m-0">
-                            <li class="breadcrumb-item"><a href="#">Breeding</a></li>
-                            <li class="breadcrumb-item active">Others</li>
-                        </ol>
+                    <div class="modal-body">
+                        <form method="POST" class="Completed_Others_tablewisedata">   
+                              <div class="card">
+                                <div class="card-body">
+                                  <h4 class="mt-0 header-title ml-5">Others Expenses</h4>
+                                  <div class="table-responsive">
+                                    <table class="table table-bordered" id="Others_completed_table" style="border-collapse: collapse; border-spacing: 0; width: 100%!important;">
+                                      <thead >
+                                        <tr>                    
+                                          <th style="font-size: 11px !important;">S.No</th>
+                                          <th style="font-size: 11px !important;">Location</th>
+                                          <th style="font-size: 11px !important;">Name</th>
+                                          <th style="font-size: 11px !important;">No of persons</th>
+                                          <th style="font-size: 11px !important;">Labour Rate</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody class="Completed_Others_tablewisedata_body">
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                        </form>
+                        <div align="center">
+                            <button type="button" class="btn btn-sm btn-success completed_final_others_submit">Submit</button>
+                            <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton" data-bs-dismiss="modal">Cancel</button>
+                        </div>
                     </div>
-
+                  </div>
                 </div>
-            </div>
-        </div>
+              </div>
 
-
-
-        <!-- end page title end breadcrumb -->
-
-
-
-        <div class="row">
-            <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-body bootstrap-select-1">
+                  <div class="card-body bootstrap-select-1">
 
+                    <form method="POST"  class="expensegroupvalue">  
 
-
-
-                        <form method="POST"  class="expensegroupvalue" >
-
-
-
-                          <input type="hidden" class="autonum" name="autonum" value="<?php echo $Doc_No;  ?>">  
-
-                          <input type="hidden" class="headercount" name="headercount" value="<?=@$Header_data['count']?>">    
-
-
-                          <input type="hidden" class="Autonumloc" name="Autonumloc" >   
-
-                          <input type="hidden" class="Autonumid" name="Autonumid" >     
-
-
-
-                          <h4 class="header-title mt-0">Others</h4>
-
-                          <div class="form-group row">
-
-
-                          </div> <!--end row-->    
-
-                          <div class="row">
-
-
-
-
-                           <div class="col-md-3">
-                              <h6 class="input-title mt-0">Expense Group</h6>
-                              <select class="select2 mb-3 Expensegroup" name="expensegroup" id="expensegroup" style="width: 100%; height:36px;" data-placeholder="Choose">
-                                <option value="">Choose Group</option>
-
-                                <?php
-                                $Sql   = "SELECT Distinct CostElementGroup FROM Budget_CostCenter_CostElement_19_20_SAP";
-                                $Sql_Connection = sqlsrv_query($conn,$Sql);
-                                while($row = sqlsrv_fetch_array($Sql_Connection)){
-                                    ?>
-                                    <option value="<?php echo trim($row['CostElementGroup']); ?>"> <?php echo $row['CostElementGroup']; ?> </option>
-                                <?php } ?>
-
-                            </select>
-                        </div>   
-
-
-
-
-
-
+                      <h4 class="header-title mt-0">Other Expenses</h4>
+                      <div class="row">
                         <div class="col-md-3">
-                            <h6 class="input-title mt-0">Expense GL Name</h6>
-                            <select class="select2 mb-3 select2-multiple expglname" name="expglname[]" id="expglname"  multiple="multiple" style="width: 100%; height:36px;" data-placeholder="Choose">
+                          <h6 class="input-title mt-0">Expense Group</h6>
+                          <select class="select2 mb-3 Expensegroup" name="expensegroup" id="expensegroup" style="width: 100%; height:36px;" data-placeholder="Choose">
+
+
+                             <!--<select class="multiselect mb-3 Expensegroup" name="expensegroup[]" id="expensegroup"  multiple="multiple" style="width: 100%; height:36px;" data-placeholder="Choose">-->
 
 
 
-                            </select>
-                        </div> 
+                            <option value="">Choose Group</option>
 
-
-
-                        <div class="col-md-3">
-                            <h6 class="input-title mt-0">Location</h6>
-                            <select class="select2 mb-3 select2-multiple" name="location[]" id="location"  multiple="multiple" style="width: 100%; height:36px;" data-placeholder="Choose">
-
-                             <?php
-                             $Sql   = "SELECT Distinct Territory from Budget_CostCenter_Mapping_Finance where Territory!='-'";
-                             $Sql_Connection = sqlsrv_query($conn,$Sql);
-                             while($row = sqlsrv_fetch_array($Sql_Connection)){
-                                ?>
-                                <option value="<?php echo trim($row['Territory']); ?>"> <?php echo $row['Territory']; ?> </option>
+                            <?php
+                            $Sql   = "SELECT Distinct CostElementGroup FROM Budget_CostCenter_CostElement_19_20_SAP";
+                            $Sql_Connection = sqlsrv_query($conn,$Sql);
+                            while($row = sqlsrv_fetch_array($Sql_Connection)){
+                              ?>
+                              <option value="<?php echo trim($row['CostElementGroup']); ?>"> <?php echo $row['CostElementGroup']; ?> </option>
                             <?php } ?>
 
-                        </select>
-                    </div>                                    
+                          </select>
+                        </div>   
+
+                        <div class="col-md-3">
+                          <h6 class="input-title mt-0">Expense GL Name</h6>
+                        <!--  <select class="select2 mb-3 select2-multiple expglname" name="expglname[]" id="expglname"  multiple="multiple" style="width: 100%; height:36px;" data-placeholder="Choose">-->
+
+
+                             <select class="multiselect mb-3 expglname" name="expglname[]" id="expglname"  multiple="multiple" style="width: 100%; height:36px;" data-placeholder="Choose">
 
 
 
-                    <div class="col-md-3">
+                          </select>
+                        </div> 
+
+                        <div class="col-md-3">
+                          <h6 class="input-title mt-0">Location</h6>
+                         <!-- <select class="select2 mb-3 select2-multiple" name="location[]" id="location"  multiple="multiple" style="width: 100%; height:36px;" data-placeholder="Choose">-->
+
+
+                             <select class="multiselect mb-3 " name="location[]" id="location"  multiple="multiple" style="width: 100%; height:36px;" data-placeholder="Choose">
 
 
 
-                       <button type="button" class="btn btn-primary addbtn" style="margin-top: 20px;"> Add </button>
+                           <?php
+                             // $Sql   = "SELECT Distinct Territory from Budget_CostCenter_Mapping_Finance where Territory!='-'";
+                           $Sql   = "SELECT  DISTINCT BreedingAdmin_Location.BreedingLocation from BreedingAdmin_Location
 
+                           Left Join BreedingAdmin_Others On BreedingAdmin_Others.Location=BreedingAdmin_Location.BreedingLocation
+                           where BreedingAdmin_Location.CreatedBy='".$_SESSION['EmpID']."' AND BreedingAdmin_Location.Rejectionstatus IS NULL AND (BreedingAdmin_Others.Location is NULL )";
+                           $Sql_Connection = sqlsrv_query($conn,$Sql);
+                           while($row = sqlsrv_fetch_array($Sql_Connection)){
+                            ?>
+                            <option value="<?php echo trim($row['BreedingLocation']); ?>"> <?php echo $row['BreedingLocation']; ?> </option>
+                           <?php } ?>
 
+                          </select>
+                        </div>                                    
+                        <div class="col-md-3">
+                         <button type="button" class="btn btn-primary addbtn" style="margin-top: 20px;"> Add </button>
 
+                         <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button>    
 
-                       <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button>    
+                         <button type="button" class="btn btn-warning completedrecord" style="margin-top: 20px;"> Completed</button>  
+                        </div>                                        
 
+                      </div>
+                    </form>
+                  </div>
+                </div>
 
-                       <button type="button" class="btn btn-danger completedrecord" style="margin-top: 20px;"> Completed Record </button>  
-
-
-                   </div>                                             
-               </div>
-           </div>
-
-
-       </form>
-
-
-
-
-
-       <div class="row projectwisehide" >
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-
-                    <h4 class="mt-0 header-title ml-5">Others</h4>
-
-                </p>
-
-                <form method="post" class="final_others_expenses">
-
-                    <table class="table table-bordered nowrap Otherexptable" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="mt-0 header-title">Others Expenses</h4>
+                    <form method="post" class="final_others_expenses">
+                      <table class="table table-bordered nowrap Otherexptable" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                           <tr >                    
                             <th>S.No</th>
@@ -464,205 +380,57 @@ input[type=number]::-webkit-outer-spin-button {
                             <th>Expense Name</th>
                             <th>Location</th>
                             <th>Action</th>
-                         </tr>
+                          </tr>
                         </thead>
 
 
-                    <tbody>
+                        <tbody>
 
-                    </tbody>
-                </table>
-            </form>
+                        </tbody>
+                      </table>
+                    </form>
 
+                    <div align="center">
+                      <button type="button" class="btn btn-sm btn-success final_others_submit">Submit</button>
+                      <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+                <?php include "footer.php"; ?>
 
-<div align="center">
-    <button type="button" class="btn btn-sm btn-success final_others_submit">Submit</button>
-    <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton">Cancel</button>
+            </div>
 
-</div>
+        </div> 
 
-</div>
-</div>
-</div> <!-- end col -->
-</div> <!-- end row -->
+    </div>  
+    <!-- End Page-content -->
 
 
-<!--<div class="modal" id="Completedrecordpopup" role="dialog">
 
+<!-- JAVASCRIPT -->
+<script src="assets/libs/jquery/jquery.min.js"></script>
+<script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/libs/metismenu/metisMenu.min.js"></script>
+<script src="assets/libs/simplebar/simplebar.min.js"></script>
+<script src="assets/libs/node-waves/waves.min.js"></script>
 
-    <form method="POST" class="Completedrecordpopup">
+<script src="assets/libs/select2/js/select2.min.js"></script>
+<script src="assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
+<script src="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+<script src="assets/libs/admin-resources/bootstrap-filestyle/bootstrap-filestyle.min.js"></script>
+<script src="assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
 
-        <div class="modal-dialog modal-lg" style="max-width: 1200px !important">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
-              <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Location Wise Project</h6> 
-          </div>
-          <div class="Conformation-body-completed">
+<script src="assets/js/pages/form-advanced.init.js"></script>
 
-           <form method="post" class="FinaltabledetailsCompleted">
-             <table  class="table table-bordered dt-responsive nowrap locationwisecomppleted" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                <thead>
-                  <tr >                    
-                    <th>S.No</th>
-                    <th>Location</th>
-                    <th>Project</th>
-                    <th> Type</th>
-                    <th>Acrage</th>       
-                    <th>Sowing and <br> Harvesting<br>(Month Wise)</th>
-                    <th>Land Block<br> Selection</th>
-                    <th>Responsible<br>Person</th>
-                    <th></th>
-
-
-
-
-
-
-                    
-                </tr>
-            </thead>
-
-
-            <tbody>
-
-            </tbody>
-
-
-        </table>
-
-
-
-    </form>
-
-
-    <div align="center">
-        <button type="button" class="btn btn-sm btn-success finalsubmittioncompleted">Submit</button>
-
-
-
-        <button type="button" class="btn btn-sm btn-danger " data-dismiss='modal'>Cancel</button>
-
-
-
-    </div>
-</div>
-
-</div>
-</div>
-
-</form>
-
-
-</div>  -->
-
-
-<!-- Modal -->
-<!--<div class="modal" id="monthwisedetails" role="dialog">
-
-
-    <form method="POST" class="monthwisedetails">
-
-        <div class="modal-dialog modal-lg" style="max-width: 1200px !important">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
-              <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Sowing and  Harvesting(Month Wise)</h6> 
-          </div>
-          <div class="Conformation-body">
-
-
-
-
-
-
-          </div>
-
-      </div>
-  </div>
-
-</form>
-
-
-</div>-->
-
-
-
-
-
-</div>                                
-</div> <!-- end col -->
-</div> <!-- end row --> 
-
-
-<!-- Modal -->
-
-
-
-</div> <!-- end container -->
-</div>
-
-
-
-<!-- end wrapper -->
-
-
-
-
-
-
-
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/modernizr.min.js"></script>
-<script src="assets/js/waves.js"></script>
-<script src="assets/js/jquery.slimscroll.js"></script>
-<script src="assets/js/jquery.nicescroll.js"></script>
-<script src="assets/js/jquery.scrollTo.min.js"></script>
-
-<!-- KNOB JS -->
-<script src="assets/plugins/jquery-knob/excanvas.js"></script>
-<script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
-
-<!-- Plugins js -->
-<script src="assets/plugins/timepicker/moment.js"></script>
-<script src="assets/plugins/timepicker/tempusdominus-bootstrap-4.js"></script>
-<script src="assets/plugins/timepicker/bootstrap-material-datetimepicker.js"></script>
-<script src="assets/plugins/clockpicker/jquery-clockpicker.min.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asColor.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asGradient.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asColorPicker.min.js"></script>
-<script src="assets/plugins/select2/select2.min.js"></script>
-
-<script src="assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
-<script src="assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script src="assets/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
-<script src="assets/plugins/bootstrap-touchspin/js/jquery.bootstrap-touchspin.min.js"></script>
-
-
-<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-<!-- Buttons examples -->
-<script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-<script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-<script src="assets/plugins/datatables/jszip.min.js"></script>
-<script src="assets/plugins/datatables/pdfmake.min.js"></script>
-<script src="assets/plugins/datatables/vfs_fonts.js"></script>
-<script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-<script src="assets/plugins/datatables/buttons.print.min.js"></script>
-<script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
-<!-- Responsive examples -->
-<script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-<script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-<!-- Plugins Init js -->
-<script src="assets/pages/form-advanced.js"></script> 
-
-<!-- App js -->
 <script src="assets/js/app.js"></script>
 
-<script src="../../../common/checkSession.js"></script>
+
+
+
+
+
+<script src="../common/checkSession.js"></script>
 
 <!-- Required datatable js -->
 
@@ -672,18 +440,86 @@ input[type=number]::-webkit-outer-spin-button {
 <script>
 
 
+   $(document).ready(function(){
+
+    // $('.js-example-basic-single').select2();
+//$('.status-dropdown').select2();
+      $('.multiselect').multiselect({
+          maxHeight: 250,
+          buttonWidth: 320,
+        // selectAllText:' Select all',
+          includeSelectAllOption:true,
+          dropdownPosition: 'below',
+          enableFiltering: true,
+          enableCaseInsensitiveFiltering: true, 
+          nonSelectedText: 'Choose Location',
+        });
+
+
+  $('.expglname').multiselect({
+        includeSelectAllOption: true,
+        enableFiltering: true,
+         enableCaseInsensitiveFiltering: true,
+        maxHeight: 250,
+          buttonWidth: 150,
+        buttonText: function(options, select) {
+            if (options.length === 0) {
+                return 'Select Activity';
+            } else {
+                return options.length + ' selected';
+            }
+        }
+    });
+
+
+    $(document).on("change",".Expensegroup",function(){
+    ///$(this).closest("tr").find(".QtyInBag").removeAttr("readonly");
+        var Expensegroup=$(this).val();
+    //var curren_tr=$(this).closest("tr");
+        $.ajax 
+        ({
+          type: "POST",
+          url: "AutoFill_Details.php",
+          data:{"Action":"Get_Expensegroupbyname","Expensegroup":Expensegroup},
+          async:false,
+
+
+          success: function(html){
+
+            //  $(".expglname").html(html);
+
+               $('.expglname').empty().append(html);
+
+                // Update bootstrap-multiselect with new options
+                $('.expglname').multiselect('rebuild');
+
+          }
+
+
+      });
+    });
+
+
+
+
+  });
+
+
+
+
+
 
     $(document).on("click",".addbtn",function(){
 
-     let Uset_Input=$(".expensegroupvalue").serializeArray();
+       let Uset_Input=$(".expensegroupvalue").serializeArray();
 
-     Uset_Input.push({"name":"Action","value":"exppostingvalue"});
+       Uset_Input.push({"name":"Action","value":"exppostingvalue"});
 
-     $.ajax 
-     ({
-      type: "POST",
-      url: "Common_Ajax.php",
-      data:Uset_Input,
+       $.ajax 
+       ({
+          type: "POST",
+          url: "Common_Ajax.php",
+          data:Uset_Input,
        async:false,//
        success: function(data){
 
@@ -713,7 +549,7 @@ input[type=number]::-webkit-outer-spin-button {
 
             Otherbasedexpensegroup("yes",user_input);
 
-
+  window.location.href ='Others.php';
 
              //alert("right");
             return false;
@@ -728,16 +564,16 @@ input[type=number]::-webkit-outer-spin-button {
       }else{
 
            // alert("Wrong");
-       Alert_Msg("Something Went Wrong.","error");
-       return false;
-   }
-}
+         Alert_Msg("Something Went Wrong.","error");
+         return false;
+     }
+ }
 });
 
 
 
 
-     return false;
+       return false;
 
 
 
@@ -749,7 +585,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
- });
+   });
 
 
 
@@ -834,9 +670,168 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
-  $(document).on('click','.others_add',function(){
+    $(document).on('click','.others_add',function(){
 
    // alert("Hai");
+        var others_id   = $(this).data('othersid');
+        var exp_group   = $(this).data('expgroupname');
+        var exp_gl      = $(this).data('expglname');
+        var location    = $(this).data('location');
+        var action      = $(this).data('action');
+        var from_action = $(this).data('fromaction');    
+
+    //alert(exp_group);
+
+
+        var html =  `<form method="POST" class="monthwisedetails"><input type="hidden" name="others_id" value="${ others_id }">`;
+        html += `<div class='row pop-req'>
+        <div class='col-md-4 py-7' style='text-align: center;'> <span > Expense Group : </span>${ exp_group }</div>
+        <div class='col-md-5 py-7' style='text-align: center;'> <span> Expense GL Name : </span>${ exp_gl }</div>
+        <div class='col-md-3 py-7' style='text-align: center;'> <span> Location : </span>${ location }</div>
+
+        </div>
+        <div>
+        <br>
+        </div>
+
+        <div style='overflow-x:auto'>
+        <table class='table table-bordered table  table-hover' cellspacing='0' width='100%'  >
+
+        <thead>
+
+        <tr>
+
+        <td colspan='4' valign='bottom'>
+        JUN
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        JUL
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        AUG
+        </td>
+
+
+        <td colspan='4' valign='bottom'>
+        SEP
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        OCT
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        NOV
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        DEC
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        JAN
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        FEB
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        MAR
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        APR
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        MAY
+        </td>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='jun_rate monthinputbox validatetotalacr' name='jun_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='jul_rate monthinputbox validatetotalacr' name='jul_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='aug_rate monthinputbox validatetotalacr' name='aug_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='sep_rate monthinputbox validatetotalacr' name='sep_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='oct_rate monthinputbox validatetotalacr' name='oct_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='nov_rate monthinputbox validatetotalacr' name='nov_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='dec_rate monthinputbox validatetotalacr' name='dec_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='jan_rate monthinputbox validatetotalacr' name='jan_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='feb_rate monthinputbox validatetotalacr' name='feb_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='mar_rate monthinputbox validatetotalacr' name='mar_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='apr_rate monthinputbox validatetotalacr' name='apr_rate' autocomplete="off" style='width:60px'>
+        </td>
+
+        <td colspan='4' valign='bottom'>
+        <input type='number' class='may_rate monthinputbox validatetotalacr' name='may_rate' autocomplete="off" style='width:60px'>
+        </td>
+        </tr>
+        </tbody>
+        </table>
+        </div>
+        </form>`;  
+
+        $('#other_expense_modal_body').html(html);
+        var text = "Add"; 
+        $('.tfa_month_det_save').removeClass('Editmonthvaue');
+        $('.tfa_month_det_save').addClass('Addmonthvaue');
+        $('.tfa_month_det_save').text(text);
+        if(action == 'edit') {
+          text = "Edit"; 
+          $('.tfa_month_det_save').removeClass('Addmonthvaue');
+          $('.tfa_month_det_save').addClass('Editmonthvaue');
+          $('.tfa_month_det_save').text(text);
+      }
+
+      $('#other_expense_modal').modal('show');
+
+  });
+
+
+$(document).on('click','.others_edit',function(){
+
+
     var others_id   = $(this).data('othersid');
     var exp_group   = $(this).data('expgroupname');
     var exp_gl      = $(this).data('expglname');
@@ -844,322 +839,167 @@ input[type=number]::-webkit-outer-spin-button {
     var action      = $(this).data('action');
     var from_action = $(this).data('fromaction');    
 
-    //alert(exp_group);
+   // alert(exp_group) ; 
 
-    
-    var html =  `<form method="POST" class="monthwisedetails"><input type="hidden" name="others_id" value="${ others_id }">`;
-    html += `<div class='row pop-req'>
-    <div class='col-md-4 py-7' style='text-align: center;'> <span > Expense Group : </span>${ exp_group }</div>
-    <div class='col-md-5 py-7' style='text-align: center;'> <span> Expense GL Name : </span>${ exp_gl }</div>
-    <div class='col-md-3 py-7' style='text-align: center;'> <span> Location : </span>${ location }</div>
+    $.ajax 
+    ({
+        type: "POST",
+        url: "Common_Ajax.php",
+        data: { Action: "Get_Others_expense",others_id : others_id,function : from_action},
+        success: function(data){
+           result=JSON.parse(data);
 
-    </div>
-    <div>
-    <br>
-    </div>
+           if(result.Status == 1){
 
-    <div style='overflow-x:auto'>
-    <table class='table table-bordered table  table-hover' cellspacing='0' width='100%'  >
+              var html =  `<form method="POST" class="monthwisedetails"><input type="hidden" name="others_id" value="${ others_id }">`;
+              html += `<div class='row pop-req'>
+              <div class='col-md-4 py-7' style='text-align: center;'> <span > Expense Group : </span>${ exp_group }</div>
+              <div class='col-md-5 py-7' style='text-align: center;'> <span> Expense GL Name : </span>${ exp_gl }</div>
+              <div class='col-md-3 py-7' style='text-align: center;'> <span> Location : </span>${ location }</div>
 
-    <thead>
+              </div>
+              <div>
+              <br>
+              </div>
 
-    <tr>
+              <div style='overflow-x:auto'>
+              <table class='table table-bordered table  table-hover' cellspacing='0' width='100%'  >
 
-    <td colspan='4' valign='bottom'>
-    JUN
-    </td>
+              <thead>
 
-    <td colspan='4' valign='bottom'>
-    JUL
-    </td>
+              <tr>
 
-    <td colspan='4' valign='bottom'>
-    AUG
-    </td>
+              <td colspan='4' valign='bottom'>
+              JUN
+              </td>
 
+              <td colspan='4' valign='bottom'>
+              JUL
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    SEP
-    </td>
+              <td colspan='4' valign='bottom'>
+              AUG
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    OCT
-    </td>
 
-    <td colspan='4' valign='bottom'>
-    NOV
-    </td>
+              <td colspan='4' valign='bottom'>
+              SEP
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    DEC
-    </td>
+              <td colspan='4' valign='bottom'>
+              OCT
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    JAN
-    </td>
+              <td colspan='4' valign='bottom'>
+              NOV
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    FEB
-    </td>
+              <td colspan='4' valign='bottom'>
+              DEC
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    MAR
-    </td>
+              <td colspan='4' valign='bottom'>
+              JAN
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    APR
-    </td>
-
-    <td colspan='4' valign='bottom'>
-    MAY
-    </td>
-
-    </tr>
-
-    </thead>
-
-    <tbody>
-
-    <tr>
-
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='jun_rate monthinputbox validatetotalacr' name='jun_rate' autocomplete="off" style='width:60px'>
-    </td>
-
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='jul_rate monthinputbox validatetotalacr' name='jul_rate' autocomplete="off" style='width:60px'>
-    </td>
+              <td colspan='4' valign='bottom'>
+              FEB
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='aug_rate monthinputbox validatetotalacr' name='aug_rate' autocomplete="off" style='width:60px'>
-    </td>
+              <td colspan='4' valign='bottom'>
+              MAR
+              </td>
 
+              <td colspan='4' valign='bottom'>
+              APR
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='sep_rate monthinputbox validatetotalacr' name='sep_rate' autocomplete="off" style='width:60px'>
-    </td>
+              <td colspan='4' valign='bottom'>
+              MAY
+              </td>
 
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='oct_rate monthinputbox validatetotalacr' name='oct_rate' autocomplete="off" style='width:60px'>
-    </td>
+              </tr>
 
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='nov_rate monthinputbox validatetotalacr' name='nov_rate' autocomplete="off" style='width:60px'>
-    </td>
-
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='dec_rate monthinputbox validatetotalacr' name='dec_rate' autocomplete="off" style='width:60px'>
-    </td>
-
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='jan_rate monthinputbox validatetotalacr' name='jan_rate' autocomplete="off" style='width:60px'>
-    </td>
-
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='feb_rate monthinputbox validatetotalacr' name='feb_rate' autocomplete="off" style='width:60px'>
-    </td>
-
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='mar_rate monthinputbox validatetotalacr' name='mar_rate' autocomplete="off" style='width:60px'>
-    </td>
-
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='apr_rate monthinputbox validatetotalacr' name='apr_rate' autocomplete="off" style='width:60px'>
-    </td>
-
-    <td colspan='4' valign='bottom'>
-    <input type='number' class='may_rate monthinputbox validatetotalacr' name='may_rate' autocomplete="off" style='width:60px'>
-    </td>
-    </tr>
-    </tbody>
-    </table>
-    </div>
-    </form>`;  
-
-    $('#other_expense_modal_body').html(html);
-    var text = "Add"; 
-    $('.tfa_month_det_save').removeClass('Editmonthvaue');
-    $('.tfa_month_det_save').addClass('Addmonthvaue');
-    $('.tfa_month_det_save').text(text);
-    if(action == 'edit') {
-      text = "Edit"; 
-      $('.tfa_month_det_save').removeClass('Addmonthvaue');
-      $('.tfa_month_det_save').addClass('Editmonthvaue');
-      $('.tfa_month_det_save').text(text);
-    }
-
-    $('#other_expense_modal').modal('show');
-
-  });
-
-
-$(document).on('click','.others_edit',function(){
-    var others_id   = $(this).data('othersid');
-    var exp_group   = $(this).data('Expgroupname');
-    var exp_gl      = $(this).data('Expglname');
-    var location    = $(this).data('Location');
-    var action      = $(this).data('action');
-    var from_action = $(this).data('fromaction');      
+              </thead>
 
-  $.ajax 
-  ({
-    type: "POST",
-    url: "Common_Ajax.php",
-    data: { Action: "Get_Others_expense",others_id : others_id,function : from_action},
-    success: function(data){
-     result=JSON.parse(data);
-     
-     if(result.Status == 1){
-
-      var html =  `<form method="POST" class="monthwisedetails"><input type="hidden" name="others_id" value="${ others_id }">`;
-    html += `<div class='row pop-req'>
-    <div class='col-md-4 py-7' style='text-align: center;'> <span > Expense Group : </span>${ exp_group }</div>
-    <div class='col-md-5 py-7' style='text-align: center;'> <span> Expense GL Name : </span>${ exp_gl }</div>
-    <div class='col-md-3 py-7' style='text-align: center;'> <span> Location : </span>${ location }</div>
+              <tbody>
 
-      </div>
-      <div>
-      <br>
-      </div>
-
-      <div style='overflow-x:auto'>
-      <table class='table table-bordered table  table-hover' cellspacing='0' width='100%'  >
+              <tr>
 
-      <thead>
-
-      <tr>
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='jun_rate monthinputbox validatetotalacr' name='jun_rate' autocomplete="off" style='width:60px' value="${ result.data.Jun }">
+              </td>
 
-      <td colspan='4' valign='bottom'>
-      JUN
-      </td>
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='jul_rate monthinputbox validatetotalacr' name='jul_rate' autocomplete="off" style='width:60px' value="${ result.data.Jul }">
+              </td>
 
-      <td colspan='4' valign='bottom'>
-      JUL
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      AUG
-      </td>
-
-
-      <td colspan='4' valign='bottom'>
-      SEP
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      OCT
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      NOV
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      DEC
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      JAN
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      FEB
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      MAR
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      APR
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      MAY
-      </td>
-
-      </tr>
-
-      </thead>
-
-      <tbody>
-
-      <tr>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='jun_rate monthinputbox validatetotalacr' name='jun_rate' autocomplete="off" style='width:60px' value="${ result.data.Jun }">
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='jul_rate monthinputbox validatetotalacr' name='jul_rate' autocomplete="off" style='width:60px' value="${ result.data.Jul }">
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='aug_rate monthinputbox validatetotalacr' name='aug_rate' autocomplete="off" style='width:60px' value="${ result.data.Aug }">
-      </td>
-
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='sep_rate monthinputbox validatetotalacr' name='sep_rate' autocomplete="off" style='width:60px' value="${ result.data.Sep }">
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='oct_rate monthinputbox validatetotalacr' name='oct_rate' autocomplete="off" style='width:60px' value="${ result.data.Oct }">
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='nov_rate monthinputbox validatetotalacr' name='nov_rate' autocomplete="off" style='width:60px' value="${ result.data.Nov }">
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='dec_rate monthinputbox validatetotalacr' name='dec_rate' autocomplete="off" style='width:60px' value="${ result.data.Dec }"> 
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='jan_rate monthinputbox validatetotalacr' name='jan_rate' autocomplete="off" style='width:60px' value="${ result.data.Jan }">
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='feb_rate monthinputbox validatetotalacr' name='feb_rate' autocomplete="off" style='width:60px' value="${ result.data.Feb }">
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='mar_rate monthinputbox validatetotalacr' name='mar_rate' autocomplete="off" style='width:60px' value="${ result.data.Mar }">
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='apr_rate monthinputbox validatetotalacr' name='apr_rate' autocomplete="off" style='width:60px' value="${ result.data.Apr }">
-      </td>
-
-      <td colspan='4' valign='bottom'>
-      <input type='number' class='may_rate monthinputbox validatetotalacr' name='may_rate' autocomplete="off" style='width:60px' value="${ result.data.May }">
-      </td>
-      </tr>
-      </tbody>
-      </table>
-      </div>
-      </form>`;  
-
-      $('#other_expense_modal_body').html(html);
-      var text = "Add"; 
-      $('.tfa_month_det_save').removeClass('Editmonthvaue');
-      $('.tfa_month_det_save').addClass('Addmonthvaue');
-      $('.tfa_month_det_save').text(text);
-      if(action == 'edit') {
-        text = "Edit"; 
-        $('.tfa_month_det_save').removeClass('Addmonthvaue');
-        $('.tfa_month_det_save').addClass('Editmonthvaue');
-        $('.tfa_month_det_save').text(text);
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='aug_rate monthinputbox validatetotalacr' name='aug_rate' autocomplete="off" style='width:60px' value="${ result.data.Aug }">
+              </td>
+
+
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='sep_rate monthinputbox validatetotalacr' name='sep_rate' autocomplete="off" style='width:60px' value="${ result.data.Sep }">
+              </td>
+
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='oct_rate monthinputbox validatetotalacr' name='oct_rate' autocomplete="off" style='width:60px' value="${ result.data.Oct }">
+              </td>
+
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='nov_rate monthinputbox validatetotalacr' name='nov_rate' autocomplete="off" style='width:60px' value="${ result.data.Nov }">
+              </td>
+
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='dec_rate monthinputbox validatetotalacr' name='dec_rate' autocomplete="off" style='width:60px' value="${ result.data.Dec }"> 
+              </td>
+
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='jan_rate monthinputbox validatetotalacr' name='jan_rate' autocomplete="off" style='width:60px' value="${ result.data.Jan }">
+              </td>
+
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='feb_rate monthinputbox validatetotalacr' name='feb_rate' autocomplete="off" style='width:60px' value="${ result.data.Feb }">
+              </td>
+
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='mar_rate monthinputbox validatetotalacr' name='mar_rate' autocomplete="off" style='width:60px' value="${ result.data.Mar }">
+              </td>
+
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='apr_rate monthinputbox validatetotalacr' name='apr_rate' autocomplete="off" style='width:60px' value="${ result.data.Apr }">
+              </td>
+
+              <td colspan='4' valign='bottom'>
+              <input type='number' class='may_rate monthinputbox validatetotalacr' name='may_rate' autocomplete="off" style='width:60px' value="${ result.data.May }">
+              </td>
+              </tr>
+              </tbody>
+              </table>
+              </div>
+              </form>`;  
+
+              $('#other_expense_modal_body').html(html);
+              var text = "Add"; 
+              $('.tfa_month_det_save').removeClass('Editmonthvaue');
+              $('.tfa_month_det_save').addClass('Addmonthvaue');
+              $('.tfa_month_det_save').text(text);
+              if(action == 'edit') {
+                text = "Edit"; 
+                $('.tfa_month_det_save').removeClass('Addmonthvaue');
+                $('.tfa_month_det_save').addClass('Editmonthvaue');
+                $('.tfa_month_det_save').text(text);
+            }
+
+            $('#other_expense_modal').modal('show');
+
+
+        }else{
+          $('#other_expense_modal').modal('hide');
+          Alert_Msg("Something Went Wrong.","error");
+          return false;
       }
-
-      $('#other_expense_modal').modal('show');
-
-
-    }else{
-      $('#other_expense_modal').modal('hide');
-      Alert_Msg("Something Went Wrong.","error");
-      return false;
-    }
   }
 });
 
@@ -1178,21 +1018,21 @@ $(document).on('click','.Addmonthvaue',function(){
     url: "Common_Ajax.php",
     data:Uset_Input,
     success: function(data){
-     result=JSON.parse(data);
+       result=JSON.parse(data);
 
-     if(result.Status == 1){
+       if(result.Status == 1){
 
-      $('#other_expense_modal').modal('hide');
+          $('#other_expense_modal').modal('hide');
 
-      Alert_Msg("Other Expense added successfully.","success");
+          Alert_Msg("Other Expense added successfully.","success");
 
-      window.location.href ='Others.php';
+          window.location.href ='Others.php';
 
-    }else{
-      $('#other_expense_modal').modal('hide');
-      Alert_Msg("Something Went Wrong.","error");
-      return false;
-    }
+      }else{
+          $('#other_expense_modal').modal('hide');
+          Alert_Msg("Something Went Wrong.","error");
+          return false;
+      }
   }
 });
 });
@@ -1208,21 +1048,21 @@ $(document).on('click','.Editmonthvaue',function(){
     url: "Common_Ajax.php",
     data:Uset_Input,
     success: function(data){
-     result=JSON.parse(data);
+       result=JSON.parse(data);
 
-     if(result.Status == 1){
+       if(result.Status == 1){
 
-      $('#other_expense_modal').modal('hide');
+          $('#other_expense_modal').modal('hide');
 
-      Alert_Msg("Other Expense updated successfully.","success");
+          Alert_Msg("Other Expense updated successfully.","success");
 
-      window.location.href ='Others.php';
+          window.location.href ='Others.php';
 
-    }else{
-      $('#other_expense_modal').modal('hide');
-      Alert_Msg("Something Went Wrong.","error");
-      return false;
-    }
+      }else{
+          $('#other_expense_modal').modal('hide');
+          Alert_Msg("Something Went Wrong.","error");
+          return false;
+      }
   }
 });
 });
@@ -1237,42 +1077,42 @@ $(document).on('click','.others_delete',function(){
     url: "Common_Ajax.php",
     data: { Action: "Delete_Others_expense", others_id : others_id },
     success: function(data){
-     result=JSON.parse(data);
+       result=JSON.parse(data);
 
-     if(result.Status == 1){
+       if(result.Status == 1){
 
-      Alert_Msg("Other Expense deleted successfully.","success");
+          Alert_Msg("Other Expense deleted successfully.","success");
 
-      window.location.href ='Others.php';
+          window.location.href ='Others.php';
 
-    }else{
-      Alert_Msg("Something Went Wrong.","error");
-      return false;
-    }
+      }else{
+          Alert_Msg("Something Went Wrong.","error");
+          return false;
+      }
   }
 });
 });
 
 $(document).on("click",".final_others_submit",function(){
   $('#ajax_loader').show();
-   $('.Otherexptable').DataTable().page.len(50000).draw();
-   var table = $('.Otherexptable').DataTable();
-   table.on('draw.dt', function () {
-     let Uset_Input=$(".final_others_expenses").serializeArray();
-     Uset_Input.push({"name":"Action","value":"Others_finaldata"});
-     submit_others_finaldata(Uset_Input)
-  });
+  $('.Otherexptable').DataTable().page.len(50000).draw();
+  var table = $('.Otherexptable').DataTable();
+  table.on('draw.dt', function () {
+   let Uset_Input=$(".final_others_expenses").serializeArray();
+   Uset_Input.push({"name":"Action","value":"Others_finaldata"});
+   submit_others_finaldata(Uset_Input)
+});
 });
 
 $(document).on("click",".completed_final_others_submit",function(){
   $('#ajax_loader').show();
-   $('#Others_completed_table').DataTable().page.len(50000).draw();
-   var table = $('#Others_completed_table').DataTable();
-   table.on('draw.dt', function () {
-     let Uset_Input=$(".Completed_Others_tablewisedata").serializeArray();
-     Uset_Input.push({"name":"Action","value":"Others_finaldata"});
-     submit_others_finaldata(Uset_Input,'completed')
-  });
+  $('#Others_completed_table').DataTable().page.len(50000).draw();
+  var table = $('#Others_completed_table').DataTable();
+  table.on('draw.dt', function () {
+   let Uset_Input=$(".Completed_Others_tablewisedata").serializeArray();
+   Uset_Input.push({"name":"Action","value":"Others_finaldata"});
+   submit_others_finaldata(Uset_Input,'completed')
+});
 
 });
 
@@ -1285,34 +1125,34 @@ $(document).on("click", ".completedrecord", function (){
 });
 
 
-  function Get_Completed_Travel_Details(destroy_status)
-  {
+function Get_Completed_Travel_Details(destroy_status)
+{
     var data_table='Others_completed_table'
     if(destroy_status == "yes")
     {
       $('#'+data_table).DataTable().destroy();
-    }
+  }
 
     // setTimeout(function(){ 
-      var table = $('#'+data_table).DataTable({
-        "dom": 'Bfrtip',
+  var table = $('#'+data_table).DataTable({
+    "dom": 'Bfrtip',
         // "scrollX": true,
-        "buttons": ['copy', 'csv', 'excel', 'pdf', 'print'],
-        "bprocessing": true,
-        "serverSide": true,
-        "pageLength": 5,
-        "searching": false,
-        "ajax": 
-        {
-          "url": "Common_Ajax.php", 
-          "type": "POST",
-          "data": {Action:"Otherexptablerecord",function: "get_completed_Others"}         
-        }
-      });
+    "buttons": ['copy', 'csv', 'excel', 'pdf', 'print'],
+    "bprocessing": true,
+    "serverSide": true,
+    "pageLength": 5,
+    "searching": false,
+    "ajax": 
+    {
+      "url": "Common_Ajax.php", 
+      "type": "POST",
+      "data": {Action:"Otherexptablerecord",function: "get_completed_Others"}         
+  }
+});
     // },500);
 
 
-  }
+}
 
 function submit_others_finaldata(Uset_Input,from = '')
 {
@@ -1323,87 +1163,66 @@ function submit_others_finaldata(Uset_Input,from = '')
       data:Uset_Input,
       success: function(data){
         $('#ajax_loader').hide();
-         result=JSON.parse(data);
-         
-         if(result.Status == 1){
+        result=JSON.parse(data);
+
+        if(result.Status == 1){
           if(from == 'completed') {
             $('#Completedrecordpopup').modal('hide');
-          }
-          swal({
+        }
+        swal({
             title: "Others Expense submitted successfully.",
             icon: "success"
-          }).then(function(isConfirmed) {
+        }).then(function(isConfirmed) {
             if(isConfirmed) {
               location.reload();
-            }
-          });
-        }else{
+          }
+      });
+    }else{
           // Alert_Msg('Something Went Wrong.','error');
-          swal({
-            title: "Something Went Wrong.",
-            icon: "error"
-          }).then(function(isConfirmed) {
-              if(isConfirmed) {
-                location.reload();
-              }
-          });
-       }
-     }
-   });
+      swal({
+        title: "Something Went Wrong.",
+        icon: "error"
+    }).then(function(isConfirmed) {
+      if(isConfirmed) {
+        location.reload();
+    }
+});
+}
+}
+});
 }
 
 
 
 
-
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-<!-- jQuery  -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/modernizr.min.js"></script>
-<script src="assets/js/waves.js"></script>
-<script src="assets/js/jquery.slimscroll.js"></script>
-<script src="assets/js/jquery.nicescroll.js"></script>
-<script src="assets/js/jquery.scrollTo.min.js"></script>
 
-<!-- KNOB JS -->
-<script src="assets/plugins/jquery-knob/excanvas.js"></script>
-<script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js"></script>
 
 <!-- Required datatable js -->
-<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <!-- Buttons examples -->
-<script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-<script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-<script src="assets/plugins/datatables/jszip.min.js"></script>
-<script src="assets/plugins/datatables/pdfmake.min.js"></script>
-<script src="assets/plugins/datatables/vfs_fonts.js"></script>
-<script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-<script src="assets/plugins/datatables/buttons.print.min.js"></script>
-<script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="assets/libs/jszip/jszip.min.js"></script>
+<script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+<script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <!-- Responsive examples -->
-<script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-<script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
+<script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
-
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.js"></script>
 
 <!-- Datatable init js -->
-<script src="assets/pages/datatables.init.js"></script>
+<script src="assets/js/pages/datatables.init.js"></script> 
 
-<!-- App js -->
-<script src="assets/js/app.js"></script>
-
-
-
-<?php include "footer.php"; ?>
-
-
-
-
-
-
+</body>
+</html>

@@ -1,0 +1,113 @@
+//
+// _buttons.scss
+//
+
+button,
+a {
+  outline: none !important;
+}
+
+.btn-light {
+  background-color: $gray-200;
+  color: $gray-900 !important;
+  border: 1px solid transparent;
+  &.show {
+      background-color: var(--#{$prefix}tertiary-bg) !important;
+      color: var(--#{$prefix}emphasis-color) !important;
+  }
+  &:hover {
+      background-color: var(--#{$prefix}tertiary-bg) !important;
+      // color: var(--#{$prefix}emphasis-color) !important;
+      border-color: var(--#{$prefix}border-color) !important;
+  }
+  &:focus,
+  &:active {
+      background-color: var(--#{$prefix}tertiary-bg) !important;
+      color: var(--#{$prefix}emphasis-color) !important;
+      box-shadow: var(--#{$prefix}shadow-sm);
+  }
+}
+
+// Rounded Buttons
+.btn-rounded {
+  border-radius: 30px;
+}
+
+// .btn-dark, .btn-secondary {
+//   color: $gray-200;
+// }
+
+.btn{
+  &:hover{
+    background-color: var(--#{$prefix}btn-hover-bg) !important;
+  }
+}
+
+.btn-outline-dark {
+  color: var(--#{$prefix}emphasis-color);
+  border-color: var(--#{$prefix}border-color);
+
+}
+.btn-outline-secondary {
+  color: var(--#{$prefix}emphasis-color);
+}
+
+.btn-outline-light {
+  color: var(--#{$prefix}emphasis-color);
+  border-color:var(--#{$prefix}border-color);
+  &:hover{
+    background-color: var(--#{$prefix}tertiary-bg) !important;
+    border-color:var(--#{$prefix}border-color);
+  }
+}
+
+@mixin button-variant-subtle($bg) {
+  color: $bg;
+  background-color: rgba($bg, 0.1);
+  border-color: transparent;
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: $white;
+    background-color: $bg;
+  }
+}
+
+@each $color, $value in $theme-colors {
+  .btn-subtle-#{$color} {
+    @include button-variant-subtle($value);
+  }
+}
+
+.btn-group-vertical {
+  label {
+    margin-bottom: 0;
+  }
+}
+
+@mixin btn($bg) {
+  color: $white;
+  border-color: transparent;
+  &:hover,
+  &:focus,
+  &:active {
+    color: $white;
+    background-color: $bg;
+  }
+  &:focus {
+    box-shadow: 0 0 0 0.15rem rgba($bg, 0.5);
+  }
+}
+
+@each $color, $value in $theme-colors {
+  .btn-#{$color} {
+    @include btn($value);
+  }
+}
+
+[data-bs-theme="dark"]{
+  .btn-secondary {
+    background-color: #8c95a0;
+  }
+}

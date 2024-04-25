@@ -42,6 +42,8 @@ Class Common_Filter{
   {
 
    // echo "hs";exit;
+    $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
     $location_array = implode(', ', @$data['location']);
     $project_array = implode(', ', @$data['project']);
 
@@ -65,7 +67,7 @@ Class Common_Filter{
 
        Where 1=1 and BreedingAdmin_Type.Currentstatus in ('1','2') and BreedingAdmin_Type.Rejectionstatus IS NULL  
 
-       AND BreedingAdmin_Type.Breedingtype='".@$breedingloc."' and BreedingLocation='".@$location_val."' and Project='".$project_val."' ";
+       AND BreedingAdmin_Type.Breedingtype='".@$breedingloc."' and BreedingLocation='".@$location_val."' and Project='".$project_val."' and BreedingAdmin_Type.CreatedBy = '".$Emp_Id."' and BreedingAdmin_project.Rejectionstatus IS NULL";
 
        $Result=sqlsrv_query($this->conn,$SqlQuery);
 
@@ -171,7 +173,47 @@ Class Common_Filter{
    return array('Status'=>$status,'Autoincnum'=>$Autoincnum,'autoid'=>$autoid);
  }
 
+ public function all_pending_project_acreage_completion_validation($Emp_Id,$autoid,$Offset,$Length)
+ {
+  $Sql="Exec BreedingAdmin_LocationWise_Datatable @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
+  $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+  $acrage_completed = 1;
+  while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
+  {
+    $recordsTotal = @$Sql_Result['TOTALROW'];
+    $resarr = array();
+    $resarr[] = utf8_encode(@$Sql_Result['Breedinglocation']);
+    $resarr[] = utf8_encode(@$Sql_Result['Project']);
+    $resarr[] = utf8_encode(@$Sql_Result['Breedingtype']);
 
+    //total Acreage get
+    $sql_month_acr="SELECT DISTINCT Total_acrage FROM BreedingAdmin_MonthwiseDetails Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Breed_id ='".@$Sql_Result['passing_id']."' AND Loc_id='".@$Sql_Result['passing_id_loc']."' AND Proj_id='".@$Sql_Result['passing_id_proj']."' AND Total_acrage !='' ";
+    $stmt = sqlsrv_query($this->conn, $sql_month_acr);
+    $month_data_acr = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
+
+    // splited acreage is equal to total acreage validation 
+    $sql_acrage="SELECT (CASE WHEN ISNULL(Jun, '') = '' THEN 0 ELSE CAST(Jun AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Jul, '') = '' THEN 0 ELSE CAST(Jul AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Aug, '') = '' THEN 0 ELSE CAST(Aug AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Sep, '') = '' THEN 0 ELSE CAST(Sep AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Oct, '') = '' THEN 0 ELSE CAST(Oct AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Nov, '') = '' THEN 0 ELSE CAST(Nov AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Dec, '') = '' THEN 0 ELSE CAST(Dec AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Jan, '') = '' THEN 0 ELSE CAST(Jan AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Feb, '') = '' THEN 0 ELSE CAST(Feb AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Mar, '') = '' THEN 0 ELSE CAST(Mar AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Apr, '') = '' THEN 0 ELSE CAST(Apr AS decimal(20,2)) END +
+      CASE WHEN ISNULL(May, '') = '' THEN 0 ELSE CAST(May AS decimal(20,2)) END ) AS monthwise_count_details FROM BreedingAdmin_MonthwiseDetails Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Breed_id ='".@$Sql_Result['passing_id']."' AND Loc_id='".@$Sql_Result['passing_id_loc']."' AND Proj_id='".@$Sql_Result['passing_id_proj']."' AND type='Sowing'";
+    $acg_stmt = sqlsrv_query($this->conn, $sql_acrage);
+    $acrage_count = sqlsrv_fetch_array($acg_stmt,SQLSRV_FETCH_ASSOC);
+
+    if($acrage_count['monthwise_count_details'] == '' || $acrage_count['monthwise_count_details'] == 0 || ($acrage_count['monthwise_count_details'] != $month_data_acr['Total_acrage'])) {
+      $acrage_completed = 0;
+
+    }
+  }
+  return $acrage_completed; 
+}
 
  public function ProjectWiseDetails($User_Input=array())
  {
@@ -183,7 +225,8 @@ Class Common_Filter{
 
   $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
 
-//  $Autoincnum=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+ //total data acreage completion status validation functionality 
+  $validate_res = $this->all_pending_project_acreage_completion_validation($Emp_Id,$autoid,0,50000);  
 
   $Dcode=$_SESSION['Dcode'];
   $sno=$Offset+1;
@@ -192,6 +235,7 @@ Class Common_Filter{
   $i=0;
   $Sql="Exec BreedingAdmin_LocationWise_Datatable @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
   $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+  $acrage_completed = true;
   while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
   {
     $recordsTotal = @$Sql_Result['TOTALROW'];
@@ -200,11 +244,6 @@ Class Common_Filter{
     $resarr[] = utf8_encode(@$Sql_Result['Breedinglocation']);
     $resarr[] = utf8_encode(@$Sql_Result['Project']);
     $resarr[] = utf8_encode(@$Sql_Result['Breedingtype']);
-
-
-    
-
-
 
     $sql_month="SELECT COUNT(*) as count FROM BreedingAdmin_MonthwiseDetails Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Breed_id ='".@$Sql_Result['passing_id']."' AND Loc_id='".@$Sql_Result['passing_id_loc']."' AND Proj_id='".@$Sql_Result['passing_id_proj']."' ";
     $stmt = sqlsrv_query($this->conn, $sql_month);
@@ -218,7 +257,7 @@ Class Common_Filter{
 
     if($month_data['count']>0){
 
-     $resarr[]  ='<input type="number" class="Acrage acragevaluemain" name=acragevaluemain[] value="'.$month_data_acr['Total_acrage'] .'" style="width: 78px;background-color:#ff0854;color:white" readonly>';
+     $resarr[]  ='<input type="number" class="Acrage acragevaluemain" name=acragevaluemain[] value="'.$month_data_acr['Total_acrage'] .'" style="width: 78px;background-color:#5dd099;color:white" readonly>';
 
    }else{
 
@@ -228,12 +267,12 @@ Class Common_Filter{
    }
 
    if($month_data['count']>0){
-    $resarr[]  =" <button type='button' attributeid='".@$Sql_Result['passing_id']."' class='btn btn-xs btn-danger View_Month_wise_popup' >View</button><input type='hidden' class='passing_id_loc' value='".@$Sql_Result['passing_id_loc']."' name=passing_id_loc[]><input type='hidden' class='passing_id_proj' value='".@$Sql_Result['passing_id_proj']."' name=passing_id_proj[]><input type='hidden' class='allpassing_id' value='".@$Sql_Result['passing_id']."' name=allpassing_id[] >";
+    $resarr[]  =" <button type='button' attributeid='".@$Sql_Result['passing_id']."' class='btn btn-xs btn-info View_Month_wise_popup' >View</button><input type='hidden' class='passing_id_loc' value='".@$Sql_Result['passing_id_loc']."' name=passing_id_loc[]><input type='hidden' class='passing_id_proj' value='".@$Sql_Result['passing_id_proj']."' name=passing_id_proj[]><input type='hidden' class='allpassing_id' value='".@$Sql_Result['passing_id']."' name=allpassing_id[] >";
 
 
   }else{
 
-    $resarr[]  =" <button type='button' attributeid='".@$Sql_Result['passing_id']."' class='btn btn-xs btn-info Add_Month_wise_popup' >Add</button><input type='hidden' class='passing_id_loc' value='".@$Sql_Result['passing_id_loc']."' name=passing_id_loc[]><input type='hidden' class='passing_id_proj' value='".@$Sql_Result['passing_id_proj']."' name=passing_id_proj[]><input type='hidden' class='allpassing_id' value='".@$Sql_Result['passing_id']."' name=allpassing_id[] >";
+    $resarr[]  =" <button type='button' attributeid='".@$Sql_Result['passing_id']."' class='btn btn-xs btn-primary Add_Month_wise_popup' >Add</button><input type='hidden' class='passing_id_loc' value='".@$Sql_Result['passing_id_loc']."' name=passing_id_loc[]><input type='hidden' class='passing_id_proj' value='".@$Sql_Result['passing_id_proj']."' name=passing_id_proj[]><input type='hidden' class='allpassing_id' value='".@$Sql_Result['passing_id']."' name=allpassing_id[] >";
   }
 
 
@@ -287,9 +326,38 @@ Class Common_Filter{
 
 
   
-  $resarr[]='<button type="button" class="btn btn-sm btn-success editbutton"><i class="fas fa-edit"></i></button>
-  <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>  '; 
-  
+  // $resarr[]='<button type="button" class="btn btn-sm btn-success editbutton"><i class="fas fa-edit"></i></button>
+  // <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>  '; 
+      
+  // Acrage is equal to monthwise entered acrage validation check 
+  $sql_acrage="SELECT (CASE WHEN ISNULL(Jun, '') = '' THEN 0 ELSE CAST(Jun AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Jul, '') = '' THEN 0 ELSE CAST(Jul AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Aug, '') = '' THEN 0 ELSE CAST(Aug AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Sep, '') = '' THEN 0 ELSE CAST(Sep AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Oct, '') = '' THEN 0 ELSE CAST(Oct AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Nov, '') = '' THEN 0 ELSE CAST(Nov AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Dec, '') = '' THEN 0 ELSE CAST(Dec AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Jan, '') = '' THEN 0 ELSE CAST(Jan AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Feb, '') = '' THEN 0 ELSE CAST(Feb AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Mar, '') = '' THEN 0 ELSE CAST(Mar AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Apr, '') = '' THEN 0 ELSE CAST(Apr AS decimal(20,2)) END +
+      CASE WHEN ISNULL(May, '') = '' THEN 0 ELSE CAST(May AS decimal(20,2)) END ) AS monthwise_count_details FROM BreedingAdmin_MonthwiseDetails Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Breed_id ='".@$Sql_Result['passing_id']."' AND Loc_id='".@$Sql_Result['passing_id_loc']."' AND Proj_id='".@$Sql_Result['passing_id_proj']."' AND type='Sowing'";
+  $acg_stmt = sqlsrv_query($this->conn, $sql_acrage);
+  $acrage_count = sqlsrv_fetch_array($acg_stmt,SQLSRV_FETCH_ASSOC);
+  $completion_class = ($acrage_count['monthwise_count_details'] == '' && $acrage_count['monthwise_count_details'] == 0) ? 'failed' : (($acrage_count['monthwise_count_details'] != '' && $acrage_count['monthwise_count_details'] > 0 && ($acrage_count['monthwise_count_details'] == $month_data_acr['Total_acrage'])) ? 'success' : 'mismatch');
+  if($completion_class == 'failed') {
+    $acrage_completed = false;
+    $resarr[]='<span title="Incompleted"><i class="fa fa-check-circle failed_completion" aria-hidden="true"></i></span>
+    <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>';
+  } elseif ($completion_class == 'success') {
+     $resarr[]='<span title="Completed"><i class="fa fa-check-circle success_completion" aria-hidden="true"></i></span>
+     <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>';
+  } elseif($completion_class == 'mismatch') {
+    $acrage_completed = false;
+     $resarr[]='<span title="Mismatch"><i class="fa fa-check-circle mismatch_completion" aria-hidden="true"></i></span>
+     <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>';
+  }
+
   
   
   $resultarr[] = $resarr;
@@ -307,6 +375,8 @@ $res['recordsFiltered'] = @$recordsTotal;
 $res['recordsTotal'] = @$recordsTotal;
 $res['data'] = @$resultarr;
 $res['sql'] = @$Sql;
+// $res['acrage_completed_status'] = $acrage_completed;
+$res['acrage_completed_status'] = ($validate_res == 1) ? true : false;
 $result = $res;
 return $result;
 }
@@ -509,26 +579,16 @@ public function Assumptionwisemalefemale($data)
 
 
 
-      $sql_month_acr="SELECT Count(*) as Month_count from BreedingAdmin_Monthwise_amount Where Location='".@$data['location']."'";
-    $stmt = sqlsrv_query($this->conn, $sql_month_acr);
-    $month_data_acr = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
+    // $sql_month_acr="SELECT Count(*) as Month_count from BreedingAdmin_Monthwise_amount Where Location='".@$data['location']."'";
+    // $stmt = sqlsrv_query($this->conn, $sql_month_acr);
+    // $month_data_acr = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
 
-//print_r($month_data_acr['Month_count']);
-   /// exit;
+    // if($month_data_acr['Month_count']==0){
+    //     $sql="INSERT INTO BreedingAdmin_Monthwise_amount(Docid,Ordernum,Location,CreatedBy,CreatedAt,CurrentStatus)output inserted.Id VALUES(1,0,'".$data['location']."','".$CreatedBy."','".$CreatedAt."','1')";
 
+    //     $Result=sqlsrv_query($this->conn,$sql);
 
-
-    if($month_data_acr['Month_count']==0){
-
-
-
-
-    $sql="INSERT INTO BreedingAdmin_Monthwise_amount(Docid,Ordernum,Location,CreatedBy,CreatedAt,CurrentStatus)output inserted.Id VALUES(1,0,'".$data['location']."','".$CreatedBy."','".$CreatedAt."','1')";
-
-    $Result=sqlsrv_query($this->conn,$sql);
-
-
-  }
+    // }
 
     foreach(@$data['project'] as $key=>$value)
     {
@@ -562,7 +622,7 @@ public function Assumptionwisemalefemale($data)
 
 
         
-        $SQL1="INSERT INTO  BreedingAdmin_Activity(Docid,Ordernum,BreedingActivity,ReqDate,CreatedBy,CreatedAt,CurrentStatus)output inserted.Id VALUES('".$Last_Insert_Id_sub."','".$i."','".$WorkActivity."','".$Created_date."','".$CreatedBy."','".$CreatedAt."','1')";
+        $SQL1="INSERT INTO  BreedingAdmin_Activity(Docid,Ordernum,BreedingActivity,ReqDate,CreatedBy,CreatedAt,CurrentStatus,malecount,femalecount)output inserted.Id VALUES('".$Last_Insert_Id_sub."','".$i."','".$WorkActivity."','".$Created_date."','".$CreatedBy."','".$CreatedAt."','1','0','0')";
          $Result=sqlsrv_query($this->conn,$SQL1);
 
          $status=1;  
@@ -674,8 +734,8 @@ $resarr[]=$Activity_selectbox;
 $resarr[] = utf8_encode(@$Sql_Result['BreedingActivity']).'<input type="hidden" class="BreedingActivity" name="BreedingActivity[]" value="'.utf8_encode(@$Sql_Result['BreedingActivity']).'">';
 
 
-$resarr[]=" <input type='number' id='example-input-small'  class='form-control form-control-sm count_num' data-gender='male' placeholder='count' name='malecount[]' style='width: 50px;' value='".utf8_encode(@$Sql_Result['malecount'])."'>"; 
-$resarr[]="<input type='number' id='example-input-small'  class='form-control form-control-sm count_num' data-gender='female' placeholder='count' name='femalecount[]' style='width: 50px;' value='".utf8_encode(@$Sql_Result['femalecount'])."'>"; 
+$resarr[]=" <input type='number' id='example-input-small'  class='form-control form-control-sm count_num' data-gender='male' placeholder='count' name='malecount[]'  style='width: 50px;' value='".utf8_encode(@$Sql_Result['malecount'])."'>"; 
+$resarr[]="<input type='number' id='example-input-small'  class='form-control form-control-sm count_num' data-gender='female' placeholder='count' name='femalecount[]'  style='width: 50px;' value='".utf8_encode(@$Sql_Result['femalecount'])."'>"; 
 
 
 
@@ -708,7 +768,7 @@ return $result;
 public function Finalsubmittiondetails($data)
 {
 
-   // echo "<pre>";print_r($data);exit;
+    //echo "<pre>";print_r($data);exit;
 //
    // $passing_id_proj = $_REQUEST['passing_id_proj'];
 
@@ -743,32 +803,20 @@ public function Finalsubmittiondetails($data)
     } else {
           // $autonum=@$data['autonum'];
 
-
       if($CreatedBy !=''){
-
 
         $i=0;
         foreach(@$data['allpassing_id'] as $key=>$value)
         {
 
-      //$location_val=@$data['location'][$key];
           $passing_id_loc=@$data['passing_id_loc'][$key];
           $allpassing_id=@$data['allpassing_id'][$key];
           $passing_id_proj=@$data['passing_id_proj'][$key];
 
-
- //$location_val=@$data['location'];
-
-
           $SQL="UPDATE  BreedingAdmin_Type SET CurrentStatus='2',finalsubmitat='$CreatedAt'  Where id='$allpassing_id' ";
           $Result=sqlsrv_query($this->conn,$SQL);
 
-
-
-
-
           $status=1;     
-
 
         }
 
@@ -778,24 +826,15 @@ public function Finalsubmittiondetails($data)
         foreach(@$data['passing_id_loc'] as $key=>$value)
         {
 
-      //$location_val=@$data['location'][$key];
           $passing_id_loc=@$data['passing_id_loc'][$key];
           $Responsible_person=@$data['Responsible_person'][$key];
 
           $acragevaluemain=@$data['acragevaluemain'][$key];   
 
- //$location_val=@$data['location'];
-
-
           $SQL="UPDATE  BreedingAdmin_Location SET CurrentStatus='2',finalsubmitat='$CreatedAt',responsible_person='$Responsible_person',totalacreage='$acragevaluemain'  Where id='$passing_id_loc' ";
           $Result=sqlsrv_query($this->conn,$SQL);
 
-
-
-
-
           $status=1;     
-
 
         }
 
@@ -805,30 +844,15 @@ public function Finalsubmittiondetails($data)
         foreach(@$data['passing_id_proj'] as $key=>$value)
         {
 
-      //$location_val=@$data['location'][$key];
           $passing_id_proj=@$data['passing_id_proj'][$key];
-
-
-
- //$location_val=@$data['location'];
-
 
           $SQL="UPDATE  BreedingAdmin_Project SET CurrentStatus='2',finalsubmitat='$CreatedAt'  Where id='$passing_id_proj' ";
           $Result=sqlsrv_query($this->conn,$SQL);
-
-
-
-
 
           $status=1;     
 
 
         }
-
-//$i_project = 0;
-
-
-
 
 
       }else{
@@ -850,10 +874,69 @@ public function Finalsubmittiondetails($data)
 
 
 
-  public function AssumptionEnrty_malefemaleamount($User_Input=array())
+//   public function AssumptionEnrty_malefemaleamount($User_Input=array())
+//   {
+
+
+//     $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
+//     $Length=@$User_Input['length'];
+//     $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
+//     $autoid=@$User_Input['autoid']!='' ? @$User_Input['autoid'] : 0;
+
+//     $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+// //  $Autoincnum=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+//     $Dcode=$_SESSION['Dcode'];
+//     $sno=$Offset+1;
+//     $recordsTotal=0;
+//     $resultarr=array();
+//     $i=0;
+//     // $Sql="Exec BreedingAdmin_Assumption_Datatable_MaleFemale @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
+//     $Sql = "SELECT *,COUNT(*) OVER() as TOTALROW FROM BreedingAdmin_Monthwise_amount WHERE CreatedBy = '".$_SESSION['EmpID']."' AND Currentstatus = '1' ORDER BY Id OFFSET ".$Offset." ROWS FETCH NEXT ".$Length." ROWS ONLY"; 
+//     $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+//     while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
+//     {
+//       $recordsTotal = @$Sql_Result['TOTALROW'];
+//       $resarr = array();
+//      // $resarr[] = $sno++;
+//       $resarr[] = "<input type='hidden' class='monthwise_amt_id' name='monthwise_amt_id[]' value='".$Sql_Result['Id']."'>".utf8_encode(@$Sql_Result['Location'])."<input type='hidden' id='example-input-small'  class='form-control form-control-sm assumlocationdata' placeholder='count' name='Assumlocation_month[]' style='width: 10px;' value='".utf8_encode(@$Sql_Result['Location'])."'>";
+
+
+//       $resarr[]="<input type='month'   class='form-control form-control-sm fontdesign month' data-monthtype='from' value='".$Sql_Result['Frommonth']."' name='Frommonth[]' style='width: 60px;'>"; 
+
+//       $resarr[]="<input type='month'   class='form-control form-control-sm fontdesign month' data-monthtype='to' value='".$Sql_Result['Tomonth']."' name='tomonth[]' style='width: 60px;'>"; 
+
+
+//       $resarr[]="<input type='number'   class='form-control form-control-sm amount' data-gender='male' name='maleamount[]' value='".$Sql_Result['MaleAmount']."' style='width: 60px;'>"; 
+
+
+//       $resarr[]="<input type='number'   class='form-control form-control-sm amount' data-gender='female' name='femaleamount[]' value='".$Sql_Result['FemaleAmount']."' style='width: 60px;'>"; 
+
+
+//       $resultarr[] = $resarr;
+//       $i++;
+//     }
+//     $res=array();
+//     if(isset($User_Input['draw']))
+//     {
+//       $res['draw'] = @$User_Input['draw'];  
+//     }else
+//     {
+//       $res['draw'] = 1; 
+//     }
+//     $res['recordsFiltered'] = @$recordsTotal;
+//     $res['recordsTotal'] = @$recordsTotal;
+//     $res['data'] = @$resultarr;
+//     $res['sql'] = @$Sql;
+//     $result = $res;
+//     return $result;
+//   }
+
+   public function AssumptionEnrty_malefemaleamount($User_Input=array())
   {
 
-
+   $location = @$User_Input['user_input'] !='' ? @$User_Input['user_input'] : 0;
     $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
     $Length=@$User_Input['length'];
     $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
@@ -868,6 +951,44 @@ public function Finalsubmittiondetails($data)
     $recordsTotal=0;
     $resultarr=array();
     $i=0;
+
+    $CreatedBy=@$_SESSION['EmpID'];
+    $CreatedAt=date('Y-m-d H:i:s');
+    $Created_date=date('Y-m-d');
+
+    if($location!='')
+    {
+      foreach($location as $val)
+      {
+        $Sql12 = "SELECT Location,Id FROM BreedingAdmin_Monthwise_amount WHERE Location='".$val."'";
+
+        $params = array();
+        $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+        $exec =sqlsrv_query($this->conn,$Sql12,$params,$options);
+
+        if ($exec === false) {
+          die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+        }
+        $cnt = sqlsrv_num_rows($exec);
+
+           // echo $count;
+           // exit;
+
+        if($cnt==0)
+        {
+           $SQL1="INSERT INTO  BreedingAdmin_Monthwise_amount(Docid,Ordernum,Location,Frommonth,Tomonth,MaleAmount,FemaleAmount,CreatedBy,CreatedAt,CurrentStatus) VALUES('0','0','".$val."','0','0','0','0','".$CreatedBy."','".$CreatedAt."',1)";
+
+          //$SQL1="INSERT INTO  BreedingAdmin_Monthwise_amount(Location,CreatedBy,CreatedAt) VALUES('".$val."','".$CreatedBy."','".$CreatedAt."')";
+
+             // echo $SQL1;
+             // exit;
+
+
+           $Result1=sqlsrv_query($this->conn,$SQL1);
+        }
+      }
+    }
+
     // $Sql="Exec BreedingAdmin_Assumption_Datatable_MaleFemale @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
     $Sql = "SELECT *,COUNT(*) OVER() as TOTALROW FROM BreedingAdmin_Monthwise_amount WHERE CreatedBy = '".$_SESSION['EmpID']."' AND Currentstatus = '1' ORDER BY Id OFFSET ".$Offset." ROWS FETCH NEXT ".$Length." ROWS ONLY"; 
     $Sql_Connection =sqlsrv_query($this->conn,$Sql);
@@ -887,7 +1008,9 @@ public function Finalsubmittiondetails($data)
       $resarr[]="<input type='number'   class='form-control form-control-sm amount' data-gender='male' name='maleamount[]' value='".$Sql_Result['MaleAmount']."' style='width: 60px;'>"; 
 
 
-      $resarr[]="<input type='number'   class='form-control form-control-sm amount' data-gender='female' name='femaleamount[]' value='".$Sql_Result['FemaleAmount']."' style='width: 60px;'>"; 
+      $resarr[]="<input type='number'   class='form-control form-control-sm amount' data-gender='female' name='femaleamount[]' value='".$Sql_Result['FemaleAmount']."' style='width: 60px;'>";
+
+      //$resarr[]="<button class='btn btn-primary btn-sm add_activity_amount'>Edit</button>"; 
 
 
 
@@ -1090,9 +1213,9 @@ public function Finalsubmittiondetails($data)
 
       $i=0;
 
-      $sql="INSERT INTO BreedingAdmin_Monthwise_amount(Docid,Ordernum,Location,CreatedBy,CreatedAt,CurrentStatus)output inserted.Id VALUES(1,0,'".$data['location']."','".$CreatedBy."','".$CreatedAt."','1')";
+      // $sql="INSERT INTO BreedingAdmin_Monthwise_amount(Docid,Ordernum,Location,CreatedBy,CreatedAt,CurrentStatus)output inserted.Id VALUES(1,0,'".$data['location']."','".$CreatedBy."','".$CreatedAt."','1')";
 
-        $Result=sqlsrv_query($this->conn,$sql);
+      //   $Result=sqlsrv_query($this->conn,$sql);
 
       foreach(@$data['project'] as $key=>$value)
       {
@@ -1107,7 +1230,7 @@ public function Finalsubmittiondetails($data)
 
 
 
-        $SQL1="INSERT INTO  BreedingAdmin_Assumption(Ordernum,AssumLocation,AssumProject,ReqDate,CreatedBy,CreatedAt,CurrentStatus)output inserted.Id VALUES('".$i."','".$location_val."','".$Project_val."','".$Created_date."','".$CreatedBy."','".$CreatedAt."','1')";
+        $SQL1="INSERT INTO  BreedingAdmin_Assumption(Ordernum,AssumLocation,AssumProject,ReqDate,CreatedBy,CreatedAt,CurrentStatus)output inserted.Id VALUES('".$i."','".$location_val."','".$Project_val."','".$Created_date."','".$CreatedBy."','".$CreatedAt."','2')";
          $Result=sqlsrv_query($this->conn,$SQL1);
 
          $Last_Insert_id_sub=sqlsrv_fetch_array($Result,SQLSRV_FETCH_ASSOC);
@@ -1128,7 +1251,7 @@ public function Finalsubmittiondetails($data)
           $femalecount=@$data['femalecount'];
 
 
-          $SQL1="INSERT INTO  BreedingAdmin_Activity(Docid,Ordernum,BreedingActivity,ReqDate,CreatedBy,CreatedAt,CurrentStatus,malecount,femalecount)output inserted.Id VALUES('".$Last_Insert_Id_sub."','".$i."','".$WorkActivity."','".$Created_date."','".$CreatedBy."','".$CreatedAt."','1','".$malecount."','".$femalecount."')";
+          $SQL1="INSERT INTO  BreedingAdmin_Activity(Docid,Ordernum,BreedingActivity,ReqDate,CreatedBy,CreatedAt,CurrentStatus,malecount,femalecount)output inserted.Id VALUES('".$Last_Insert_Id_sub."','".$i."','".$WorkActivity."','".$Created_date."','".$CreatedBy."','".$CreatedAt."','2','".$malecount."','".$femalecount."')";
            $Result=sqlsrv_query($this->conn,$SQL1);
 
            $status=1;  
@@ -1509,6 +1632,169 @@ public function Finalsubmittiondetails($data)
     return $result;
   }
 
+  //Divya
+
+  public function finalmalefemaleamountdata($data)
+  {
+
+    //echo "<pre>";print_r($data);exit;
+
+   // $passing_id_proj = $_REQUEST['passing_id_proj'];
+
+   // echo "<pre>";print_r($passing_id_proj);
+  // exit; 
+
+
+    $CreatedBy=@$_SESSION['EmpID'];
+
+
+      //print_r($CreatedBy);
+    $Dcode=@$_SESSION['Dcode'];
+    $CreatedAt=date('Y-m-d H:i:s');
+    $Created_date=date('Y-m-d');
+    $CurrentStatus="1";
+    $RejectionStatus="1";
+
+
+
+   //$Doc_No=Generate_Auto_Breedid(0);
+
+  // print_r($Doc_No);
+
+
+    $status=0;  
+//     // $autonum=@$data['autonum'];
+//     $sql ="SELECT COUNT(*) as malefemale_entered_count,(SELECT COUNT(*) from BreedingAdmin_Assumption 
+//       inner join BreedingAdmin_Activity on BreedingAdmin_Activity.Docid = BreedingAdmin_Assumption.Id
+//       where BreedingAdmin_Assumption.CreatedBy = '".$CreatedBy."' and BreedingAdmin_Assumption.Currentstatus = '1' and BreedingAdmin_Assumption.Rejectionstatus IS NULL) as total_assumption FROM BreedingAdmin_Assumption 
+//       inner join BreedingAdmin_Activity on BreedingAdmin_Activity.Docid = BreedingAdmin_Assumption.Id
+//       where BreedingAdmin_Assumption.CreatedBy = '".$CreatedBy."' and BreedingAdmin_Assumption.Currentstatus = '1' and BreedingAdmin_Assumption.Rejectionstatus IS NULL and malecount IS NOT NULL and femalecount IS NOT NULL and BreedingAdmin_Activity.malecount != '' and BreedingAdmin_Activity.femalecount IS NOT NULL and BreedingAdmin_Activity.femalecount != ''";
+
+//       $Sql_Connection  =  sqlsrv_query($this->conn,$sql);
+//       $result  = sqlsrv_fetch_array($Sql_Connection);
+
+//       $sql2 = "SELECT COUNT(*) as Monthwise_amount_entered,(SELECT COUNT(*) from BreedingAdmin_Monthwise_amount where CreatedBy = '".$CreatedBy."') as total from BreedingAdmin_Monthwise_amount where CreatedBy = '".$CreatedBy."' and Frommonth IS NOT NULL and Frommonth != ''
+//         and Tomonth IS NOT NULL and Tomonth != '' and MaleAmount IS NOT NULL and FemaleAmount IS NOT NULL";
+//       $Sql_Connection  =  sqlsrv_query($this->conn,$sql2);
+//       $second_result  = sqlsrv_fetch_array($Sql_Connection);
+
+//       if(($result['malefemale_entered_count'] != $result['total_assumption']) || ($second_result['Monthwise_amount_entered'] != $second_result['total'])) {
+//         $status = 0;  
+//       } else {
+
+//         if($CreatedBy !=''){
+
+
+//           $i=0;
+//           foreach(@$data['AssumptionId'] as $key=>$value)
+//           {
+
+//       //$location_val=@$data['location'][$key];
+//             $AssumptionId=@$data['AssumptionId'][$key];
+
+
+
+//             $SQL="UPDATE  BreedingAdmin_Assumption SET CurrentStatus='2'  Where id='$AssumptionId' ";
+//             $Result=sqlsrv_query($this->conn,$SQL);
+
+
+
+
+
+//             $status=1;     
+
+
+//           }
+
+
+
+
+//           foreach(@$data['BreedingActivity'] as $key=>$value)
+//           {
+
+//       //$location_val=@$data['location'][$key];
+//             $BreedingActivity=@$data['BreedingActivity'][$key];
+//             $AssumptionId=@$data['activeid'][$key];
+//             $malecount=@$data['malecount'][$key];
+//             $femalecount=@$data['femalecount'][$key];
+
+
+// ///$Responsible_person=@$data['Responsible_person'][$key];
+
+
+//             $SQL="UPDATE  BreedingAdmin_Activity SET CurrentStatus='2',malecount='$malecount',femalecount='$femalecount' Where id='$AssumptionId' ";
+//             $Result=sqlsrv_query($this->conn,$SQL);
+
+
+
+
+
+//             $status=1;     
+
+
+//           }
+
+
+
+
+ //          foreach(@$data['Assumlocation_month'] as $key=>$value)
+ //          {
+
+ //      //$location_val=@$data['location'][$key];
+ //            $Assumlocation_month=@$data['Assumlocation_month'][$key];
+ //            $Frommonth=@$data['Frommonth'][$key];
+ //            $tomonth=@$data['tomonth'][$key];
+ //            $maleamount=@$data['maleamount'][$key];
+ //            $femaleamount=@$data['femaleamount'][$key];
+
+
+
+
+
+ // //$location_val=@$data['location'];
+
+ //            $SQL1="INSERT INTO  BreedingAdmin_Monthwise_amount(Docid,Ordernum,Location,Frommonth,Tomonth,MaleAmount,FemaleAmount,CreatedBy,CreatedAt,CurrentStatus)output inserted.Id VALUES(1,'".$i."','".$Assumlocation_month."','".$Frommonth."','".$tomonth."','".$maleamount."','".$femaleamount."','".$CreatedBy."','".$CreatedAt."','1')";
+
+ //              $Result=sqlsrv_query($this->conn,$SQL1);
+
+
+
+
+
+ //              $status=1;     
+
+
+ //            }
+
+          foreach ($data['monthwise_amt_id'] as $key => $value) {
+
+            $SQL1="UPDATE BreedingAdmin_Monthwise_amount SET CurrentStatus = '2' WHERE Id = '".$value."'";
+
+              $Result=sqlsrv_query($this->conn,$SQL1);
+
+              $status=1; 
+          }
+
+
+
+
+          // }else{
+
+          //   $status=0;
+
+
+          // }
+
+        //}
+
+
+
+
+
+//  exit;
+      return array('Status'=>$status);
+    }
+
 
 
 
@@ -1552,12 +1838,12 @@ public function Finalsubmittiondetails($data)
       $Sql_Connection  =  sqlsrv_query($this->conn,$sql);
       $result  = sqlsrv_fetch_array($Sql_Connection);
 
-      $sql2 = "SELECT COUNT(*) as Monthwise_amount_entered,(SELECT COUNT(*) from BreedingAdmin_Monthwise_amount where CreatedBy = '".$CreatedBy."') as total from BreedingAdmin_Monthwise_amount where CreatedBy = '".$CreatedBy."' and Frommonth IS NOT NULL and Frommonth != ''
-        and Tomonth IS NOT NULL and Tomonth != '' and MaleAmount IS NOT NULL and FemaleAmount IS NOT NULL";
-      $Sql_Connection  =  sqlsrv_query($this->conn,$sql2);
-      $second_result  = sqlsrv_fetch_array($Sql_Connection);
+      // $sql2 = "SELECT COUNT(*) as Monthwise_amount_entered,(SELECT COUNT(*) from BreedingAdmin_Monthwise_amount where CreatedBy = '".$CreatedBy."') as total from BreedingAdmin_Monthwise_amount where CreatedBy = '".$CreatedBy."' and Frommonth IS NOT NULL and Frommonth != ''
+      //   and Tomonth IS NOT NULL and Tomonth != '' and MaleAmount IS NOT NULL and FemaleAmount IS NOT NULL";
+      // $Sql_Connection  =  sqlsrv_query($this->conn,$sql2);
+      // $second_result  = sqlsrv_fetch_array($Sql_Connection);
 
-      if(($result['malefemale_entered_count'] != $result['total_assumption']) || ($second_result['Monthwise_amount_entered'] != $second_result['total'])) {
+      if(($result['malefemale_entered_count'] != $result['total_assumption'])) {
         $status = 0;  
       } else {
 
@@ -1645,14 +1931,14 @@ public function Finalsubmittiondetails($data)
 
  //            }
 
-          foreach ($data['monthwise_amt_id'] as $key => $value) {
+          // foreach ($data['monthwise_amt_id'] as $key => $value) {
 
-            $SQL1="UPDATE BreedingAdmin_Monthwise_amount SET CurrentStatus = '2' WHERE Id = '".$value."'";
+          //   $SQL1="UPDATE BreedingAdmin_Monthwise_amount SET CurrentStatus = '2' WHERE Id = '".$value."'";
 
-              $Result=sqlsrv_query($this->conn,$SQL1);
+          //     $Result=sqlsrv_query($this->conn,$SQL1);
 
-              $status=1; 
-          }
+          //     $status=1; 
+          // }
 
 
 
@@ -1675,14 +1961,52 @@ public function Finalsubmittiondetails($data)
     }
 
 
+ public function all_completed_project_acreage_completion_validation($Emp_Id,$autoid,$Offset,$Length)
+ {
+  $Sql="Exec BreedingAdmin_LocationWise_Datatable_Completed @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
+  $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+  $acrage_completed = 1;
+  while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
+  {
+    $recordsTotal = @$Sql_Result['TOTALROW'];
+    $resarr = array();
+    $resarr[] = utf8_encode(@$Sql_Result['Breedinglocation']);
+    $resarr[] = utf8_encode(@$Sql_Result['Project']);
+    $resarr[] = utf8_encode(@$Sql_Result['Breedingtype']);
 
+    //total Acreage get
+    $sql_month_acr="SELECT DISTINCT Total_acrage FROM BreedingAdmin_MonthwiseDetails Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Breed_id ='".@$Sql_Result['passing_id']."' AND Loc_id='".@$Sql_Result['passing_id_loc']."' AND Proj_id='".@$Sql_Result['passing_id_proj']."' AND Total_acrage !='' ";
+    $stmt = sqlsrv_query($this->conn, $sql_month_acr);
+    $month_data_acr = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
+
+    // splited acreage is equal to total acreage validation 
+    $sql_acrage="SELECT (CASE WHEN ISNULL(Jun, '') = '' THEN 0 ELSE CAST(Jun AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Jul, '') = '' THEN 0 ELSE CAST(Jul AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Aug, '') = '' THEN 0 ELSE CAST(Aug AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Sep, '') = '' THEN 0 ELSE CAST(Sep AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Oct, '') = '' THEN 0 ELSE CAST(Oct AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Nov, '') = '' THEN 0 ELSE CAST(Nov AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Dec, '') = '' THEN 0 ELSE CAST(Dec AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Jan, '') = '' THEN 0 ELSE CAST(Jan AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Feb, '') = '' THEN 0 ELSE CAST(Feb AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Mar, '') = '' THEN 0 ELSE CAST(Mar AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Apr, '') = '' THEN 0 ELSE CAST(Apr AS decimal(20,2)) END +
+      CASE WHEN ISNULL(May, '') = '' THEN 0 ELSE CAST(May AS decimal(20,2)) END ) AS monthwise_count_details FROM BreedingAdmin_MonthwiseDetails Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Breed_id ='".@$Sql_Result['passing_id']."' AND Loc_id='".@$Sql_Result['passing_id_loc']."' AND Proj_id='".@$Sql_Result['passing_id_proj']."' AND type='Sowing'";
+    $acg_stmt = sqlsrv_query($this->conn, $sql_acrage);
+    $acrage_count = sqlsrv_fetch_array($acg_stmt,SQLSRV_FETCH_ASSOC);
+
+    if($acrage_count['monthwise_count_details'] == '' || $acrage_count['monthwise_count_details'] == 0 || ($acrage_count['monthwise_count_details'] != $month_data_acr['Total_acrage'])) {
+      $acrage_completed = 0;
+
+    }
+  }
+  return $acrage_completed; 
+}
 
 
 
     public function CompletedProjectWiseDetails($User_Input=array())
     {
-
-
       $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
       $Length=@$User_Input['length'];
       $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
@@ -1692,6 +2016,9 @@ public function Finalsubmittiondetails($data)
 
 //  $Autoincnum=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
 
+       //total data acreage completion status validation functionality 
+       $validate_res = $this->all_completed_project_acreage_completion_validation($Emp_Id,$autoid,0,50000);  
+
       $Dcode=$_SESSION['Dcode'];
       $sno=$Offset+1;
       $recordsTotal=0;
@@ -1699,6 +2026,7 @@ public function Finalsubmittiondetails($data)
       $i=0;
       $Sql="Exec BreedingAdmin_LocationWise_Datatable_Completed @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
       $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+      $acrage_completed = true;
       while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
       {
         $recordsTotal = @$Sql_Result['TOTALROW'];
@@ -1725,7 +2053,7 @@ public function Finalsubmittiondetails($data)
 
         if($month_data['count']>0){
 
-         $resarr[]  ='<input type="number" class="Acrage acragevaluemain" name=acragevaluemain[] value="'.$month_data_acr['Total_acrage'] .'" style="width: 78px;background-color:#ff0854;color:white" readonly>';
+         $resarr[]  ='<input type="number" class="Acrage acragevaluemain" name=acragevaluemain[] value="'.$month_data_acr['Total_acrage'] .'" style="width: 78px;background-color:#5dd099;color:white" readonly>';
 
        }else{
 
@@ -1735,12 +2063,12 @@ public function Finalsubmittiondetails($data)
        }
 
        if($month_data['count']>0){
-        $resarr[]  =" <button type='button' attributeid='".@$Sql_Result['passing_id']."' class='btn btn-xs btn-danger View_Month_wise_popup_Completed' >View</button><input type='hidden' class='passing_id_loc' value='".@$Sql_Result['passing_id_loc']."' name=passing_id_loc[]><input type='hidden' class='passing_id_proj' value='".@$Sql_Result['passing_id_proj']."' name=passing_id_proj[]><input type='hidden' class='allpassing_id' value='".@$Sql_Result['passing_id']."' name=allpassing_id[] >";
+        $resarr[]  =" <button type='button' attributeid='".@$Sql_Result['passing_id']."' class='btn btn-xs btn-info View_Month_wise_popup_Completed' >View</button><input type='hidden' class='passing_id_loc' value='".@$Sql_Result['passing_id_loc']."' name=passing_id_loc[]><input type='hidden' class='passing_id_proj' value='".@$Sql_Result['passing_id_proj']."' name=passing_id_proj[]><input type='hidden' class='allpassing_id' value='".@$Sql_Result['passing_id']."' name=allpassing_id[] >";
 
 
       }else{
 
-        $resarr[]  =" <button type='button' attributeid='".@$Sql_Result['passing_id']."' class='btn btn-xs btn-info Add_Month_wise_popup' >Add</button><input type='hidden' class='passing_id_loc' value='".@$Sql_Result['passing_id_loc']."' name=passing_id_loc[]><input type='hidden' class='passing_id_proj' value='".@$Sql_Result['passing_id_proj']."' name=passing_id_proj[]><input type='hidden' class='allpassing_id' value='".@$Sql_Result['passing_id']."' name=allpassing_id[] >";
+        $resarr[]  =" <button type='button' attributeid='".@$Sql_Result['passing_id']."' class='btn btn-xs btn-primary Add_Month_wise_popup' >Add</button><input type='hidden' class='passing_id_loc' value='".@$Sql_Result['passing_id_loc']."' name=passing_id_loc[]><input type='hidden' class='passing_id_proj' value='".@$Sql_Result['passing_id_proj']."' name=passing_id_proj[]><input type='hidden' class='allpassing_id' value='".@$Sql_Result['passing_id']."' name=allpassing_id[] >";
       }
 
 
@@ -1794,9 +2122,36 @@ public function Finalsubmittiondetails($data)
 
 
 
-      $resarr[]='<button type="button" class="btn btn-sm btn-success editbutton"><i class="fas fa-edit"></i></button>
-      <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>  '; 
-
+      // $resarr[]='<button type="button" class="btn btn-sm btn-success editbutton"><i class="fas fa-edit"></i></button>
+      // <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>  '; 
+    // Acrage is equal to monthwise entered acrage validation check 
+    $sql_acrage="SELECT (CASE WHEN ISNULL(Jun, '') = '' THEN 0 ELSE CAST(Jun AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Jul, '') = '' THEN 0 ELSE CAST(Jul AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Aug, '') = '' THEN 0 ELSE CAST(Aug AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Sep, '') = '' THEN 0 ELSE CAST(Sep AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Oct, '') = '' THEN 0 ELSE CAST(Oct AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Nov, '') = '' THEN 0 ELSE CAST(Nov AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Dec, '') = '' THEN 0 ELSE CAST(Dec AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Jan, '') = '' THEN 0 ELSE CAST(Jan AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Feb, '') = '' THEN 0 ELSE CAST(Feb AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Mar, '') = '' THEN 0 ELSE CAST(Mar AS decimal(20,2)) END +
+      CASE WHEN ISNULL(Apr, '') = '' THEN 0 ELSE CAST(Apr AS decimal(20,2)) END +
+      CASE WHEN ISNULL(May, '') = '' THEN 0 ELSE CAST(May AS decimal(20,2)) END ) AS monthwise_count_details FROM BreedingAdmin_MonthwiseDetails Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Breed_id ='".@$Sql_Result['passing_id']."' AND Loc_id='".@$Sql_Result['passing_id_loc']."' AND Proj_id='".@$Sql_Result['passing_id_proj']."' AND type='Sowing'";
+    $acg_stmt = sqlsrv_query($this->conn, $sql_acrage);
+    $acrage_count = sqlsrv_fetch_array($acg_stmt,SQLSRV_FETCH_ASSOC);
+    $completion_class = ($acrage_count['monthwise_count_details'] == '' && $acrage_count['monthwise_count_details'] == 0) ? 'failed' : (($acrage_count['monthwise_count_details'] != '' && $acrage_count['monthwise_count_details'] > 0 && ($acrage_count['monthwise_count_details'] == $month_data_acr['Total_acrage'])) ? 'success' : 'mismatch');
+    if($completion_class == 'failed') {
+      $acrage_completed = false;
+      $resarr[]='<span title="Incompleted"><i class="fa fa-check-circle failed_completion" aria-hidden="true"></i></span>
+      <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>';
+    } elseif ($completion_class == 'success') {
+       $resarr[]='<span title="Completed"><i class="fa fa-check-circle success_completion" aria-hidden="true"></i></span>
+       <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>';
+    } elseif($completion_class == 'mismatch') {
+      $acrage_completed = false;
+       $resarr[]='<span title="Mismatch"><i class="fa fa-check-circle mismatch_completion" aria-hidden="true"></i></span>
+       <button type="button" class="btn btn-sm btn-danger deleterow deletebutton"><i class="fas fa-trash-alt"></i></button>';
+    }
 
 
       $resultarr[] = $resarr;
@@ -1813,7 +2168,9 @@ public function Finalsubmittiondetails($data)
     $res['recordsFiltered'] = @$recordsTotal;
     $res['recordsTotal'] = @$recordsTotal;
     $res['data'] = @$resultarr;
-    $res['sql'] = @$Sql;
+    $res['sql'] = @$Sql;  
+    // $res['acrage_completed_status'] = $acrage_completed;
+    $res['acrage_completed_status'] = ($validate_res == 1) ? true : false;
     $result = $res;
     return $result;
   }
@@ -1848,14 +2205,14 @@ public function Finalsubmittiondetails($data)
       $recordsTotal = @$Sql_Result['TOTALROW'];
       $resarr = array();
      // $resarr[] = $sno++;
-      $resarr[] = utf8_encode(@$Sql_Result['Assumlocation']).'<input type="hidden" class="Assumlocation" name="Assumlocation[]" value="'.utf8_encode(@$Sql_Result['Assumlocation']).'"><input type="hidden" class="AssumProject" name="AssumProject[]" value="'.utf8_encode(@$Sql_Result['AssumProject']).'"><input type="hidden" class="AssumptionId" name="AssumptionId[]" value="'.utf8_encode(@$Sql_Result['Id']).'">';
+      $resarr[] = utf8_encode(@$Sql_Result['Assumlocation']).'<input type="hidden" class="Assumlocation" name="Assumlocation[]" value="'.utf8_encode(@$Sql_Result['Assumlocation']).'"><input type="hidden" class="AssumProject" name="AssumProject[]" value="'.utf8_encode(@$Sql_Result['AssumProject']).'"><input type="hidden" class="AssumptionId" name="AssumptionId[]" value="'.utf8_encode(@$Sql_Result['Id']).'"><input type="hidden" class="activeid" name="activeid[]" value="'.utf8_encode(@$Sql_Result['activeid']).'">';
       $resarr[] = '<div class="Assumproj" style="word-wrap: break-word">'.utf8_encode(@$Sql_Result['AssumProject']).'</div>';
 
       $resarr[] = utf8_encode(@$Sql_Result['BreedingActivity']).'<input type="hidden" class="BreedingActivity" name="BreedingActivity[]" value="'.utf8_encode(@$Sql_Result['BreedingActivity']).'">';
 
 
-      $resarr[]=" <input type='number' id='example-input-small'  class='form-control form-control-sm' placeholder='count' name='malecount[]' style='width: 50px;' value='".utf8_encode(@$Sql_Result['malecount'])."'>"; 
-      $resarr[]="<input type='number' id='example-input-small'  class='form-control form-control-sm' placeholder='count' name='femalecount[]' style='width: 50px;' value='".utf8_encode(@$Sql_Result['femalecount'])."'>"; 
+      $resarr[]=" <input type='number' id='example-input-small'  class='form-control form-control-sm count_num' data-gender='male' placeholder='count' name='malecount[]' style='width: 50px;' value='".utf8_encode(@$Sql_Result['malecount'])."'>"; 
+      $resarr[]="<input type='number' id='example-input-small'  class='form-control form-control-sm count_num' data-gender='male' placeholder='count' name='femalecount[]' style='width: 50px;' value='".utf8_encode(@$Sql_Result['femalecount'])."'>"; 
 
 
 
@@ -1883,6 +2240,7 @@ public function Finalsubmittiondetails($data)
     $result = $res;
     return $result;
   }
+
 
 
 
@@ -2261,8 +2619,6 @@ public function Finalsubmittiondetails($data)
 
   public function consumablesentry($User_Input=array())
   {
-
-
     $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
     $Length=@$User_Input['length'];
     $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
@@ -2284,14 +2640,14 @@ public function Finalsubmittiondetails($data)
       $recordsTotal = @$Sql_Result['TOTALROW'];
       $resarr = array();
      // $resarr[] = $sno++;
-      $resarr[] = utf8_encode(@$Sql_Result['ConsumLocation']).'<input type="hidden" class="ConsumLocation" name="ConsumLocation[]" value="'.utf8_encode(@$Sql_Result['ConsumLocation']).'"><input type="hidden" class="ConsumProject" name="ConsumProject[]" value="'.utf8_encode(@$Sql_Result['ConsumProject']).'"><input type="hidden" class="ConsumId" name="ConsumId[]" value="'.utf8_encode(@$Sql_Result['Id']).'"><input type="hidden" class="consumtypeid" name="consumtypeid[]" value="'.utf8_encode(@$Sql_Result['consumtypeid']).'">';
+      $resarr[] = utf8_encode(@$Sql_Result['ConsumLocation']).'<input type="hidden" class="ConsumLocation" name="ConsumLocation[]" value="'.utf8_encode(@$Sql_Result['ConsumLocation']).'"><input type="hidden" class="ConsumProject" name="ConsumProject[]" value="'.utf8_encode(@$Sql_Result['ConsumProject']).'"><input type="hidden" class="ConsumId" name="ConsumId[]" value="'.utf8_encode(@$Sql_Result['Id']).'"><input type="hidden" class="type_id" name="type_id[]" value="'.utf8_encode(@$Sql_Result['type_id']).'"><input type="hidden" class="consumtypeid" name="consumtypeid[]" value="'.utf8_encode(@$Sql_Result['consumtypeid']).'">';
       $resarr[] = '<div class="ConsumProject" style="word-wrap: break-word">'.utf8_encode(@$Sql_Result['ConsumProject']).'</div>';
 
       $resarr[] = '<div class="Breedingconsumables" style="word-wrap: break-word">'.utf8_encode(@$Sql_Result['Breedingconsumables']).'</div>';
-      $resarr[] ="<input type='number' class='form-control acraege' name='acraege[]' style='width:70px'>";
+      $resarr[] ="<input type='number' class='form-control acraege' name='acraege[]' style='width:70px' value='".utf8_encode(@$Sql_Result['acre'])."''>";
      // $resarr[] ="";
 
-          $resarr[]  =" <button type='button' attributeid='".@$Sql_Result['Id']."' class='btn btn-xs btn-info Add_Consmables_monthwise' >Add</button>";
+          $resarr[]  =" <button type='button' class='btn btn-sm btn-danger deleterow deletebutton'><i class='fas fa-trash-alt'></i></button>";
   // $resarr[] ="";
    //$resarr[] ="<input type='number' class='form-control UOM' name='UOM[]' style='width:70px'>";
    //$resarr[] ="<span class='totalconsum' style='font-size:14px'></span><input type='hidden' class='appendtotalvalue' name='Total[]'>";
@@ -2325,8 +2681,6 @@ public function Finalsubmittiondetails($data)
 
   public function consumablesentryuom($User_Input=array())
   {
-
-
     $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
     $Length=@$User_Input['length'];
     $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
@@ -2341,23 +2695,21 @@ public function Finalsubmittiondetails($data)
     $recordsTotal=0;
     $resultarr=array();
     $i=0;
-    $Sql="Exec BreedingAdmin_Consumption_Datatable_UOM @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
+    $location      = $User_Input['user_input']['location_name'];
+    $project_names = implode(',',$User_Input['user_input']['project_name']);
+    $consumables   = implode(',',$User_Input['user_input']['consumables']);
+    $Sql="Exec BreedingAdmin_Consumption_Datatable_UOM @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length.",@location='".$location."',@project='".$project_names."',@consumables='".$consumables."'";
     $Sql_Connection =sqlsrv_query($this->conn,$Sql);
     while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
     {
       $recordsTotal = @$Sql_Result['TOTALROW'];
       $resarr = array();
      // $resarr[] = $sno++;
-      $resarr[] = '<span style="word-break:break-all;">'.utf8_encode(@$Sql_Result['Breedingconsumables']).'</span> <input type="hidden" class="Breedingconsumables" name="Breedingconsumables[]" value="'.utf8_encode(@$Sql_Result['Breedingconsumables']).'"><input type="hidden" class="ConsumProject" name="ConsumProject[]" value="'.utf8_encode(@$Sql_Result['ConsumProject']).'"><input type="hidden" class="ConsumId" name="ConsumId[]" value="'.utf8_encode(@$Sql_Result['Id']).'"><input type="hidden" class="consumtypeid" name="consumtypeid[]" value="'.utf8_encode(@$Sql_Result['consumtypeid']).'">';
+      $resarr[] = '<span style="word-break:break-all;">'.utf8_encode(@$Sql_Result['ConsumLocation']).'</span>';
+      $resarr[] = '<span style="word-break:break-all;">'.utf8_encode(@$Sql_Result['ConsumProject']).'</span>';
+      $resarr[] = '<span style="word-break:break-all;">'.utf8_encode(@$Sql_Result['Breedingconsumables']).'</span><input type="hidden" class="Breedingconsumables" name="Breedingconsumables[]" value="'.utf8_encode(@$Sql_Result['Breedingconsumables']).'"><input type="hidden" class="ConsumProject" name="ConsumProject[]" value="'.utf8_encode(@$Sql_Result['ConsumProject']).'"><input type="hidden" class="ConsumId" name="ConsumId[]" value="'.utf8_encode(@$Sql_Result['Id']).'"><input type="hidden" class="consumtypeid" name="consumtypeid[]" value="'.utf8_encode(@$Sql_Result['consumtypeid']).'">';
 
-      $resarr[] ="<input type='number' class='form-control UOM' name='UOM[]' style='width:70px'>";
-
-
-
-
-
-
-
+      $resarr[] ="<input type='number' class='form-control UOM' name='UOM[]' style='width:70px' value='".$Sql_Result['UOM']."'>";
       $resultarr[] = $resarr;
       $i++;
     }
@@ -2583,6 +2935,7 @@ public function Finalsubmittiondetails($data)
 
       $resarr[] = '<div class="Breedingconsumables" style="word-wrap: break-word">'.utf8_encode(@$Sql_Result['Breedingconsumables']).'</div>';
       $resarr[] ="<input type='number' class='form-control acraege' name='acraege[]' style='width:70px' value=".utf8_encode(@$Sql_Result['acre']).">";
+      $resarr[]  =" <button type='button' class='btn btn-sm btn-danger deleterow deletebutton'><i class='fas fa-trash-alt'></i></button>";
   // $resarr[] ="";
    //$resarr[] ="<input type='number' class='form-control UOM' name='UOM[]' style='width:70px'>";
    //$resarr[] ="<span class='totalconsum' style='font-size:14px'></span><input type='hidden' class='appendtotalvalue' name='Total[]'>";
@@ -2611,57 +2964,7 @@ public function Finalsubmittiondetails($data)
     return $result;
   }
 
-  public function getBreederDetails($User_Input=array())
-  {
-
-
-    $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
-    $Length=@$User_Input['length'] !='' ? @$User_Input['length'] : 0;
-    $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
-    $autoid=@$User_Input['autoid']!='' ? @$User_Input['autoid'] : 0;
-
-    $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
-
-//  $Autoincnum=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
-
-    $Dcode=$_SESSION['Dcode'];
-    $sno=$Offset+1;
-    $recordsTotal=0;
-    $resultarr=array();
-    $groupedData=array();
-    $i=0;
-    $Sql="Exec BreedingAdmin_FieldExpense_Datatable @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
-    //echo $Sql;
-    //exit;
-    $Sql_Connection =sqlsrv_query($this->conn,$Sql);
-    while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
-    {
-      $dataarr = array();
-      $dataarr['BreedingLocation'] = $Sql_Result['BreedingLocation'];
-      $dataarr['Project'] = $Sql_Result['Project'];
-      $dataarr['BreedingActivity'] = $Sql_Result['BreedingActivity'];
-      $resultarr[] = $dataarr;
-    }
-      // Serialize each sub-array to make it a string
-    $serializedArrays = array_map('serialize', $resultarr);
-
-      // Remove duplicate serialized arrays
-    $uniqueSerializedArrays = array_unique($serializedArrays);
-
-      // Unserialize each unique serialized array to get back the original format
-    $uniqueArrays = array_map('unserialize', $uniqueSerializedArrays);
-
-      // Reset array keys to start from 0
-    $uniqueArrays = array_values($uniqueArrays);
-
-    $res['data'] = @$uniqueArrays;
-
-    $result = $res;
-    // echo "<pre>";
-    // print_r($result);
-    // exit;
-    return $result;
-  }
+  
 
   public function getSubTableDetails($User_Input=array())
   {
@@ -2895,20 +3198,43 @@ $status=0;
 
 
 
-
-
+public function get_current_business_year()
+{
+    $sql     = "SELECT Business_Year,FORMAT(From_Date,'dd-MM-yyyy') as from_date,FORMAT(To_Date,'dd-MM-yyyy') as to_date FROM Breeding_Config_Business_Year where Status = 1";
+    $result  = sqlsrv_query($this->conn,$sql); 
+    $res_arr = sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC);
+    return $res_arr;  
+}
 
 
 public function Add_TFA($data)
 {
+  $current_byear = $this->get_current_business_year();
   $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
   $CreatedAt=date('Y-m-d H:i:s');
   $CurrentStatus="1";
-  $RejectionStatus="1";
 
-  $sql = "INSERT INTO BreedingAdmin_TFA (Location,Name,No_of_persons,CreatedBy,CreatedAt,Currentstatus,Rejectionstatus) VALUES ('".$data['location']."','".$data['name']."',".$data['no_of_persons'].",'".$Emp_Id."','".$CreatedAt."','".$CurrentStatus."','".$CurrentStatus."')";
+
+  foreach($data['TFA_Reqno'] as $key => $value) {
+  //validation check for entered month is completed within business year
+    $valid_sql = "SELECT from_month,to_month from BreedingAdmin_TFA_Details where Location= '".$data['location']."' and TFA_Reqno = '".$value."' and Breeding_year = '".$current_byear['Business_Year']."' and Rejectionstatus IS NULL";
+    $result  = sqlsrv_query($this->conn,$valid_sql); 
+    $res_arr = sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC);
+    if($res_arr['from_month'] == date('m-Y',strtotime($current_byear['from_date'])) && $res_arr['to_month'] == date('m-Y',strtotime($current_byear['to_date']))) {
+        $status = 0;
+        return array('Status'=>$status);
+    } else {
+      //get TFA reqesut no employee
+      $sql     = "SELECT DISTINCT Name FROM BreedingAdmin_TFA_Details where TFA_Reqno = '".$value."'";
+      $result  = sqlsrv_query($this->conn,$sql); 
+      $employee = sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC);
+
+      $sql = "INSERT INTO BreedingAdmin_TFA_Details (TFA_Reqno,Location,Name,Breeding_year,CreatedBy,CreatedAt,Currentstatus) VALUES ('".$value."','".$data['location']."','".$employee['Name']."','".$current_byear['Business_Year']."','".$Emp_Id."','".$CreatedAt."','".$CurrentStatus."')";
+      $result = sqlsrv_query($this->conn,$sql); 
+    }
+
+  }
   
-  $result = sqlsrv_query($this->conn,$sql); 
 
   if($result === false) {
       $status = 0;
@@ -2920,6 +3246,16 @@ public function Add_TFA($data)
 
 }
 
+
+public function month_format_change($month)
+{
+    $formattedDate = '';
+    if($month != '') {
+      $date = DateTime::createFromFormat('m-Y', $month);
+      $formattedDate = $date->format('F Y');
+    }
+    return $formattedDate; 
+}
 
 public function Get_TFA_Details($User_Input=array())
 {
@@ -2935,11 +3271,12 @@ public function Get_TFA_Details($User_Input=array())
   $recordsTotal=0;
   $resultarr=array();
   $i=1;
-  $Sql="SELECT Location,Name,No_of_persons,count(*) over() as TOTALROW,Id from BreedingAdmin_TFA where CreatedBy = '".$Emp_Id."' AND Currentstatus = '1' AND RejectionStatus = '1' ORDER BY Id OFFSET ".$Offset." ROWS FETCH NEXT ".$Length." ROWS ONLY";
+  $Sql="SELECT Location,Name,TFA_Reqno,Existing_rate,from_month,to_month,Crop,count(*) over() as TOTALROW,Id from BreedingAdmin_TFA_Details where RejectionStatus IS NULL AND Currentstatus = 1 ORDER BY Id OFFSET ".$Offset." ROWS FETCH NEXT ".$Length." ROWS ONLY";
 
-  if(isset($User_Input['function']) && $User_Input['function'] == 'get_completed_TFA') {
-      $Sql="SELECT Location,Name,No_of_persons,count(*) over() as TOTALROW,Id from BreedingAdmin_TFA where CreatedBy = '".$Emp_Id."' AND Currentstatus = '2' AND RejectionStatus = '1'  ORDER BY Id OFFSET ".$Offset." ROWS FETCH NEXT ".$Length." ROWS ONLY";
-  }
+  // if(isset($User_Input['function']) && $User_Input['function'] == 'get_completed_TFA') {
+  //     $Sql="SELECT Location,Name,No_of_persons,count(*) over() as TOTALROW,Id from BreedingAdmin_TFA where CreatedBy = '".$Emp_Id."' AND Currentstatus = '2' AND RejectionStatus = '1'  ORDER BY Id OFFSET ".$Offset." ROWS FETCH NEXT ".$Length." ROWS ONLY";
+  // }
+
   $Sql_Connection =sqlsrv_query($this->conn,$Sql);
   while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
   {
@@ -2947,26 +3284,54 @@ public function Get_TFA_Details($User_Input=array())
     $recordsTotal   = @$Sql_Result['TOTALROW'];
     $result[]       = $sno++;
     $result[]       = $Sql_Result['Location'];
-    $result[]       = $Sql_Result['Name']; 
-    $result[]       = $Sql_Result['No_of_persons'];
+    $result[]       = utf8_encode($Sql_Result['Name']);
+
+
+    $crop_select    = "<input type='hidden' value='".$Sql_Result['Id']."' id='tfa_id' name='TFA_ID[]'><input type='hidden' value='".$Sql_Result['Location']."' id='location'><input type='hidden' value='".$Sql_Result['TFA_Reqno']."' id='TFA_Reqno'><select class='select2 form-select inputs crop' name='crop'><option value=''>Choose Crop</option>";
+
+    //All crops get from TFA DETAILS
+    $crop_list = "SELECT DISTINCT Crop From BreedingAdmin_TFA_Details where RejectionStatus IS NULL AND Crop != ''";
+    $crop_conn =sqlsrv_query($this->conn,$crop_list);
+    while($crop_res = sqlsrv_fetch_array($crop_conn)) {
+      $selected   = '';
+      if($Sql_Result['Crop'] == $crop_res['Crop']) {
+        $selected   = 'selected';
+      }
+      $crop_select  .= "<option ".$selected." value='".$crop_res['Crop']."'>".$crop_res['Crop']."</option>"; 
+    }
+    $crop_select    .= "</select>";
+    $result[]       = $crop_select;
+
+    // Last Existing rate get for the location and employee
+    $ex_rate = "SELECT Existing_rate from BreedingAdmin_TFA_Details where Location= 'Fazilka' and Name = 'Anil kumar' and Currentstatus = 2 order by Id DESC";
+    $exist_conn =sqlsrv_query($this->conn,$ex_rate);
+    $result[]       = "<h5><span class='badge bg-success'>".sqlsrv_fetch_array($exist_conn)['Existing_rate']."</span></h5>";
+
+    $result[]       = "<input type='number' class='form-control inputs current_rate' value='".$Sql_Result['Existing_rate']."' name='current_rate[]'>";
+    $result[]       = "<input class='form-control inputs from_month' type='text' name='from_month' value='".$Sql_Result['from_month']."' placeholder='MM-YYYY' readonly />";
+    $result[]       = "<input class='form-control inputs to_month' type='text' value='".$Sql_Result['to_month']."' name='to_month'  placeholder='MM-YYYY' readonly/>";
+
+    $result[]       = "<button type='button' class='btn btn-sm btn-danger tfa_delete ms-2' data-action='delete' data-tfaid='".$Sql_Result['Id']."'><i class='fa fa-trash'></i></button><button type='button' class='btn btn-sm btn-success tfa_add_row ms-2' data-TFA_Reqno='".$Sql_Result['TFA_Reqno']."' data-location='".$Sql_Result['Location']."' data-name='".$Sql_Result['Name']."'><i class='fa fa-plus'></i></button>";
+
+
 
     //check monthwise labour rate is exist start   
-    $check_sql      = "SELECT COUNT(*) as total FROM BreedingAdmin_TFA_MonthwiseDetails WHERE TFA_id = ".$Sql_Result['Id']." AND Currentstatus = '1' AND RejectionStatus = '1'";
-    $from_action = 'pending';
-    if(isset($User_Input['function']) && $User_Input['function'] == 'get_completed_TFA') {
-      $check_sql="SELECT COUNT(*) as total FROM BreedingAdmin_TFA_MonthwiseDetails WHERE TFA_id = ".$Sql_Result['Id']." AND Currentstatus = '2' AND RejectionStatus = '1'";
-      $from_action = 'completed';
-    }
-    $result_sql     = sqlsrv_query($this->conn,$check_sql);
-    $count          = sqlsrv_fetch_array($result_sql,SQLSRV_FETCH_ASSOC);
+    // $check_sql      = "SELECT COUNT(*) as total FROM BreedingAdmin_TFA_MonthwiseDetails WHERE TFA_id = ".$Sql_Result['Id']." AND Currentstatus = '1' AND RejectionStatus = '1'";
+    // $from_action = 'pending';
+    // if(isset($User_Input['function']) && $User_Input['function'] == 'get_completed_TFA') {
+    //   $check_sql="SELECT COUNT(*) as total FROM BreedingAdmin_TFA_MonthwiseDetails WHERE TFA_id = ".$Sql_Result['Id']." AND Currentstatus = '2' AND RejectionStatus = '1'";
+    //   $from_action = 'completed';
+    // }
+    // $result_sql     = sqlsrv_query($this->conn,$check_sql);
+    // $count          = sqlsrv_fetch_array($result_sql,SQLSRV_FETCH_ASSOC);
     // echo "<pre>";print_r($count['total']);exit;
     //check monthwise labour rate is exist end    
 
-    if($count['total'] > 0) {
-      $result[]       = "<button type='button' class='btn btn-sm  btn-info labour_rate_edit' data-action='edit' data-tfaid='".$Sql_Result['Id']."' data-loc='".$Sql_Result['Location']."' data-name ='".$Sql_Result['Name']."' data-nop ='".$Sql_Result['No_of_persons']."' data-fromaction ='".$from_action."'>View</button><button type='button' class='btn btn-sm btn-danger labour_rate_delete ml-2' data-action='delete' data-tfaid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='TFA_ID[]'>"; 
-    } else {
-      $result[]       = "<button type='button' style='width: 49px;' class='btn btn-sm btn-primary labour_rate_add' data-action='add' data-tfaid='".$Sql_Result['Id']."' data-loc='".$Sql_Result['Location']."' data-name ='".$Sql_Result['Name']."' data-nop ='".$Sql_Result['No_of_persons']."' data-fromaction ='".$from_action."'>Add</button><button type='button' class='btn btn-sm btn-danger labour_rate_delete ml-2' data-action='delete' data-tfaid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='TFA_ID[]'>"; 
-    }
+    // if($count['total'] > 0) {
+    //   $result[]       = "<button type='button' class='btn btn-sm  btn-info labour_rate_edit' data-action='edit' data-tfaid='".$Sql_Result['Id']."' data-loc='".$Sql_Result['Location']."' data-name ='".$Sql_Result['Name']."' data-nop ='".$Sql_Result['No_of_persons']."' data-fromaction ='".$from_action."'>View</button><button type='button' class='btn btn-sm btn-danger labour_rate_delete ms-2' data-action='delete' data-tfaid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='TFA_ID[]'>"; 
+    // } else {
+    //   $result[]       = "<button type='button' style='width: 43px;' class='btn btn-sm btn-primary labour_rate_add' data-action='add' data-tfaid='".$Sql_Result['Id']."' data-loc='".$Sql_Result['Location']."' data-name ='".$Sql_Result['Name']."' data-nop ='".$Sql_Result['No_of_persons']."' data-fromaction ='".$from_action."'>Add</button><button type='button' class='btn btn-sm btn-danger labour_rate_delete ms-2' data-action='delete' data-tfaid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='TFA_ID[]'>"; 
+    // }
 
     // echo "<pre>";print_r($Sql_Result);exit;
     $resultarr[] = $result;
@@ -3056,21 +3421,21 @@ public function Get_TFA_labour_rate($data)
   return $final_result;
 }
 
-public function Delete_TFA_labour_rate($data)
+public function Delete_TFA($data)
 {
   $final_result  = []; 
   $Emp_Id        = isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
   $RejectBy      = $_SESSION['EmpID'];
   $RejectAt      =  date('Y-m-d H:i:s');
 
-  $sql           = "UPDATE BreedingAdmin_TFA_MonthwiseDetails SET Rejectionstatus = 2,Rejectby = '".$RejectBy."',Rejectat = '".$RejectAt."' WHERE TFA_id = ".$data['tfa_id']."";
+  $sql           = "UPDATE BreedingAdmin_TFA_Details SET Rejectionstatus = 1,Rejectby = '".$RejectBy."',Rejectat = '".$RejectAt."' WHERE Id = ".$data['tfa_id']."";
   $result        = sqlsrv_query($this->conn,$sql);
 
-  $sql1           = "UPDATE BreedingAdmin_TFA SET Rejectionstatus = 2,Rejectby = '".$RejectBy."',Rejectat = '".$RejectAt."' WHERE id = ".$data['tfa_id']."";
-  $result_sql     = sqlsrv_query($this->conn,$sql1);
+  // $sql1           = "UPDATE BreedingAdmin_TFA SET Rejectionstatus = 2,Rejectby = '".$RejectBy."',Rejectat = '".$RejectAt."' WHERE id = ".$data['tfa_id']."";
+  // $result_sql     = sqlsrv_query($this->conn,$sql1);
 
 
-  if($result === false || $result_sql === false) {
+  if($result === false) {
     $status = 0;
   } else {
     $status = 1;
@@ -3080,7 +3445,7 @@ public function Delete_TFA_labour_rate($data)
   return $final_result;
 }
 
-public function TFA_finaldata($data)
+public function TFA_finaldata_old($data)
 {
   // echo "<pre>";print_r($data);exit;
   $final_result  = []; 
@@ -3123,7 +3488,41 @@ public function TFA_finaldata($data)
 }
 
 
+public function TFA_finaldata($data)
+{
+  // echo "<pre>";print_r($data);exit;
+  $final_result  = []; 
+  $Emp_Id        = isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+  $RejectBy      = $_SESSION['EmpID'];
+  $RejectAt      =  date('Y-m-d H:i:s');
 
+
+  //Submit validation check functionality start
+  $validate_sql = "SELECT count(*) as Empty_count from BreedingAdmin_TFA_Details where CreatedBy = '".$Emp_Id."' and Currentstatus = 1
+    and (Crop IS NULL OR Existing_rate IS NULL OR from_month IS NULL OR to_month IS NULL)";
+  $validate_result   = sqlsrv_query($this->conn,$validate_sql);
+  $validated_arr     = sqlsrv_fetch_array($validate_result,SQLSRV_FETCH_ASSOC);
+  //Submit validation check functionality end
+
+
+  if($validated_arr['Empty_count'] == 0) {
+      foreach ($data['TFA_ID'] as $key => $value) {
+        $sql           = "UPDATE BreedingAdmin_TFA_Details SET CurrentStatus = 2 WHERE Id = ".$value."";
+        $result_sql    = sqlsrv_query($this->conn,$sql);
+      }
+
+      if($result_sql === false) {
+        $status = 0;
+      } else {
+        $status = 1;
+      }
+  } else {
+        $status = 0; 
+  }
+
+  $final_result['Status'] = $status;
+  return $final_result;
+}
 
   public function Finaltabledetailsland($data)
   {
@@ -3471,9 +3870,9 @@ public function Get_Travel_Details($User_Input=array())
     //check monthwise travel expense is exist end    
 
     if($count['total'] > 0) {
-      $result[]       = "<button type='button' class='btn btn-sm btn-info travel_expense_edit' data-action='edit' data-travelid='".$Sql_Result['Id']."' data-employee='".$Sql_Result['Employee_Name']."' data-expenses ='".$Sql_Result['Expenses_Name']."' data-pervisit ='".$Sql_Result['Per_visit']."' data-fromaction ='".$from_action."'>View</button><button type='button' class='btn btn-sm btn-danger travel_expense_delete ml-2' data-action='delete' data-travelid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='Travel_id[]'>"; 
+      $result[]       = "<button type='button' class='btn btn-sm btn-info travel_expense_edit' data-action='edit' data-travelid='".$Sql_Result['Id']."' data-employee='".$Sql_Result['Employee_Name']."' data-expenses ='".$Sql_Result['Expenses_Name']."' data-pervisit ='".$Sql_Result['Per_visit']."' data-fromaction ='".$from_action."'>View</button><button type='button' class='btn btn-sm btn-danger travel_expense_delete ms-2' data-action='delete' data-travelid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='Travel_id[]'>"; 
     } else {
-      $result[]       = "<button type='button' style='width: 49px;' class='btn btn-sm btn-primary travel_expense_add' data-action='add' data-travelid='".$Sql_Result['Id']."' data-employee='".$Sql_Result['Employee_Name']."' data-expenses ='".$Sql_Result['Expenses_Name']."' data-pervisit ='".$Sql_Result['Per_visit']."' data-fromaction ='".$from_action."'>ADD</button><button type='button' class='btn btn-sm btn-danger travel_expense_delete ml-2' data-action='delete' data-travelid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='Travel_id[]'>"; 
+      $result[]       = "<button type='button' style='width: 43px;' class='btn btn-sm btn-primary travel_expense_add' data-action='add' data-travelid='".$Sql_Result['Id']."' data-employee='".$Sql_Result['Employee_Name']."' data-expenses ='".$Sql_Result['Expenses_Name']."' data-pervisit ='".$Sql_Result['Per_visit']."' data-fromaction ='".$from_action."'>ADD</button><button type='button' class='btn btn-sm btn-danger travel_expense_delete ms-2' data-action='delete' data-travelid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='Travel_id[]'>"; 
     }
 
     $resultarr[] = $result;
@@ -3729,9 +4128,9 @@ public function Otherexptablerecord($User_Input=array())
     //check monthwise others expense is exist end  
 
     if($count['total'] > 0) {
-      $result[]       = "<button type='button' style='width: 49px;' class='btn btn-sm btn-info others_edit' data-action='edit' data-othersid='".$Sql_Result['Id']."' data-Expgroupname ='".$Sql_Result['Expgroupname']."' data-Expglname='".$Sql_Result['Expglname']."' data-Location ='".$Sql_Result['Location']."' data-fromaction ='".$from_action."'>VIEW</button><button type='button' class='btn btn-sm btn-danger others_delete ml-2' data-action='delete' data-othersid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='Others_id[]'>"; 
+      $result[]       = "<button type='button' style='width: 51px;' class='btn btn-sm btn-info others_edit' data-action='edit' data-othersid='".$Sql_Result['Id']."' data-Expgroupname ='".$Sql_Result['Expgroupname']."' data-Expglname='".$Sql_Result['Expglname']."' data-Location ='".$Sql_Result['Location']."' data-fromaction ='".$from_action."'>VIEW</button><button type='button' class='btn btn-sm btn-danger others_delete ms-2' data-action='delete' data-othersid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='Others_id[]'>"; 
     } else {
-      $result[]       = "<button type='button' style='width: 49px;' class='btn btn-sm btn-primary others_add' data-action='add' data-othersid='".$Sql_Result['Id']."' data-Expgroupname ='".$Sql_Result['Expgroupname']."' data-Expglname='".$Sql_Result['Expglname']."' data-Location ='".$Sql_Result['Location']."' data-fromaction ='".$from_action."'>ADD</button><button type='button' class='btn btn-sm btn-danger others_delete ml-2' data-action='delete' data-othersid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='Others_id[]'>"; 
+      $result[]       = "<button type='button' style='width: 51px;' class='btn btn-sm btn-primary others_add' data-action='add' data-othersid='".$Sql_Result['Id']."' data-Expgroupname ='".$Sql_Result['Expgroupname']."' data-Expglname='".$Sql_Result['Expglname']."' data-Location ='".$Sql_Result['Location']."' data-fromaction ='".$from_action."'>ADD</button><button type='button' class='btn btn-sm btn-danger others_delete ms-2' data-action='delete' data-othersid='".$Sql_Result['Id']."' data-fromaction ='".$from_action."'><i class='fa fa-trash'></i></button><input type='hidden' value='".$Sql_Result['Id']."' name='Others_id[]'>"; 
     }
 
     // echo "<pre>";print_r($Sql_Result);exit;
@@ -4063,10 +4462,1525 @@ public function monthwisestoreconsumables($data)
     return $result;
   }
 
+public function getBreederDetailsManCount($User_Input=array())
+{
+
+  $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
+  $Length=@$User_Input['length'] !='' ? @$User_Input['length'] : 0;
+  $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
+  $autoid=@$User_Input['autoid']!='' ? @$User_Input['autoid'] : 0;
+
+  $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+//  $Autoincnum=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+  $Dcode=$_SESSION['Dcode'];
+  $sno=$Offset+1;
+  $recordsTotal=0;
+  $resultarr=array();
+  $resultarrAct=array();
+  $maleValuesArray=array();
+  $femaleValuesArray=array();
+
+  $maleValuesArrayAct=array();
+  $femaleValuesArrayAct=array();
+  // $count=array();
+  // $count1=array();
+  $i=0;
+
+
+  $Sql="Exec BreedingAdmin_FieldExpense_Datatable @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
+      // echo $Sql;
+      // exit;
+  $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+  while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
+  {
+    $dataarr = array();
+    $getLocation=$Sql_Result['BreedingLocation'];
+    $dataarr['BreedingLocation'] = $Sql_Result['BreedingLocation'];
+    $dataarr['Project'] = $Sql_Result['Project'];
+    $dataarr['BreedingActivity'] = $Sql_Result['BreedingActivity'];
+    $dataarr['Breedingtype'] = $Sql_Result['Breedingtype'];
+    $dataarr['passing_id'] = $Sql_Result['passing_id'];
+    $dataarr['passing_id_loc'] = $Sql_Result['passing_id_loc'];
+    $dataarr['passing_id_proj'] = $Sql_Result['passing_id_proj'];
+
+
+    //Get Male and Female Amount
+
+   // Fetch MaleAmount and FemaleAmount based on BreedingLocation
+    $qry = "SELECT Location,MaleAmount, FemaleAmount FROM BreedingAdmin_Monthwise_amount WHERE Location = '".$Sql_Result['BreedingLocation']."' AND Activity='22'";
+
+    // echo $qry;
+    // exit;
+    $res = sqlsrv_query($this->conn, $qry);
+
+
+    while ($row = sqlsrv_fetch_array($res)) {
+       //$cntarr = array();
+      $dataarr['MaleAmount'] = $row['MaleAmount'];
+      $dataarr['FemaleAmount'] = $row['FemaleAmount'];
+      $dataarr['Location'] = $row['Location'];
+       // $resultarr1[] = $cntarr;
+      $resultarr[] = $dataarr;
+
+    }
+
+  }
+
+  //Additional Activity------------------------------------------------------------------------------------------------------
+
+  $Sql1="Exec BreedingAdmin_FieldExpense_Datatable @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
+      // echo $Sql;
+      // exit;
+  $Sql_Connection1 =sqlsrv_query($this->conn,$Sql1);
+  while($Sql_Result1 = sqlsrv_fetch_array($Sql_Connection1))
+  {
+    $dataarrAct = array();
+    //$getLocation=$Sql_Result['BreedingLocation'];
+    $dataarrAct['BreedingLocation'] = $Sql_Result1['BreedingLocation'];
+    $dataarrAct['Project'] = $Sql_Result1['Project'];
+    $dataarrAct['BreedingActivity'] = $Sql_Result1['BreedingActivity'];
+    $dataarrAct['Breedingtype'] = $Sql_Result1['Breedingtype'];
+    $dataarrAct['passing_id'] = $Sql_Result1['passing_id'];
+    $dataarrAct['passing_id_loc'] = $Sql_Result1['passing_id_loc'];
+    $dataarrAct['passing_id_proj'] = $Sql_Result1['passing_id_proj'];
+
+    // Fetch MaleAmount and FemaleAmount based on Activity
+    $qryAct = "SELECT Id,Location,MaleAmount, FemaleAmount,Activity FROM BreedingAdmin_Monthwise_amount WHERE Location = '".$Sql_Result1['BreedingLocation']."' AND CurrentStatus='4'";
+
+    // echo $qry;
+    // exit;
+    $resAct = sqlsrv_query($this->conn, $qryAct);
+
+
+    while ($rowAct = sqlsrv_fetch_array($resAct)) {
+
+      if($Sql_Result1['BreedingActivity']!=$rowAct['Activity'])
+      {
+        $dataarrAct['Act_Id'] = $rowAct['Id'];
+        $dataarrAct['MaleAmount'] = $rowAct['MaleAmount'];
+        $dataarrAct['FemaleAmount'] = $rowAct['FemaleAmount'];
+        $dataarrAct['Location'] = $rowAct['Location'];
+        $dataarrAct['Activity'] = $rowAct['Activity'];
+         // $resultarr1[] = $cntarr;
+        $resultarrAct[] = $dataarrAct;
+      }
+    }
+
+  }
+
+  //Additional Activity------------------------------------------------------------------------------------------------------
+
+
+      // Serialize each sub-array to make it a string
+  $serializedArrays = array_map('serialize', $resultarr);
+
+      // Remove duplicate serialized arrays
+  $uniqueSerializedArrays = array_unique($serializedArrays);
+
+      // Unserialize each unique serialized array to get back the original format
+  $uniqueArrays = array_map('unserialize', $uniqueSerializedArrays);
+
+      // Reset array keys to start from 0
+  $uniqueArrays = array_values($uniqueArrays);
+
+//   echo "<pre>";
+//   print_r($uniqueArrays);
+// exit;
+
+//Additional Activity------------------------------------------------------------------------------------------------------
+
+    // Serialize each sub-array to make it a string
+  $serializedArraysAct = array_map('serialize', $resultarrAct);
+
+      // Remove duplicate serialized arrays
+  $uniqueSerializedArraysAct = array_unique($serializedArraysAct);
+
+      // Unserialize each unique serialized array to get back the original format
+  $uniqueArraysAct = array_map('unserialize', $uniqueSerializedArraysAct);
+
+      // Reset array keys to start from 0
+  $uniqueArraysAct = array_values($uniqueArraysAct);
+
+//     echo "<pre>";
+//   print_r($uniqueArraysAct);
+// exit;
+
+  //Additional Activity------------------------------------------------------------------------------------------------------
+
+
+  $resultarr1=array();
+
+
+ // echo $query;
+ // echo"<br>";
+ // echo $query1;
+ // echo"<br>";
 
 
 
 
+
+  foreach($uniqueArrays as $mndata)
+  {
+    $type='Sowing';
+
+    $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+    $Dcode=$_SESSION['Dcode'];
+    $recordsTotal=0;
+
+    $i=0;
+
+    $Sql="Exec Get_Breed_MFManCount_MonthWise_Datatable @EMPID='".$Emp_Id."',@BreedingLocation='".$mndata['BreedingLocation']."',@Project='".$mndata['Project']."',@BreedingActivity='".$mndata['BreedingActivity']."',@type='".$type."',@Breedingtype='".$mndata['Breedingtype']."' ";
+
+    $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+    while($rowval = sqlsrv_fetch_array($Sql_Connection))
+    {
+     $resultarr1[] = $rowval;
+    }
+  }
+
+
+    foreach ($resultarr1 as $key=>$row) {
+
+      if (!empty($uniqueArrays[$key])) {
+
+             $query = "SELECT mcid,Location,Project,Activity,Type,passing_id_loc,passing_id,passing_id_proj,Gender,Count,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Jan,Feb,Mar,Apr,May FROM Fieldexpense_Man_Count_Data_Save WHERE Location='".$uniqueArrays[$key]['BreedingLocation']."' AND Project='".$uniqueArrays[$key]['Project']."' AND Activity='".$uniqueArrays[$key]['BreedingActivity']."' AND Type='".$uniqueArrays[$key]['Breedingtype']."' AND Gender='Male'";
+
+             // echo "<br>";
+             // echo $query;
+             // exit;
+
+           $params = array();
+           $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+           $qryRes =sqlsrv_query($this->conn,$query,$params,$options);
+
+           if ($qryRes === false) {
+                  die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+                }
+                $count = sqlsrv_num_rows($qryRes);
+
+
+
+        $query1 = "SELECT mcid,Location,Project,Activity,Type,passing_id_loc,passing_id,passing_id_proj,Gender,Count,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Jan,Feb,Mar,Apr,May FROM Fieldexpense_Man_Count_Data_Save WHERE Location='".$uniqueArrays[$key]['BreedingLocation']."' AND Project='".$uniqueArrays[$key]['Project']."' AND Activity='".$uniqueArrays[$key]['BreedingActivity']."' AND Type='".$uniqueArrays[$key]['Breedingtype']."' AND Gender='Female'";
+
+        $params1 = array();
+        $options1 =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+        $qryRes1 =sqlsrv_query($this->conn,$query1,$params1,$options1);
+
+        if ($qryRes1 === false) {
+          die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+        }
+        $count1 = sqlsrv_num_rows($qryRes1);
+
+
+
+        if($count>0)
+          {
+            while($qryRow = sqlsrv_fetch_array($qryRes))
+            {
+              $maleValuesArray[] = [
+                'gender' => 'Male',
+                'malecount' => $qryRow['Count'],
+                'Jun_Male_value' => $qryRow['Jun'],
+                'Jul_Male_value' => $qryRow['Jul'],
+                'Aug_Male_value' => $qryRow['Aug'],
+                'Sep_Male_value' => $qryRow['Sep'],
+                'Oct_Male_value' => $qryRow['Oct'],
+                'Nov_Male_value' => $qryRow['Nov'],
+                'Dec_Male_value' => $qryRow['Dec'],
+                'Jan_Male_value' => $qryRow['Jan'],
+                'Feb_Male_value' => $qryRow['Feb'],
+                'Mar_Male_value' => $qryRow['Mar'],
+                'Apr_Male_value' => $qryRow['Apr'],
+                'May_Male_value' => $qryRow['May'],
+
+              ];
+            }
+
+          }
+          else
+          {
+              // Collect male values
+            $maleValuesArray[] = [
+              'gender' => 'Male',
+              'malecount' => $row['malecount'],
+              'Jun_Male_value' => $row['Jun_Male_value'],
+              'Jul_Male_value' => $row['Jul_Male_value'],
+              'Aug_Male_value' => $row['Aug_Male_value'],
+              'Sep_Male_value' => $row['Sep_Male_value'],
+              'Oct_Male_value' => $row['Oct_Male_value'],
+              'Nov_Male_value' => $row['Nov_Male_value'],
+              'Dec_Male_value' => $row['Dec_Male_value'],
+              'Jan_Male_value' => $row['Jan_Male_value'],
+              'Feb_Male_value' => $row['Feb_Male_value'],
+              'Mar_Male_value' => $row['Mar_Male_value'],
+              'Apr_Male_value' => $row['Apr_Male_value'],
+              'May_Male_value' => $row['May_Male_value'],
+
+            ];
+
+          }
+
+          if($count1>0)
+          {
+            while($qryRow1 = sqlsrv_fetch_array($qryRes1))
+            {
+                // Collect female values
+              $femaleValuesArray[] = [
+                'gender' => 'Female',
+                'femalecount' => $qryRow1['Count'],
+                'Jun_femalevalue' => $qryRow1['Jun'],
+                'Jul_femalevalue' => $qryRow1['Jul'],
+                'Aug_femalevalue' => $qryRow1['Aug'],
+                'Sep_femalevalue' => $qryRow1['Sep'],
+                'Oct_femalevalue' => $qryRow1['Oct'],
+                'Nov_femalevalue' => $qryRow1['Nov'],
+                'Dec_femalevalue' => $qryRow1['Dec'],
+                'Jan_femalevalue' => $qryRow1['Jan'],
+                'Feb_femalevalue' => $qryRow1['Feb'],
+                'Mar_femalevalue' => $qryRow1['Mar'],
+                'Apr_femalevalue' => $qryRow1['Apr'],
+                'May_femalevalue' => $qryRow1['May'],
+              ];
+            }
+
+          }
+          else
+          {    
+                          // Collect female values
+            $femaleValuesArray[] = [
+              'gender' => 'Female',
+              'femalecount' => $row['femalecount'],
+              'Jun_femalevalue' => $row['Jun_femalevalue'],
+              'Jul_femalevalue' => $row['Jul_femalevalue'],
+              'Aug_femalevalue' => $row['Aug_femalevalue'],
+              'Sep_femalevalue' => $row['Sep_femalevalue'],
+              'Oct_femalevalue' => $row['Oct_femalevalue'],
+              'Nov_femalevalue' => $row['Nov_femalevalue'],
+              'Dec_femalevalue' => $row['Dec_femalevalue'],
+              'Jan_femalevalue' => $row['Jan_femalevalue'],
+              'Feb_femalevalue' => $row['Feb_femalevalue'],
+              'Mar_femalevalue' => $row['Mar_femalevalue'],
+              'Apr_femalevalue' => $row['Apr_femalevalue'],
+              'May_femalevalue' => $row['May_femalevalue'],
+            ];
+          }
+
+
+      }
+
+if (!empty($uniqueArraysAct[$key])) {
+
+        $query2 = "SELECT mcid,Location,Project,Activity,Type,passing_id_loc,passing_id,passing_id_proj,Gender,Count,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Jan,Feb,Mar,Apr,May FROM Fieldexpense_Man_Count_Data_Save WHERE Location='".$uniqueArraysAct[$key]['BreedingLocation']."' AND Project='".$uniqueArraysAct[$key]['Project']."' AND Activity='".$uniqueArraysAct[$key]['Activity']."' AND Type='".$uniqueArraysAct[$key]['Breedingtype']."' AND Gender='Male'";
+
+             // echo "<br>";
+             // echo $query;
+             // exit;
+
+   $params2 = array();
+   $options2 =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+   $qryRes2 =sqlsrv_query($this->conn,$query2,$params2,$options2);
+
+   if ($qryRes2 === false) {
+          die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+        }
+        $count2 = sqlsrv_num_rows($qryRes2);
+
+
+
+        $query3 = "SELECT mcid,Location,Project,Activity,Type,passing_id_loc,passing_id,passing_id_proj,Gender,Count,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Jan,Feb,Mar,Apr,May FROM Fieldexpense_Man_Count_Data_Save WHERE Location='".$uniqueArraysAct[$key]['BreedingLocation']."' AND Project='".$uniqueArraysAct[$key]['Project']."' AND Activity='".$uniqueArraysAct[$key]['Activity']."' AND Type='".$uniqueArraysAct[$key]['Breedingtype']."' AND Gender='Female'";
+
+        $params3 = array();
+        $options3 =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+        $qryRes3 =sqlsrv_query($this->conn,$query3,$params3,$options3);
+
+        if ($qryRes3 === false) {
+          die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+        }
+        $count3 = sqlsrv_num_rows($qryRes3);
+
+
+         if($count2>0)
+          {
+            while($qryRow2 = sqlsrv_fetch_array($qryRes2))
+            {
+              $maleValuesArrayAct[] = [
+                'gender' => 'Male',
+                'malecount' => $qryRow2['Count'],
+                'Jun_Male_value' => $qryRow2['Jun'],
+                'Jul_Male_value' => $qryRow2['Jul'],
+                'Aug_Male_value' => $qryRow2['Aug'],
+                'Sep_Male_value' => $qryRow2['Sep'],
+                'Oct_Male_value' => $qryRow2['Oct'],
+                'Nov_Male_value' => $qryRow2['Nov'],
+                'Dec_Male_value' => $qryRow2['Dec'],
+                'Jan_Male_value' => $qryRow2['Jan'],
+                'Feb_Male_value' => $qryRow2['Feb'],
+                'Mar_Male_value' => $qryRow2['Mar'],
+                'Apr_Male_value' => $qryRow2['Apr'],
+                'May_Male_value' => $qryRow2['May'],
+
+              ];
+            }
+
+          }
+          else
+          {
+              // Collect male values
+            $maleValuesArrayAct[] = [
+              'gender' => 'Male',
+              'malecount' => $row['malecount'],
+              'Jun_Male_value' => $row['Jun_Male_value'],
+              'Jul_Male_value' => $row['Jul_Male_value'],
+              'Aug_Male_value' => $row['Aug_Male_value'],
+              'Sep_Male_value' => $row['Sep_Male_value'],
+              'Oct_Male_value' => $row['Oct_Male_value'],
+              'Nov_Male_value' => $row['Nov_Male_value'],
+              'Dec_Male_value' => $row['Dec_Male_value'],
+              'Jan_Male_value' => $row['Jan_Male_value'],
+              'Feb_Male_value' => $row['Feb_Male_value'],
+              'Mar_Male_value' => $row['Mar_Male_value'],
+              'Apr_Male_value' => $row['Apr_Male_value'],
+              'May_Male_value' => $row['May_Male_value'],
+
+            ];
+
+          }
+
+
+          if($count3>0)
+          {
+            while($qryRow3 = sqlsrv_fetch_array($qryRes3))
+            {
+                // Collect female values
+              $femaleValuesArrayAct[] = [
+                'gender' => 'Female',
+                'femalecount' => $qryRow3['Count'],
+                'Jun_femalevalue' => $qryRow3['Jun'],
+                'Jul_femalevalue' => $qryRow3['Jul'],
+                'Aug_femalevalue' => $qryRow3['Aug'],
+                'Sep_femalevalue' => $qryRow3['Sep'],
+                'Oct_femalevalue' => $qryRow3['Oct'],
+                'Nov_femalevalue' => $qryRow3['Nov'],
+                'Dec_femalevalue' => $qryRow3['Dec'],
+                'Jan_femalevalue' => $qryRow3['Jan'],
+                'Feb_femalevalue' => $qryRow3['Feb'],
+                'Mar_femalevalue' => $qryRow3['Mar'],
+                'Apr_femalevalue' => $qryRow3['Apr'],
+                'May_femalevalue' => $qryRow3['May'],
+              ];
+            }
+
+          }
+          else
+          {    
+            // Collect female values
+            $femaleValuesArrayAct[] = [
+              'gender' => 'Female',
+              'femalecount' => $row['femalecount'],
+              'Jun_femalevalue' => $row['Jun_femalevalue'],
+              'Jul_femalevalue' => $row['Jul_femalevalue'],
+              'Aug_femalevalue' => $row['Aug_femalevalue'],
+              'Sep_femalevalue' => $row['Sep_femalevalue'],
+              'Oct_femalevalue' => $row['Oct_femalevalue'],
+              'Nov_femalevalue' => $row['Nov_femalevalue'],
+              'Dec_femalevalue' => $row['Dec_femalevalue'],
+              'Jan_femalevalue' => $row['Jan_femalevalue'],
+              'Feb_femalevalue' => $row['Feb_femalevalue'],
+              'Mar_femalevalue' => $row['Mar_femalevalue'],
+              'Apr_femalevalue' => $row['Apr_femalevalue'],
+              'May_femalevalue' => $row['May_femalevalue'],
+            ];
+          }
+
+
+}         
+
+        }
+
+
+
+      
+
+
+       // echo "<pre>";
+       // print_r($femaleValuesArray);
+       // exit;
+
+      $res2['data'] = @$uniqueArrays;
+
+      $res2['dataAct'] = @$uniqueArraysAct;
+
+      $res2['male'] = @$maleValuesArray;
+      $res2['female'] = @$femaleValuesArray;
+
+      $res2['maleAct'] = @$maleValuesArrayAct;
+      $res2['femaleAct'] = @$femaleValuesArrayAct;
+
+
+     // echo "<pre>";
+     // print_r($res2);
+     // exit;
+
+
+
+
+
+
+  //$res1['cnt'] = @$resultarr1;
+
+      $result = $res2;
+  //$result = $res1;
+    // echo "<pre>";
+    // print_r($result);
+    // exit;
+      return $result;
+    }
+
+
+public function getBreederDetails($User_Input=array())
+{
+
+
+  $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
+  $Length=@$User_Input['length'] !='' ? @$User_Input['length'] : 0;
+  $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
+  $autoid=@$User_Input['autoid']!='' ? @$User_Input['autoid'] : 0;
+
+  $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+//  $Autoincnum=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+  $Dcode=$_SESSION['Dcode'];
+  $sno=$Offset+1;
+  $recordsTotal=0;
+  $resultarr=array();
+  //$resultarr1=array();
+  $i=0;
+
+
+  $Sql="Exec BreedingAdmin_FieldExpense_Datatable @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
+     // echo $Sql;
+     // exit;
+  $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+  while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
+  {
+    $dataarr = array();
+    $getLocation=$Sql_Result['BreedingLocation'];
+    $dataarr['BreedingLocation'] = $Sql_Result['BreedingLocation'];
+    $dataarr['Project'] = $Sql_Result['Project'];
+    $dataarr['BreedingActivity'] = $Sql_Result['BreedingActivity'];
+    $dataarr['Breedingtype'] = $Sql_Result['Breedingtype'];
+    $dataarr['passing_id'] = $Sql_Result['passing_id'];
+    $dataarr['passing_id_loc'] = $Sql_Result['passing_id_loc'];
+    $dataarr['passing_id_proj'] = $Sql_Result['passing_id_proj'];
+
+
+    //Get Male and Female Amount
+
+   // Fetch MaleAmount and FemaleAmount based on BreedingLocation
+    $qry = "SELECT Location,MaleAmount, FemaleAmount FROM BreedingAdmin_Monthwise_amount WHERE Location = '".$Sql_Result['BreedingLocation']."'";
+    $res = sqlsrv_query($this->conn, $qry);
+
+
+    while ($row = sqlsrv_fetch_array($res)) {
+       //$cntarr = array();
+      $dataarr['MaleAmount'] = $row['MaleAmount'];
+      $dataarr['FemaleAmount'] = $row['FemaleAmount'];
+      $dataarr['Location'] = $row['Location'];
+       // $resultarr1[] = $cntarr;
+      $resultarr[] = $dataarr;
+    }
+
+    
+  }
+
+
+      // Serialize each sub-array to make it a string
+  $serializedArrays = array_map('serialize', $resultarr);
+
+      // Remove duplicate serialized arrays
+  $uniqueSerializedArrays = array_unique($serializedArrays);
+
+      // Unserialize each unique serialized array to get back the original format
+  $uniqueArrays = array_map('unserialize', $uniqueSerializedArrays);
+
+      // Reset array keys to start from 0
+  $uniqueArrays = array_values($uniqueArrays);
+
+     // echo "<pre>";
+     // print_r($uniqueArrays);
+     // exit;
+
+  $res1['data'] = @$uniqueArrays;
+
+
+
+
+
+  
+  //$res1['cnt'] = @$resultarr1;
+
+  $result = $res1;
+  //$result = $res1;
+    // echo "<pre>";
+    // print_r($result);
+    // exit;
+  return $result;
+}
+
+
+ public function InsertManCountTableData($User_Input=array())
+    {
+
+     // echo "<pre>";print_r($User_Input);
+     // exit; 
+
+
+     $CreatedBy=@$_SESSION['EmpID'];
+
+  //  echo "<pre>";print_r($User_Input['Male']);
+  // exit;
+
+     $Location = $User_Input['Location'];
+     $Project = $User_Input['Project'];
+     $Activity=$User_Input['Activity'];
+     $Type = $User_Input['Type'];
+     $passing_id = $User_Input['passing_id'];
+     $passing_id_loc=$User_Input['passing_id_loc'];
+     $passing_id_proj = $User_Input['passing_id_proj'];
+
+     $Activity_Id = @$User_Input['Activity_Id']!='' ?@$User_Input['Activity_Id'] : 0;
+
+     $Gender = $User_Input['Gender'];
+     $Count=$User_Input['Count'];
+     $Jun = @$User_Input['Jun']!='' ?@$User_Input['Jun'] : 0.00;
+     $Jul = @$User_Input['Jul']!='' ?@$User_Input['Jul'] : 0.00;
+     $Aug = @$User_Input['Aug']!='' ?@$User_Input['Aug'] : 0.00;
+     $Sep = @$User_Input['Sep']!='' ?@$User_Input['Sep'] : 0.00;
+     $Oct = @$User_Input['Oct']!='' ?@$User_Input['Oct'] : 0.00;
+     $Nov = @$User_Input['Nov']!='' ?@$User_Input['Nov'] : 0.00;
+     $Dec = @$User_Input['Dec']!='' ?@$User_Input['Dec'] : 0.00;
+     $Jan = @$User_Input['Jan']!='' ?@$User_Input['Jan'] : 0.00;
+     $Feb = @$User_Input['Feb']!='' ?@$User_Input['Feb'] : 0.00;
+     $Mar = @$User_Input['Mar']!='' ?@$User_Input['Mar'] : 0.00;
+     $Apr = @$User_Input['Apr']!='' ?@$User_Input['Apr'] : 0.00;
+     $May = @$User_Input['May']!='' ?@$User_Input['May'] : 0.00;
+
+     if($Location && $Gender && ($Activity_Id!='' || $Activity_Id!=0))
+     {
+
+      $SqlAct = "SELECT Location,mcid,Activity_Id FROM Fieldexpense_Man_Count_Data_Save WHERE Location='".$Location."' AND Project='".$Project."' AND Activity='".$Activity."' AND Type='".$Type."' AND passing_id_loc='".$passing_id_loc."' AND passing_id='".$passing_id."' AND passing_id_proj='".$passing_id_proj."' AND Gender='".$Gender."' AND Activity_Id='".$Activity_Id."'";
+
+      $paramsAct = array();
+      $optionsAct =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+      $Sql_ConnectionAct =sqlsrv_query($this->conn,$SqlAct,$paramsAct,$optionsAct);
+
+      if ($Sql_ConnectionAct === false) {
+    die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+  }
+  $countAct = sqlsrv_num_rows($Sql_ConnectionAct);
+
+  if($countAct==0)
+  {
+    $SQLAct = "INSERT INTO  Fieldexpense_Man_Count_Data_Save(Location,Project,Activity,Type,passing_id_loc,passing_id,passing_id_proj,Gender,Count,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Jan,Feb,Mar,Apr,May,Activity_Id) VALUES('".$Location."','".$Project."','".$Activity."','".$Type."','".$passing_id_loc."','".$passing_id."','".$passing_id_proj."','".$Gender."','".$Count."','".$Jun."','".$Jul."','".$Aug."','".$Sep."','".$Oct."','".$Nov."','".$Dec."','".$Jan."','".$Feb."','".$Mar."','".$Apr."','".$May."','".$Activity_Id."')";
+
+           //echo $SQL;
+           //exit;
+     $ResultAct = sqlsrv_query($this->conn, $SQLAct);
+     if ($ResultAct === false) {
+      die(print_r(sqlsrv_errors(), true));
+    }
+    $status ='Man Count Added Successfully';
+
+  }
+  else
+  {
+    $status ='Man Count Already Added';
+  }
+
+}
+else if($Location && $Gender)
+     {
+
+      $Sql = "SELECT Location,mcid FROM Fieldexpense_Man_Count_Data_Save WHERE Location='".$Location."' AND Project='".$Project."' AND Activity='".$Activity."' AND Type='".$Type."' AND passing_id_loc='".$passing_id_loc."' AND passing_id='".$passing_id."' AND passing_id_proj='".$passing_id_proj."' AND Gender='".$Gender."'";
+
+      $params = array();
+      $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+      $Sql_Connection =sqlsrv_query($this->conn,$Sql,$params,$options);
+
+      if ($Sql_Connection === false) {
+    die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+  }
+  $count = sqlsrv_num_rows($Sql_Connection);
+
+  if($count==0)
+  {
+    $SQL = "INSERT INTO  Fieldexpense_Man_Count_Data_Save(Location,Project,Activity,Type,passing_id_loc,passing_id,passing_id_proj,Gender,Count,Jun,Jul,Aug,Sep,Oct,Nov,Dec,Jan,Feb,Mar,Apr,May) VALUES('".$Location."','".$Project."','".$Activity."','".$Type."','".$passing_id_loc."','".$passing_id."','".$passing_id_proj."','".$Gender."','".$Count."','".$Jun."','".$Jul."','".$Aug."','".$Sep."','".$Oct."','".$Nov."','".$Dec."','".$Jan."','".$Feb."','".$Mar."','".$Apr."','".$May."')";
+
+           //echo $SQL;
+           //exit;
+     $Result = sqlsrv_query($this->conn, $SQL);
+     if ($Result === false) {
+      die(print_r(sqlsrv_errors(), true));
+    }
+    $status ='Man Count Added Successfully';
+
+  }
+  else
+  {
+    $status ='Man Count Already Added';
+  }
+
+}
+else
+{
+  $status='Please Check Post Data';
+}
+
+
+
+return array('Status'=>$status);
+}
+
+
+public function UpdateManCountTableData($User_Input=array())
+{
+
+   // echo "<pre>";print_r($User_Input);
+   // exit;
+
+ $Location = $User_Input['Location'];
+ $Project = $User_Input['Project'];
+ $Activity=$User_Input['Activity'];
+ $Type = $User_Input['Type'];
+ $passing_id = $User_Input['passing_id'];
+ $passing_id_loc=$User_Input['passing_id_loc'];
+ $passing_id_proj = $User_Input['passing_id_proj'];
+ $Activity_Id = @$User_Input['Activity_Id']!='' ?@$User_Input['Activity_Id'] : 0;
+ $Gender = $User_Input['Gender'];
+ $Count=$User_Input['Count'];
+
+ $Jun = @$User_Input['Jun']!='' ?@$User_Input['Jun'] : 0.00;
+     $Jul = @$User_Input['Jul']!='' ?@$User_Input['Jul'] : 0.00;
+     $Aug = @$User_Input['Aug']!='' ?@$User_Input['Aug'] : 0.00;
+     $Sep = @$User_Input['Sep']!='' ?@$User_Input['Sep'] : 0.00;
+     $Oct = @$User_Input['Oct']!='' ?@$User_Input['Oct'] : 0.00;
+     $Nov = @$User_Input['Nov']!='' ?@$User_Input['Nov'] : 0.00;
+     $Dec = @$User_Input['Dec']!='' ?@$User_Input['Dec'] : 0.00;
+     $Jan = @$User_Input['Jan']!='' ?@$User_Input['Jan'] : 0.00;
+     $Feb = @$User_Input['Feb']!='' ?@$User_Input['Feb'] : 0.00;
+     $Mar = @$User_Input['Mar']!='' ?@$User_Input['Mar'] : 0.00;
+     $Apr = @$User_Input['Apr']!='' ?@$User_Input['Apr'] : 0.00;
+     $May = @$User_Input['May']!='' ?@$User_Input['May'] : 0.00;
+
+
+ // $Jun = $User_Input['Jun'];
+ // $Jul = $User_Input['Jul'];
+ // $Aug = $User_Input['Aug'];
+ // $Sep = $User_Input['Sep'];
+ // $Oct = $User_Input['Oct'];
+ // $Nov = $User_Input['Nov'];
+ // $Dec = $User_Input['Dec'];
+ // $Jan = $User_Input['Jan'];
+ // $Feb = $User_Input['Feb'];
+ // $Mar = $User_Input['Mar'];
+ // $Apr = $User_Input['Apr'];
+ // $May = $User_Input['May']; 
+
+
+ $CreatedBy=@$_SESSION['EmpID'];
+
+
+ if($Location && $Gender && ($Activity_Id!='' || $Activity_Id!=0))
+ {
+
+  $Sql = "SELECT Location,mcid,Activity_Id FROM Fieldexpense_Man_Count_Data_Save WHERE Location='".$Location."' AND Project='".$Project."' AND Activity='".$Activity."' AND Type='".$Type."' AND passing_id_loc='".$passing_id_loc."' AND passing_id='".$passing_id."' AND passing_id_proj='".$passing_id_proj."' AND Gender='".$Gender."' AND Activity_Id='".$Activity_Id."'";
+
+  $params = array();
+  $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+  $Sql_Connection =sqlsrv_query($this->conn,$Sql,$params,$options);
+
+  if ($Sql_Connection === false) {
+    die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+  }
+  $count = sqlsrv_num_rows($Sql_Connection);
+
+     // echo $count;
+     // exit;
+
+  $MCId='';
+  $ActId='';
+
+
+
+  if($count>0)
+  {
+    while($row=sqlsrv_fetch_array($Sql_Connection))
+    { 
+      $MCId=$row['mcid'];
+      $ActId=$row['Activity_Id'];
+    }
+
+    $query ="UPDATE Fieldexpense_Man_Count_Data_Save SET Jun='".$Jun."',Jul='".$Jul."',Aug='".$Aug."',Sep='".$Sep."',Oct='".$Oct."',Nov='".$Nov."',Dec='".$Dec."',Jan='".$Jan."',Feb='".$Feb."',Mar='".$Mar."',Apr='".$Apr."',May='".$May."' WHERE mcid='".$MCId."' AND Activity_Id='".$ActId."'";
+    $rest =sqlsrv_query($this->conn,$query);
+
+    // echo  $query;
+    // exit;
+
+    $status ='Man Count Act MonthWise Updated Successfully';
+  }
+  else
+  {
+    $status ='Update Failed';
+  }
+
+
+}
+ else if($Location && $Gender)
+ {
+
+  $Sql1 = "SELECT Location,mcid FROM Fieldexpense_Man_Count_Data_Save WHERE Location='".$Location."' AND Project='".$Project."' AND Activity='".$Activity."' AND Type='".$Type."' AND passing_id_loc='".$passing_id_loc."' AND passing_id='".$passing_id."' AND passing_id_proj='".$passing_id_proj."' AND Gender='".$Gender."'";
+
+  $params1 = array();
+  $options1 =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+  $Sql_Connection1 =sqlsrv_query($this->conn,$Sql1,$params1,$options1);
+
+  if ($Sql_Connection1 === false) {
+    die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+  }
+  $count1 = sqlsrv_num_rows($Sql_Connection1);
+
+     // echo $count;
+     // exit;
+
+  $MCId1='';
+
+
+
+  if($count1>0)
+  {
+    while($row1=sqlsrv_fetch_array($Sql_Connection1))
+    { 
+      $MCId1=$row1['mcid'];
+    }
+
+    $query1 ="UPDATE Fieldexpense_Man_Count_Data_Save SET Jun='".$Jun."',Jul='".$Jul."',Aug='".$Aug."',Sep='".$Sep."',Oct='".$Oct."',Nov='".$Nov."',Dec='".$Dec."',Jan='".$Jan."',Feb='".$Feb."',Mar='".$Mar."',Apr='".$Apr."',May='".$May."' WHERE mcid='".$MCId1."'";
+    $rest1 =sqlsrv_query($this->conn,$query1);
+
+    // echo  $query;
+    // exit;
+
+    $status ='Man Count MonthWise Updated Successfully';
+  }
+  else
+  {
+    $status ='Update Failed';
+  }
+
+
+}
+else
+{
+  $status='Please Check Post Data';
+}
+
+
+
+return array('Status'=>$status);
+}
+
+
+
+
+
+public function AssumptionEnrty_malefemaleamount_activity($User_Input=array())
+  {
+    // echo "<pre>";
+    // print_r($User_Input);
+    // exit;
+
+   $location = @$User_Input['location'] !='' ? @$User_Input['location'] : 0;
+   $activity = @$User_Input['activity'] !='' ? @$User_Input['activity'] : 0;
+    $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
+    $Length=@$User_Input['length'];
+    $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
+    $autoid=@$User_Input['autoid']!='' ? @$User_Input['autoid'] : 0;
+
+    $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+//  $Autoincnum=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+    $Dcode=$_SESSION['Dcode'];
+    $sno=$Offset+1;
+    $recordsTotal=0;
+    $resultarr=array();
+    $i=0;
+
+    $CreatedBy=@$_SESSION['EmpID'];
+    $CreatedAt=date('Y-m-d H:i:s');
+    $Created_date=date('Y-m-d');
+
+    if($location!='' && $activity!='')
+    {
+      // foreach($location as $val)
+      // {
+      //   foreach($activity as $act)
+        $Sql12 = "SELECT Location,Id FROM BreedingAdmin_Monthwise_amount WHERE Location='".$location."' AND (Activity != '22' AND Activity='".$activity."') AND CreatedBy='".$_SESSION['EmpID']."'";
+
+        $params = array();
+        $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+        $exec =sqlsrv_query($this->conn,$Sql12,$params,$options);
+
+        if ($exec === false) {
+          die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+        }
+        $cnt = sqlsrv_num_rows($exec);
+
+           // echo $count;
+           // exit;
+
+        if($cnt==0)
+        {
+           $SQL1="INSERT INTO  BreedingAdmin_Monthwise_amount(Docid,Ordernum,Location,Frommonth,Tomonth,MaleAmount,FemaleAmount,CreatedBy,CreatedAt,CurrentStatus,Activity) VALUES('0','0','".$location."','0','0','0','0','".$CreatedBy."','".$CreatedAt."',3,'".$activity."')";
+
+          //$SQL1="INSERT INTO  BreedingAdmin_Monthwise_amount(Location,CreatedBy,CreatedAt) VALUES('".$val."','".$CreatedBy."','".$CreatedAt."')";
+
+             // echo $SQL1;
+             // exit;
+
+
+           $Result1=sqlsrv_query($this->conn,$SQL1);
+        }
+      }
+    //}
+
+    // $Sql="Exec BreedingAdmin_Assumption_Datatable_MaleFemale @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length." ";
+    $Sql = "SELECT *,COUNT(*) OVER() as TOTALROW FROM BreedingAdmin_Monthwise_amount WHERE CreatedBy = '".$_SESSION['EmpID']."' AND Currentstatus = '3' ORDER BY Id OFFSET ".$Offset." ROWS FETCH NEXT ".$Length." ROWS ONLY"; 
+    $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+    while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
+    {
+      $recordsTotal = @$Sql_Result['TOTALROW'];
+      $resarr = array();
+     // $resarr[] = $sno++;
+      $resarr[] = "<input type='hidden' class='monthwise_amt_id_act' name='monthwise_amt_id_act[]' value='".$Sql_Result['Id']."'>".utf8_encode(@$Sql_Result['Location'])."<input type='hidden' id='example-input-small-act'  class='form-control form-control-sm assumlocationdataAct' placeholder='count' name='Assumlocation_month_act[]' style='width: 10px;' value='".utf8_encode(@$Sql_Result['Location'])."'>";
+
+      $resarr[] = utf8_encode(@$Sql_Result['Activity'])."<input type='hidden' id='example-input-small-act'  class='form-control form-control-sm assumlocationdataAct' placeholder='count' name='Assumlocation_month_act[]' style='width: 10px;' value='".utf8_encode(@$Sql_Result['Activity'])."'>";
+
+
+      $resarr[]="<input type='month'   class='form-control form-control-sm fontdesign month_act' data-monthtype_act='from' value='".$Sql_Result['Frommonth']."' name='Frommonthact[]' style='width: 60px;'>"; 
+
+      $resarr[]="<input type='month'   class='form-control form-control-sm fontdesign month_act' data-monthtype_act='to' value='".$Sql_Result['Tomonth']."' name='tomonthact[]' style='width: 60px;'>"; 
+
+
+      $resarr[]="<input type='number'   class='form-control form-control-sm amount_act' data-gender_act='male' name='maleamountact[]' value='".$Sql_Result['MaleAmount']."' style='width: 60px;'>"; 
+
+
+      $resarr[]="<input type='number'   class='form-control form-control-sm amount_act' data-gender_act='female' name='femaleamountact[]' value='".$Sql_Result['FemaleAmount']."' style='width: 60px;'>";
+
+      $resarr[]="<button class='btn btn-primary btn-sm delete_activity_amount' data-activityid='".$Sql_Result['Id']."' data-activityloc='".$Sql_Result['Location']."' data-activity='".$Sql_Result['Activity']."'>Delete</button>";
+
+
+      $resultarr[] = $resarr;
+      $i++;
+    }
+    $res=array();
+    if(isset($User_Input['draw']))
+    {
+      $res['draw'] = @$User_Input['draw'];  
+    }else
+    {
+      $res['draw'] = 1; 
+    }
+    $res['recordsFiltered'] = @$recordsTotal;
+    $res['recordsTotal'] = @$recordsTotal;
+    $res['data'] = @$resultarr;
+    $res['sql'] = @$Sql;
+    $result = $res;
+    return $result;
+  }
+
+  public function update_location_responsible_person($data)
+  {
+    $SQL1 = "UPDATE BreedingAdmin_Location SET responsible_person = '".$data['res_person']."' Where Id='".$data['location_id']."'";
+
+    $Result1=sqlsrv_query($this->conn,$SQL1);
+    
+    if($Result1 == false) {
+      $status = 0;
+    } else {
+      $status = 1;
+    }
+
+    return $status;
+  }
+
+  public function Get_UOM_Details($data)
+  {
+    $final_arr = [];
+    if(isset($data['location_name']) && !isset($data['project_name'])) {
+        $SQL = "SELECT DISTINCT ConsumProject from BreedingAdmin_Consumables 
+        inner join BreedingAdmin_Consumablestype ON BreedingAdmin_Consumables.Id = BreedingAdmin_Consumablestype.Docid
+        where BreedingAdmin_Consumables.Rejectionstatus IS NULL AND BreedingAdmin_Consumables.CreatedBy = '".$_SESSION['EmpID']."' AND ConsumLocation = '".$data['location_name']."'";
+    }
+
+    if(isset($data['location_name']) && isset($data['project_name'])) {
+        $project_names = implode(',',$data['project_name']);
+        $SQL = "SELECT DISTINCT Breedingconsumables from BreedingAdmin_Consumables 
+        inner join BreedingAdmin_Consumablestype ON BreedingAdmin_Consumables.Id = BreedingAdmin_Consumablestype.Docid
+        where BreedingAdmin_Consumables.Rejectionstatus IS NULL AND BreedingAdmin_Consumables.CreatedBy = '".$_SESSION['EmpID']."' AND ConsumLocation = '".$data['location_name']."' AND ConsumProject IN ('".$project_names."')";
+    }
+
+    $Result=sqlsrv_query($this->conn,$SQL);
+
+    while($row = sqlsrv_fetch_array($Result,SQLSRV_FETCH_ASSOC)) {
+      $final_arr[] = $row; 
+    }
+    
+    return $final_arr;
+
+  }
+
+  public function update_consumables_uom($data)
+  {
+    $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+    if($data['type'] == 'single') {
+      $SQL1 = "UPDATE BreedingAdmin_Consumablestype SET UOM = '".$data['uom_value']."' Where Id='".$data['consum_type_id']."'";
+
+      $Result1=sqlsrv_query($this->conn,$SQL1);
+      
+      if($Result1 == false) {
+        $status = 0;
+      } else {
+        $status = 1;
+      }
+    } elseif ($data['type'] == 'bulk') {
+      $autoid = 0;
+      $Offset = 0;
+      $Length = 50000;
+      $location = $data['location_name'];
+      $project_names = implode(',',$data['project_name']);
+      $consumables = implode(',',$data['consumables']);
+
+      // $Sql = "SELECT BreedingAdmin_Consumablestype.Id As consumtypeid from BreedingAdmin_Consumables
+      // inner join BreedingAdmin_Consumablestype On BreedingAdmin_Consumablestype.Docid=BreedingAdmin_Consumables.id AND BreedingAdmin_Consumablestype.Rejectionstatus IS NULL Where 1=1 and BreedingAdmin_Consumables.Currentstatus=''1'' AND BreedingAdmin_Consumables.Rejectionstatus IS NULL AND BreedingAdmin_Consumables.CreatedBy  = '".$Emp_Id."'";
+
+        $Sql="Exec BreedingAdmin_Consumption_Datatable_UOM @EMPID='".$Emp_Id."',@autoid=".$autoid.",@OFFSET=".$Offset.",@Length=".$Length.",@location='".$location."',@project='".$project_names."',@consumables='".$consumables."'";
+        $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+        while($Sql_Result = sqlsrv_fetch_array($Sql_Connection)) {
+             $SQL1 = "UPDATE BreedingAdmin_Consumablestype SET UOM = '".$data['uom_value']."' Where Id='".$Sql_Result['consumtypeid']."'";
+
+             $Result1=sqlsrv_query($this->conn,$SQL1);
+
+             if($Result1 == false) {
+                $status = 0;
+             } else {
+              $status = 1;
+             }
+        }
+    }
+    return $status;
+  }
+
+
+
+
+public function getConsumablesReport($User_Input=array())
+{
+
+
+  $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
+  $Length=@$User_Input['length'] !='' ? @$User_Input['length'] : 0;
+  $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
+  $autoid=@$User_Input['autoid']!='' ? @$User_Input['autoid'] : 0;
+  $resultarr = array();
+
+            $type='Sowing';
+
+            //$Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+            $Emp_Id = 'RS7361';
+
+            $Dcode=$_SESSION['Dcode'];
+            $recordsTotal=0;
+
+            $i=0;
+
+            $Sql="Exec Get_Breed_Consumable_MonthWise_Datatable_Div @EMPID='".$Emp_Id."',@type='".$type."' ";
+
+            //echo $Sql;exit;
+         
+
+            $SqlCon =sqlsrv_query($this->conn,$Sql);
+
+          //   if ($SqlCon === false) {
+          //     die(print_r(sqlsrv_errors(), true));
+          // }
+            while($rowVal = sqlsrv_fetch_array($SqlCon))
+            {
+              $dataarr = array();
+            $dataarr['ConsumLocation'] = $rowVal['ConsumLocation'];
+            $dataarr['ConsumProject'] = $rowVal['ConsumProject'];
+            $dataarr['Breedingconsumables'] = $rowVal['Breedingconsumables'];
+            $dataarr['acre'] = $rowVal['acre'];
+             $dataarr['UOM'] = $rowVal['UOM'];
+             $dataarr['totalacreage'] = $rowVal['totalacreage'];
+             $dataarr['Jun_Consume_value'] = $rowVal['Jun_Consume_value'];
+             $dataarr['Jul_Consume_value'] = $rowVal['Jul_Consume_value'];
+             $dataarr['Aug_Consume_value'] = $rowVal['Aug_Consume_value'];
+             $dataarr['Sep_Consume_value'] = $rowVal['Sep_Consume_value'];
+             $dataarr['Oct_Consume_value'] = $rowVal['Oct_Consume_value'];
+             $dataarr['Nov_Consume_value'] = $rowVal['Nov_Consume_value'];
+             $dataarr['Dec_Consume_value'] = $rowVal['Dec_Consume_value'];
+             $dataarr['Jan_Consume_value'] = $rowVal['Jan_Consume_value'];
+             $dataarr['Feb_Consume_value'] = $rowVal['Feb_Consume_value'];
+             $dataarr['Mar_Consume_value'] = $rowVal['Mar_Consume_value'];
+             $dataarr['Apr_Consume_value'] = $rowVal['Apr_Consume_value'];
+             $dataarr['May_Consume_value'] = $rowVal['May_Consume_value'];
+
+             $resultarr[] = $dataarr;
+            }
+            $res['data'] = $resultarr;
+
+            $result = $res;
+           return $result; 
+
+            //echo "<pre>";print_r($resultarr);exit;    
+}
+
+
+public function getLocationWiseLandLeaseData($User_Input=array())
+{
+  // echo "<pre>";
+  // print_r($User_Input);
+  // exit;
+
+
+  $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
+  $Length=@$User_Input['length'] !='' ? @$User_Input['length'] : 0;
+  $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
+  $autoid=@$User_Input['autoid']!='' ? @$User_Input['autoid'] : 0;
+
+  $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+//  $Autoincnum=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+  $Dcode=$_SESSION['Dcode'];
+  $sno=$Offset+1;
+  $recordsTotal=0;
+  $resultarr=array();
+  $resultarr1=array();
+  $i=0;
+
+  $Location=@$User_Input['Location'] !='' ? @$User_Input['Location'] : 0;
+
+if($Location!='')
+{
+        $Loc = implode(",",$Location);
+
+           $getToYearP = date('Y');
+            $getFromYearP = $getToYearP-1;
+            $Breeding_YearP = $getFromYearP."-".$getToYearP;
+
+        $Sql="Select * from BreedingAdmin_Land_Lease_master where Location in ('".$Loc."') AND Breeding_Year = '".$Breeding_YearP."'";
+            // echo $Sql;
+            // exit;
+        $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+        while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
+        {
+          $dataarr = array();
+          $dataarr['Id'] = $Sql_Result['Id'];
+          $dataarr['Location'] = $Sql_Result['Location'];
+          $dataarr['Crop'] = $Sql_Result['Crop'];
+          $dataarr['Status'] = $Sql_Result['Status'];
+          $dataarr['VendorName'] = $Sql_Result['VendorName'];
+          $dataarr['VendorCode'] = $Sql_Result['VendorCode'];
+          $dataarr['NoOfAcres'] = $Sql_Result['Acre'];
+          $dataarr['PerAcre'] = $Sql_Result['PerAcre'];
+            $resultarr[] = $dataarr;
+          }
+
+           // Fetch MaleAmount and FemaleAmount based on BreedingLocation
+            $qryExec = "SELECT DISTINCT Crop FROM BreedingAdmin_Land_Lease_master";
+            $execD = sqlsrv_query($this->conn, $qryExec);
+
+
+            while ($rowExec = sqlsrv_fetch_array($execD)) {
+             
+              $resultarr1[] = $rowExec;
+            }
+
+        $res['data'] = @$resultarr;
+        $res['crop'] = @$resultarr1;
+      }
+
+        $result = $res;
+          // echo "<pre>";
+          // print_r($result);
+          // exit;
+        return $result;
+}
+
+public function Get_tfa_employees($data)
+{
+  $Byear         = $this->get_current_business_year();
+  $final_result  = []; 
+  $result_arr    = [];
+  $Emp_Id        = isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+  $sql           = "SELECT DISTINCT TFA_Reqno,Name FROM BreedingAdmin_TFA_Details WHERE Location = '".$data['location']."' AND Rejectionstatus IS NULL";
+
+  $result        = sqlsrv_query($this->conn,$sql);
+  while($row = sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC)) {
+      $arr['Name'] = utf8_encode($row['Name']);
+      $arr['TFA_Reqno'] = utf8_encode($row['TFA_Reqno']);
+      $result_arr[] = $arr;
+  }
+
+  if($result === false) {
+    $status = 0;
+  } else {
+    $status = 1;
+  }
+
+  $final_result['Status'] = $status;
+  $final_result['data'] = $result_arr;
+  return $final_result;
+}
+
+
+
+public function InsertLeaseLandVendorDetails($User_Input)
+{
+  // echo "<pre>";
+  // print_r($User_Input);
+  // exit;
+  $lease_loc = @$User_Input['lease_loc'];
+  $crop = @$User_Input['crop'];
+  $vendorStatus = @$User_Input['status'];
+  $vendor_name = @$User_Input['vendor_name'];
+  $vendor_code = @$User_Input['vendor_code'];
+  $no_of_acres = @$User_Input['no_of_acres'];
+  $per_acre = @$User_Input['per_acre'];
+  $from_date = @$User_Input['from_date'];
+  $to_date = @$User_Input['to_date'];
+
+  $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+    if($lease_loc!='')
+      {
+        foreach($lease_loc as $key=>$loc)
+        {
+          if($loc!='' && $loc!=null)
+          {
+            // echo"<br>";
+            // echo $loc;
+            // $fromDate = date("d-m-Y", strtotime($from_date[$key]));
+            // $toDate = date("d-m-Y", strtotime($to_date[$key]));
+            $exp = explode('-',$from_date[$key]);
+            $getFromYear = $exp[1];
+            $getToYear = $getFromYear+1;
+            $Breeding_Year = $getFromYear."-".$getToYear;
+            $cDate = date("Y-m-d H:i:s");
+            $query = "select * from BreedingAdmin_Land_Lease_master where Frommonth='".$from_date[$key]."' AND Tomonth='".$to_date[$key]."' AND CreatedBy='".$Emp_Id."' AND VendorName='".$vendor_name[$key]."' AND Location='".$lease_loc[$key]."'";
+
+            $params = array();
+            $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+            $exec =sqlsrv_query($this->conn,$query,$params,$options);
+
+            if ($exec === false) {
+              die(print_r(sqlsrv_errors(), true)); // Print SQL Server errors
+            }
+            $cnt = sqlsrv_num_rows($exec);
+            if($cnt==0)
+            {
+               $insQry = "insert into BreedingAdmin_Land_Lease_master(Location,Crop,VendorCode,VendorName,Acre,PerAcre,Status,Frommonth,Tomonth,Breeding_Year,CreatedBy,CreatedAt,Currentstatus) values('".$lease_loc[$key]."','".$crop[$key]."','".$vendor_code[$key]."','".$vendor_name[$key]."','".$no_of_acres[$key]."','".$per_acre[$key]."','".$vendorStatus[$key]."','".$from_date[$key]."','".$to_date[$key]."','".$Breeding_Year."','".$Emp_Id."','".$cDate."',1)";
+
+               // echo $insQry;
+               // exit;
+               
+              if($Result=sqlsrv_query($this->conn,$insQry))
+              {
+                $status=1;
+              }
+              else
+              {
+                $status=2;
+              }
+            }
+          }
+          else
+          {
+            $status=3;
+          }
+       }
+     }
+    return array('Status'=>$status);
+}
+
+public function getCompletedLocationWiseLandLeaseData()
+{
+       $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+       $resultarr =array();
+       $resultarr1 =array();
+       $getFromYear = date('Y');
+       $getToYear = $getFromYear+1;
+       $Breeding_Year = $getFromYear."-".$getToYear;
+
+        $Sql="Select * from BreedingAdmin_Land_Lease_master where Breeding_Year = '".$Breeding_Year."' AND Currentstatus=1 AND CreatedBy='".$Emp_Id."' AND COALESCE(Rejectionstatus, '') <> '1'";
+            // echo $Sql;
+            // exit;
+        $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+        while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
+        {
+          $dataarr = array();
+          $dataarr['Id'] = $Sql_Result['Id'];
+          $dataarr['Location'] = $Sql_Result['Location'];
+          $dataarr['Crop'] = $Sql_Result['Crop'];
+          $dataarr['Status'] = $Sql_Result['Status'];
+          $dataarr['VendorName'] = $Sql_Result['VendorName'];
+          $dataarr['VendorCode'] = $Sql_Result['VendorCode'];
+          $dataarr['NoOfAcres'] = $Sql_Result['Acre'];
+          $dataarr['PerAcre'] = $Sql_Result['PerAcre'];
+          $dataarr['Frommonth'] = $Sql_Result['Frommonth'];
+          $dataarr['Tomonth'] = $Sql_Result['Tomonth'];
+          $dataarr['Breeding_Year'] = $Sql_Result['Breeding_Year'];
+            $resultarr[] = $dataarr;
+          }
+
+        // Fetch MaleAmount and FemaleAmount based on BreedingLocation
+            $qryExec = "SELECT DISTINCT Crop FROM BreedingAdmin_Land_Lease_master";
+            $execD = sqlsrv_query($this->conn, $qryExec);
+
+
+            while ($rowExec = sqlsrv_fetch_array($execD)) {
+             
+              $resultarr1[] = $rowExec;
+            }
+
+        $res['data'] = @$resultarr;
+        $res['crop'] = @$resultarr1;
+
+        $result = $res;
+        return $result;
+}
+
+public function FinaltabledetailslandCompleted($User_Input)
+{
+  // echo "<pre>";
+  // print_r($User_Input);
+  // exit;
+  
+  $location = @$User_Input['location'];
+  $dataId = @$User_Input['dataId'];
+  $crop = @$User_Input['crop'];
+  $status = @$User_Input['status'];
+  $vendorName = @$User_Input['vendorName'];
+  $vendorCode = @$User_Input['vendorCode'];
+  $no_of_acres = @$User_Input['no_of_acres'];
+  $per_acre = @$User_Input['per_acre'];
+  $fromMonth = @$User_Input['fromMonth'];
+  $toMonth = @$User_Input['toMonth'];
+
+   $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+   $UpdQry ="UPDATE BreedingAdmin_Land_Lease_master SET Crop='".$crop."',Status='".$status."',Acre='".$no_of_acres."',PerAcre='".$per_acre."' WHERE Id='".$dataId."'";
+    if($UpdExec=sqlsrv_query($this->conn,$UpdQry))
+    {
+      $status=1;
+    }
+    else
+    {
+      $status=2;
+    }
+
+
+  
+    return array('Status'=>$status);
+}
+
+public function DeleteFinaltabledetailslandCompleted($User_Input)
+{
+  $dataId = @$User_Input['Id'];
+  $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+  $rDate = date("Y-m-d H:i:s");
+
+   $RejQry ="UPDATE BreedingAdmin_Land_Lease_master SET Rejectionstatus=1, RejectBy='".$Emp_Id."',Rejectat='".$rDate."' WHERE Id='".$dataId."' AND CreatedBy='".$Emp_Id."'";
+    if($RejExec=sqlsrv_query($this->conn,$RejQry))
+    {
+      $status=1;
+    }
+    else
+    {
+      $status=2;
+    }
+
+    return array('Status'=>$status);
+}
+
+public function getAddLandLeaseData($User_Input=array())
+{
+  // echo "<pre>";
+  // print_r($User_Input);
+  // exit;
+
+
+  $Offset=@$User_Input['start'] !='' ? @$User_Input['start'] : 0;
+  $Length=@$User_Input['length'] !='' ? @$User_Input['length'] : 0;
+  $Autoincnum=@$User_Input['Autoincnum']!='' ? @$User_Input['Autoincnum'] : 0;
+  $autoid=@$User_Input['autoid']!='' ? @$User_Input['autoid'] : 0;
+
+  $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+//  $Autoincnum=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+
+  $Dcode=$_SESSION['Dcode'];
+  $sno=$Offset+1;
+  $recordsTotal=0;
+  $resultarr=array();
+  $resultarr1=array();
+  $i=0;
+
+  $Location=@$User_Input['Location'] !='' ? @$User_Input['Location'] : 0;
+
+if($Location!='')
+{
+       $Loc = implode(",",$Location);
+       $getFromYear = date('Y');
+       $getToYear = $getFromYear+1;
+       $Breeding_Year = $getFromYear."-".$getToYear;
+
+        $Sql="Select * from BreedingAdmin_Land_Lease_master where Location in ('".$Loc."') AND Breeding_Year = '".$Breeding_Year."'";
+            // echo $Sql;
+            // exit;
+        $Sql_Connection =sqlsrv_query($this->conn,$Sql);
+        while($Sql_Result = sqlsrv_fetch_array($Sql_Connection))
+        {
+          $dataarr = array();
+          $dataarr['Id'] = $Sql_Result['Id'];
+          $dataarr['Location'] = $Sql_Result['Location'];
+          $dataarr['Crop'] = $Sql_Result['Crop'];
+          $dataarr['Status'] = $Sql_Result['Status'];
+          $dataarr['VendorName'] = $Sql_Result['VendorName'];
+          $dataarr['VendorCode'] = $Sql_Result['VendorCode'];
+          $dataarr['NoOfAcres'] = $Sql_Result['Acre'];
+          $dataarr['PerAcre'] = $Sql_Result['PerAcre'];
+          $dataarr['Frommonth'] = $Sql_Result['Frommonth'];
+          $dataarr['Tomonth'] = $Sql_Result['Tomonth'];
+          $dataarr['Currentstatus'] = $Sql_Result['Currentstatus'];
+          $dataarr['Rejectionstatus'] = $Sql_Result['Rejectionstatus'];
+            $resultarr[] = $dataarr;
+          }
+
+           // Fetch MaleAmount and FemaleAmount based on BreedingLocation
+            $qryExec = "SELECT DISTINCT Crop FROM BreedingAdmin_Land_Lease_master";
+            $execD = sqlsrv_query($this->conn, $qryExec);
+
+
+            while ($rowExec = sqlsrv_fetch_array($execD)) {
+             
+              $resultarr1[] = $rowExec;
+            }
+
+        $res['data'] = @$resultarr;
+        $res['crop'] = @$resultarr1;
+      }
+
+        $result = $res;
+          // echo "<pre>";
+          // print_r($result);
+          // exit;
+        return $result;
+}
+
+public function last_entered_to_month($from,$location,$TFA_Reqno,$month)
+{
+    $current_byear = $this->get_current_business_year();
+    $valid_sql = "SELECT TOP 1 to_month from BreedingAdmin_TFA_Details where Location= '".$location."' and TFA_Reqno = '".$TFA_Reqno."' and Breeding_year = '".$current_byear['Business_Year']."' and Rejectionstatus IS NULL order by CONVERT(datetime, to_month+'-01') DESC";
+
+    $result  = sqlsrv_query($this->conn,$valid_sql); 
+    $res_arr = sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC);
+    return $res_arr;
+}
+
+public function TFA_fields_update($data)
+{
+  if($data['from'] == 'from_month') {
+
+    //validation check for entered month is already exist functionality start
+    $validation_res_arr    = $this->last_entered_to_month($data['from'],$data['location'],$data['TFA_Reqno'],$data['from_month']);
+    $to_month_last_date    = date('t',strtotime('01-'.$validation_res_arr['to_month']));
+    $last_entered_to_month = $to_month_last_date.'-'.$validation_res_arr['to_month'];
+    $current_from_month    = '01-'.$data['from_month'];
+    if(strtotime($current_from_month) < strtotime($last_entered_to_month)) {
+      $status = 0;
+      return array('status'=>$status);
+    }
+    //validation check for entered month is already exist functionality end
+
+    $SQL1 = "UPDATE BreedingAdmin_TFA_Details SET from_month = '".$data['from_month']."' Where Id='".$data['id']."'";
+  } elseif($data['from'] == 'to_month') {
+
+    //validation check for entered to month is greater than that from month functionality start
+    $from_month          = '01-'.$data['from_month'];
+    $to_month_last_date  = date('t',strtotime('01-'.$data['to_month']));
+    $current_to_month    = $to_month_last_date.'-'.$data['to_month'];
+    if(strtotime($current_to_month) < strtotime($from_month)) {
+      $status = 0;
+      return array('status'=>$status);
+    }     
+    //validation check for entered to month is greater than that from month functionality end
+
+
+    $SQL1 = "UPDATE BreedingAdmin_TFA_Details SET to_month = '".$data['to_month']."' Where Id='".$data['id']."'";
+  } elseif($data['from'] == 'current_rate') {
+    $SQL1 = "UPDATE BreedingAdmin_TFA_Details SET Existing_rate = '".$data['current_rate']."' Where Id='".$data['id']."'";
+  } elseif($data['from'] == 'crop') {
+    $SQL1 = "UPDATE BreedingAdmin_TFA_Details SET Crop = '".$data['crop']."' Where Id='".$data['id']."'";
+  }
+    
+  $Result1=sqlsrv_query($this->conn,$SQL1);
+
+  if($Result1 == false) {
+    $status = 0;
+  } else {
+    $status = 1;
+  }
+
+  return array('status'=>$status);
+}
+
+public function Add_TFA_row($data)
+{
+  // echo "<pre>";print_r($data);exit;
+  $current_byear = $this->get_current_business_year();
+  $Emp_Id=isset($_SESSION['EmpID']) && ($_SESSION['EmpID'] !='Admin' || $_SESSION['EmpID'] !='SuperAdmin') ? $_SESSION['EmpID'] : '';
+  $CreatedAt=date('Y-m-d H:i:s');
+  $CurrentStatus="1";
+
+
+  //validation check for entered month is completed within business year
+    $valid_sql = "SELECT TOP 1 from_month,to_month from BreedingAdmin_TFA_Details where Location= '".$data['location']."' and TFA_Reqno = '".$data['TFA_Reqno']."' and Breeding_year = '".$current_byear['Business_Year']."' and Rejectionstatus IS NULL ORDER BY CONVERT(datetime,to_month+'-01') DESC";
+    $valid_result  = sqlsrv_query($this->conn,$valid_sql); 
+    $res_arr = sqlsrv_fetch_array($valid_result,SQLSRV_FETCH_ASSOC);
+    if($res_arr['to_month'] == date('m-Y',strtotime($current_byear['to_date']))) {
+        $status = 0;
+        return array('Status'=>$status);
+    } else {
+      $sql = "INSERT INTO BreedingAdmin_TFA_Details (TFA_Reqno,Location,Name,Breeding_year,CreatedBy,CreatedAt,Currentstatus) VALUES ('".$data['TFA_Reqno']."','".$data['location']."','".$data['name']."','".$current_byear['Business_Year']."','".$Emp_Id."','".$CreatedAt."','".$CurrentStatus."')";
+      $result = sqlsrv_query($this->conn,$sql); 
+    }  
+
+  if($result === false) {
+      $status = 0;
+  } else {
+      $status = 1;
+  }
+
+  return array('Status'=>$status);
+}
 
 }
 

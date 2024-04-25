@@ -1,5 +1,5 @@
 <?php 
-include '../../../auto_load.php';
+include '../../auto_load.php';
 include 'Common_Filter.php';
 error_reporting(-1);
 $Common_Filter=new Common_Filter($conn);
@@ -164,9 +164,9 @@ if($Action=="assumption_malefemale_amount_update")
 {
 	$get_tfa_labour_data=$Common_Filter->Get_TFA_labour_rate($_POST);
 	echo json_encode($get_tfa_labour_data);exit;
-}if($Action=="Delete_TFA_labour_rate")
+}if($Action=="Delete_TFA")
 {
-	$deletion_status =$Common_Filter->Delete_TFA_labour_rate($_POST);
+	$deletion_status =$Common_Filter->Delete_TFA($_POST);
 	echo json_encode($deletion_status);exit;
 }if($Action=="TFA_finaldata")
 {
@@ -244,6 +244,95 @@ if($Action=="assumption_malefemale_amount_update")
 {
 	$ConsumablesMaster=$Common_Filter->ConsumablesMaster($_POST);
 	echo json_encode($ConsumablesMaster);exit;
+}if($Action=="getBreederDetailsManCount")
+{
+	$getBreederDetailsManCount=$Common_Filter->getBreederDetailsManCount($_POST);
+	echo json_encode($getBreederDetailsManCount);exit;
+}
+if($Action=="InsertManCountTableData")
+{
+	$InsertManCountTableData=$Common_Filter->InsertManCountTableData($_POST);
+	echo json_encode($InsertManCountTableData);exit;
+}if($Action=="UpdateManCountTableData")
+{
+	$UpdateManCountTableData=$Common_Filter->UpdateManCountTableData($_POST);
+	echo json_encode($UpdateManCountTableData);exit;
+}if($Action=="AssumptionEnrty_malefemaleamount_activity")
+{
+	$AssumptionEnrty_malefemaleamount_activity=$Common_Filter->AssumptionEnrty_malefemaleamount_activity($_POST);
+	echo json_encode($AssumptionEnrty_malefemaleamount_activity);exit;
+}
+
+if($Action=="update_location_responsible_person")
+{
+	$responsible_person_data =$Common_Filter->update_location_responsible_person($_POST);
+	echo json_encode($responsible_person_data);exit;
+}
+
+if($Action=="Get_UOM_Details")
+{
+	$Get_UOM_Details=$Common_Filter->Get_UOM_Details($_POST);
+	echo json_encode($Get_UOM_Details);exit;
+}
+
+if($Action=="update_consumables_uom")
+{
+	$update_consumables_uom=$Common_Filter->update_consumables_uom($_POST);
+	echo json_encode($update_consumables_uom);exit;
+}if($Action=="getConsumablesReport")
+{
+	$getConsumablesReport  =$Common_Filter->getConsumablesReport($_POST);
+	echo json_encode($getConsumablesReport);exit;
+}
+if($Action=="getLocationWiseLandLeaseData")
+{
+	$getLocationWiseLandLeaseData  =$Common_Filter->getLocationWiseLandLeaseData($_POST);
+	echo json_encode($getLocationWiseLandLeaseData);exit;
+}
+
+if($Action=="Get_tfa_employees")
+{
+	$Get_tfa_employees=$Common_Filter->Get_tfa_employees($_POST);
+	echo json_encode($Get_tfa_employees);exit;
+}
+
+if($Action=="InsertLeaseLandVendorDetails")
+{
+	$InsertLeaseLandVendorDetails=$Common_Filter->InsertLeaseLandVendorDetails($_POST);
+	echo json_encode($InsertLeaseLandVendorDetails);exit;
+}
+
+if($Action=="getCompletedLocationWiseLandLeaseData")
+{
+	$getCompletedLocationWiseLandLeaseData=$Common_Filter->getCompletedLocationWiseLandLeaseData();
+	echo json_encode($getCompletedLocationWiseLandLeaseData);exit;
+}
+
+if($Action=="FinaltabledetailslandCompleted")
+{
+	$FinaltabledetailslandCompleted=$Common_Filter->FinaltabledetailslandCompleted($_POST);
+	echo json_encode($FinaltabledetailslandCompleted);exit;
+}
+if($Action=="DeleteFinaltabledetailslandCompleted")
+{
+	$DeleteFinaltabledetailslandCompleted=$Common_Filter->DeleteFinaltabledetailslandCompleted($_POST);
+	echo json_encode($DeleteFinaltabledetailslandCompleted);exit;
+}
+if($Action=="getAddLandLeaseData")
+{
+	$getAddLandLeaseData  =$Common_Filter->getAddLandLeaseData($_POST);
+	echo json_encode($getAddLandLeaseData);exit;
+}
+
+if($Action == "TFA_fields_update") {
+	$TFA_fields_update =$Common_Filter->TFA_fields_update($_POST);
+	echo json_encode($TFA_fields_update);exit;
+}
+
+if($Action=="Add_TFA_row")
+{
+	$Add_TFA_row=$Common_Filter->Add_TFA_row($_POST);
+	echo json_encode($Add_TFA_row);exit;
 }
 
 

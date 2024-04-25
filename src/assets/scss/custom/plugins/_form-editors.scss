@@ -1,0 +1,99 @@
+//
+// Form editors.scss
+//
+
+// Tinymce
+
+.tox-tinymce {
+    border: 2px solid var(--#{$prefix}border-color) !important;
+}
+
+.tox {
+    .tox-menu {
+        background-color: var(--#{$prefix}card-bg) !important;
+        border-color: var(--#{$prefix}border-color) !important;
+    }
+    .tox-collection__group {
+        border-color: var(--#{$prefix}border-color) !important;
+    }
+    .tox-collection__item {
+        color: var(--#{$prefix}body-color) !important;
+    }
+    .tox-collection__item--active {
+        background-color: var(--#{$prefix}border-color) !important;
+    }
+    .tox-collection__group-heading {
+        background-color: var(--#{$prefix}border-color) !important;
+    }
+    .tox-collection__item--enabled {
+        background-color: var(--#{$prefix}border-color) !important;
+    }
+    .tox-statusbar {
+        border-top: 1px solid var(--#{$prefix}border-color)!important;
+    }
+
+    .tox-menubar,
+    .tox-edit-area__iframe,
+    .tox-statusbar {
+        background-color: $card-bg !important;
+        background: none !important;
+    }
+
+    .tox-mbtn {
+        color: var(--#{$prefix}secondary-color) !important;
+
+        &:hover:not(:disabled):not(.tox-mbtn--active) {
+            background-color: var(--#{$prefix}border-color) !important;
+        }
+    }
+
+    .tox-tbtn {
+        &:hover {
+            background-color: var(--#{$prefix}border-color)!important;
+        }
+    }
+
+    .tox-tbtn--enabled{
+        background-color: var(--#{$prefix}card-bg) !important;
+    
+        &:hover,
+        &:active,
+        &:focus{
+          background-color: var(--#{$prefix}card-bg) !important;
+        }
+      }
+    .tox-toolbar__primary {
+        border-color: var(--#{$prefix}border-color)!important;
+    }
+
+    .tox-toolbar,
+    .tox-toolbar__overflow,
+    .tox-toolbar__primary {
+        background: var(--#{$prefix}border-color)!important;
+    }
+
+    .tox-tbtn {
+        color: var(--#{$prefix}body-color) !important;
+
+        svg {
+            fill: var(--#{$prefix}body-color) !important;
+        }
+    }
+
+    .tox-edit-area__iframe {
+        background-color: $card-bg !important;
+    }
+
+    .tox-statusbar a,
+    .tox-statusbar__path-item,
+    .tox-statusbar__wordcount {
+        color: $gray-700 !important;
+    }
+
+    &:not([dir="rtl"]) .tox-toolbar__group:not(:last-of-type) {
+        border-right: 1px solid darken($gray-300, 5%) !important;
+    }
+}
+.tox-tinymce-aux {
+    z-index: 1000 !important;
+}

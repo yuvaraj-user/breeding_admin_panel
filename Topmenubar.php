@@ -1,157 +1,74 @@
-        <!-- Navigation Bar-->
-        <header id="topnav">
-            <div class="topbar-main">
-                <div class="container-fluid">
+       <header id="page-topbar">
+    <div class="d-flex">
+        <div class="navbar-brand-box text-center">
+            <a href="index.php" class="logo logo-light">
+                <span class="logo-sm">
+                    <img src="assets/images/logo-sm.png" alt="" height="22">
+                </span>
+               <span class="logo-lg">
+                    <h6 style="color: white;line-height: 80px;"><img src="assets/images/logo-sm.png" alt="" height="22"> Budget Portal</h6>
 
-                    <!-- Logo container-->
-                    <div class="logo">
-                        
 
 
-                        <a class="brand" href="index.php" style="font-weight: 600;
+
+
+                </span>
+            </a>
+            <a href="index.html" class="logo logo-dark">
+                <span class="logo-sm">
+                    <!--<img src="assets/images/logo-sm.png" alt="" height="22">-->
+                </span>
+                <span class="logo-lg">
+                    <img src="assets/images/logo_dark.png" alt="" height="20">
+                </span>
+            </a>
+        </div>
+
+        <div class="navbar-header">    
+            <button type="button" class="button-menu-mobile waves-effect" id="vertical-menu-btn">
+                <i class="mdi mdi-menu"></i>
+            </button> 
+
+
+             <a class="brand" href="index.php" style="font-weight: 600;
     position: relative;
     top: -15px!important;padding: 0px 19px 1px !important;
-">  <a href="../../pages/landing.php"><img class="img-responsive brand logo_rasi" src="../../../global/photos/logo.png" alt="#"  /></a>
+">  <a href="../../pages/landing.php"><img class="img-responsive brand logo_rasi" style="width: 100px;" src="../../global/photos/logo.png" alt="#"  /></a>
 
-   </a><img class="img-responsive brand vijayrasiseeds vijaylogo" src="../../../global/photos/VijayRasiSeedsLogo.png" alt="#" />
-             <!-- <a class="navbar-brand brand-logo-mini" href="index.php"><img src="../assets/images/logo-mini.svg" alt="logo" /></a>-->
-
+   </a><img class="img-responsive brand vijayrasiseeds vijaylogo" src="../../global/photos/VijayRasiSeedsLogo.png" alt="#" />
 
 
+                </span>
+            </a>
+            <div class="d-flex ms-auto">
+                <!-- Search input -->
+                
 
+
+
+                <div class="dropdown">
+                    <button type="button" class="btn header-item toggle-search noti-icon waves-effect" data-target="#search-wrap">
+                        <i class="mdi mdi-magnify"></i>
+                    </button>
+                </div>
+
+              
+
+                <div class="dropdown d-inline-block">
+                    <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img class="rounded-circle header-profile-user me-2" src="assets/images/users/avatar-1.png" alt="Header Avatar"> 
+                        <span class="d-none d-md-inline-block ms-1"><?=@$_SESSION['Name'] ?><i class="mdi mdi-chevron-down"></i> </span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <!-- item-->
+                       
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="../../logout.php" role="menuitem"><i class="dripicons-power-off font-size-16 align-middle me-1 text-danger"></i> Logout</a>
                     </div>
-
-                     <div style="
-            position: fixed;
-          
-            top: 18%;
-            left: 50%;
-            margin-top: -100px;
-            margin-left: -100px;">
+                </div>
 
 
-                      <a href="index.php" class="logo">
-                            <i class="mdi mdi-flower text-success mr-1"></i> <span class="hide-phone">BreedingPortal</span>
-                        </a>
-
-
-                    </div>
-                    <!-- End Logo container-->
-
-
-                    <div class="menu-extras topbar-custom">
-
-                        <ul class="list-unstyled float-right mb-0">
-                            
-                          
-                            <li class="dropdown notification-list">
-                                <a class="nav-link dropdown-toggle arrow-none waves-effect nav-user" data-toggle="dropdown" href="#" role="button"
-                                   aria-haspopup="false" aria-expanded="false">
-                                    <img src="assets/images/users/avatar-1.png" alt="user" class="rounded-circle">
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right profile-dropdown  border-0">
-                                    <!-- item-->
-                                    <div class="dropdown-item noti-title">
-                                        <h5>Welcome</h5>
-                                    </div>
-                      
-
-                                    <a class="dropdown-item" href="../../../logout.php" role="menuitem"><i class="mdi mdi-logout m-r-5 text-muted" aria-hidden="true"></i>  Logout</a>
-                                </div>
-                            </li>
-                            <li class="menu-item">
-                                <!-- Mobile menu toggle-->
-                                <a class="navbar-toggle nav-link">
-                                    <div class="lines">
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                    </div>
-                                </a>
-                                <!-- End mobile menu toggle-->
-                            </li>
-
-                        </ul>
-                    </div>
-                    <!-- end menu-extras -->
-
-                    <div class="clearfix"></div>
-
-                </div> <!-- end container -->
             </div>
-            <!-- end topbar-main -->
-
-            <!-- MENU Start -->
-            <div class="navbar-custom">
-                <div class="container-fluid">
-                    <div id="navigation">
-                        <!-- Navigation Menu-->
-                        <ul class="navigation-menu">
-
-                            <li class="has-submenu">
-                                <a href="index.php"><i class="dripicons-device-desktop"></i>Dashboard</a>
-                            </li>
-
-                            <li class="has-submenu">
-                                <a href="ProjectAcrage.php"><i class="dripicons-to-do"></i>Acreage</a>                                
-                            </li>
-
-
-                            <li class="has-submenu">
-                                <a href="Assumptions.php"><i class="dripicons-to-do"></i>Assumption</a>                                
-                            </li>
-
-
-                             <li class="has-submenu">
-                                <a href="FieldExpenses.php"><i class="dripicons-to-do"></i>Field Expenses</a>                                
-                            </li>
-
-                            <li class="has-submenu">
-                                <a href="Consumables.php"><i class="dripicons-to-do"></i>Consumables</a>                                
-                            </li>
-
-
-
-                            <li class="has-submenu">
-                                <a href="#"><i class="dripicons-copy"></i>Other Modules</a>
-                                <ul class="submenu megamenu">
-                                    <li>
-                                        <ul>
-                                            <li><a href="TFA.php">TFA/PCL</a></li>
-                                            <li><a href="Landlease.php">Land Lease</a></li>
-                                            <li><a href="Travel.php">Travel</a></li>
-                                            <li><a href="Others.php">Others</a></li>
-                                        </ul>
-                                    </li>
-                                  
-                                </ul>
-                            </li>
-
-
-
-                            <li class="has-submenu">
-                                <a href="#"><i class="dripicons-copy"></i>Masters</a>
-                                <ul class="submenu megamenu">
-                                    <li>
-                                        <ul>
-                                            <li><a href="LocationMaster.php">Location Master</a></li>
-                                            <li><a href="projectmaster.php">Project Master</a></li>
-                                            <li><a href="Activitymaster.php">Activity Master</a></li>
-
-                                             <li><a href="Consumablemaster.php">Consumable Master</a></li>
-
-                                            
-                                           
-                                        </ul>
-                                    </li>
-                                  
-                                </ul>
-                            </li>
-
-                        </ul>
-                        <!-- End navigation menu -->
-                    </div> <!-- end #navigation -->
-                </div> <!-- end container -->
-            </div> <!-- end navbar-custom -->
-        </header>
-        <!-- End Navigation Bar-->
+        </div>    
+    </div>    
+</header>

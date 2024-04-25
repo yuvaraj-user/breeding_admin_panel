@@ -1,0 +1,68 @@
+@@include("partials/main.html")
+
+    <head>
+    
+        @@include("partials/title-meta.html", {"meta-title": "Starter Pages"})
+    
+        @@include("partials/head-css.html")
+    
+        <!-- Basic Css files -->
+
+    </head>
+
+    @@include("partials/body.html")
+
+
+        <!-- Loader -->
+        <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
+
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+
+            @@include("partials/menu.html")
+
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                        @@include("partials/page-title.html", {"page-title": "Starter Pages", "subtitle":"Extra Pages", "title": "Starter Pages"})
+                       
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="mb-0">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.
+                                            The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content
+                                            here, content here', making it look like readable English. Many desktop publishing packages and web page editors now
+                                            use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their
+                                            infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and
+                                            the like).</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>    
+                </div>
+                <!-- End Page-content -->
+                
+                @@include("partials/footer.html")
+
+            </div>
+            <!-- end main content-->
+
+        </div>
+        <!-- END layout-wrapper -->
+
+        @@include("partials/right-sidebar.html")
+                             
+        @@include("partials/vendor-script.html")
+
+        <script src="assets/js/app.js"></script>
+
+    </body>
+</html>

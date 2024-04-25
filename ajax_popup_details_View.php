@@ -1,6 +1,6 @@
 <?php 
 
-include '../../../auto_load.php';
+include '../../auto_load.php';
 //include 'Send_Mail.php';
 $action_type = $_REQUEST['action_type'];
 
@@ -372,7 +372,8 @@ if($action_type == 'monthwisedata' && isset($_REQUEST['passing_id']) && $_REQUES
 
 
  <button type='button'  class='btn  btn-success Savemonthvalue' >SAVE</button>
- <button type='button' class='btn btn-default close' data-dismiss='modal'>Close</button>
+ <button type='button' class='btn btn-default close' data-bs-dismiss='modal'>Close</button>
+
 
  </div>";
 
@@ -856,7 +857,7 @@ if($action_type == 'monthwisedata_view' && isset($_REQUEST['passing_id']) && $_R
 
 
  <button type='button'  class='btn  btn-success Editmonthvaue' >Edit</button>
- <button type='button' class='btn btn-default close' data-dismiss='modal'>Close</button>
+ <button type='button' class='btn btn-default close' data-bs-dismiss='modal'>Close</button>
  </div>";
 
 
@@ -869,17 +870,19 @@ if($action_type == 'monthwisedata_view' && isset($_REQUEST['passing_id']) && $_R
 } 
 
 
-if($action_type == 'deleterowwisedata' && isset($_REQUEST['passing_id']) && $_REQUEST['passing_id'] != '' ){  
+if($action_type == 'deleterowwisedata' && isset($_REQUEST['passing_id']) && $_REQUEST['passing_id'] != '' ){ 
+
  $passing_id = $_REQUEST['passing_id'];
  $passing_id_loc = $_REQUEST['passing_id_loc'];
  $passing_id_proj = $_REQUEST['passing_id_proj'];
+ $location_name = $_REQUEST['location_name'];
+ $project_name = $_REQUEST['project_name'];
+
 
  $CreatedAt=date('Y-m-d H:i:s');
  $CreatedBy=@$_SESSION['EmpID'];
 
  if($CreatedBy !=''){
-
-
   $Sql="UPDATE BreedingAdmin_Type SET Rejectionstatus='2',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' Where Id='".@$passing_id."'";
         $Result=sqlsrv_query($conn,$Sql);
 
@@ -890,6 +893,65 @@ if($action_type == 'deleterowwisedata' && isset($_REQUEST['passing_id']) && $_RE
 
   $Sql="UPDATE BreedingAdmin_Project SET Rejectionstatus='2',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' Where id='".@$passing_id_proj."'";
   $Result=sqlsrv_query($conn,$Sql);
+
+  // update rejection for assumptions modules based on the location and project name start
+  $Sql="UPDATE BreedingAdmin_Assumption SET Rejectionstatus='1',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' output inserted.Id Where AssumLocation ='".@$location_name."' AND AssumProject ='".@$project_name."' AND CreatedBy = '".$CreatedBy."'";
+  $Result1=sqlsrv_query($conn,$Sql);
+
+  while($row = sqlsrv_fetch_array($Result1,SQLSRV_FETCH_ASSOC)) {
+    $Sql="UPDATE BreedingAdmin_Activity SET Rejectionstatus='1',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' Where Docid = '".$row['Id']."'";
+    $Result=sqlsrv_query($conn,$Sql);
+  }
+  // update rejection for assumptions modules based on the location and project name end
+
+  // update rejection for consumanbles modules based on the location and project name start
+  $Sql="UPDATE BreedingAdmin_Consumables SET Rejectionstatus='1',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' output inserted.Id Where ConsumLocation ='".@$location_name."' AND ConsumProject ='".@$project_name."' AND CreatedBy = '".$CreatedBy."'";
+  $Result2=sqlsrv_query($conn,$Sql);
+
+  while($row = sqlsrv_fetch_array($Result2,SQLSRV_FETCH_ASSOC)) {
+    $Sql="UPDATE BreedingAdmin_Consumablestype SET Rejectionstatus='1',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' Where Docid = '".$row['Id']."'";
+    $Result=sqlsrv_query($conn,$Sql);
+  }
+  // update rejection for consumanbles modules based on the location and project name end
+
+
+  //location availability check in location table for the user
+  $loction_count_sql = "SELECT COUNT(*) as available_location_count from BreedingAdmin_Location where CreatedBy = '".$CreatedBy."' and Rejectionstatus IS NULL";
+  $loction_count_res = sqlsrv_query($conn,$loction_count_sql);
+
+  if(sqlsrv_fetch_array($loction_count_res,SQLSRV_FETCH_ASSOC)['available_location_count'] == 0) {
+
+    //update rejection for TFA modules based on the location start
+    $tfa_Sql = "UPDATE BreedingAdmin_TFA SET Rejectionstatus='1',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' output inserted.Id Where Location ='".@$location_name."' AND CreatedBy = '".$CreatedBy."'";
+    $tfa_Result = sqlsrv_query($conn,$tfa_Sql);
+
+    while($row = sqlsrv_fetch_array($tfa_Result,SQLSRV_FETCH_ASSOC)) {
+      $TFA_Month_Sql = "UPDATE BreedingAdmin_TFA_MonthwiseDetails SET Rejectionstatus='1',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' Where TFA_id = '".$row['Id']."'";
+      $TFA_Month_Result = sqlsrv_query($conn,$TFA_Month_Sql);
+    }
+    // update rejection for TFA modules based on the location end
+
+
+    //update rejection for Landlease modules based on the location start
+    $landlease_Sql = "UPDATE BreedingAdmin_Landlese SET Rejectionstatus='2',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' output inserted.Id Where Location ='".@$location_name."' AND CreatedBy = '".$CreatedBy."'";
+    $landlease_Result = sqlsrv_query($conn,$landlease_Sql);
+
+    while($row = sqlsrv_fetch_array($landlease_Result,SQLSRV_FETCH_ASSOC)) {
+      $landlease_Month_Sql = "UPDATE BreedingAdmin_MonthwiseLandlease SET Rejectionstatus='2',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' Where TFA_id = '".$row['Id']."'";
+      $landlease_Month_Result = sqlsrv_query($conn,$landlease_Month_Sql);
+    }
+    // update rejection for Landlease modules based on the location end
+
+    //update rejection for others modules based on the location start
+    $others_Sql = "UPDATE BreedingAdmin_Others SET Rejectionstatus='2',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' output inserted.Id Where Location ='".@$location_name."' AND CreatedBy = '".$CreatedBy."'";
+    $others_Result = sqlsrv_query($conn,$others_Sql);
+
+    while($row = sqlsrv_fetch_array($others_Result,SQLSRV_FETCH_ASSOC)) {
+      $others_Month_Sql = "UPDATE BreedingAdmin_Others_MonthwiseDetails SET Rejectionstatus='2',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' Where TFA_id = '".$row['Id']."'";
+      $others_Month_Result = sqlsrv_query($conn,$others_Month_Sql);
+    }
+    // update rejection for others modules based on the location end
+  }
 
   $reqdet=1;
 }else{
@@ -1109,7 +1171,7 @@ if($action_type == 'landleasemonthwise' && isset($_REQUEST['passing_id']) && $_R
 
 
  <button type='button'  class='btn  btn-success Savemonthvalue' >SAVE</button>
- <button type='button' class='btn btn-default close' data-dismiss='modal'>Close</button>
+ <button type='button' class='btn btn-default close' data-bs-dismiss='modal'>Close</button>
 
  </div>";
 
@@ -1330,7 +1392,7 @@ if($action_type == 'monthwiseconsumbales' && isset($_REQUEST['passing_id']) && $
 
 
  <button type='button'  class='btn  btn-success Savemonthvalue' >SAVE</button>
- <button type='button' class='btn btn-default close' data-dismiss='modal'>Close</button>
+ <button type='button' class='btn btn-default close' data-bs-dismiss='modal'>Close</button>
 
  </div>";
 
@@ -1346,6 +1408,59 @@ if($action_type == 'monthwiseconsumbales' && isset($_REQUEST['passing_id']) && $
 
 
 
+if($action_type == 'deleterowwisedata_consumables' && isset($_REQUEST['passing_id']) && $_REQUEST['passing_id'] != '' ){ 
+
+ $passing_id = $_REQUEST['passing_id'];
+
+
+
+ $CreatedAt=date('Y-m-d H:i:s');
+ $CreatedBy=@$_SESSION['EmpID'];
+
+ if($CreatedBy !=''){
+
+
+   $Sql="UPDATE BreedingAdmin_Consumables SET Rejectionstatus='1',Rejectby='".$CreatedBy."',Rejectat='".$CreatedAt."' output inserted.Id Where Id ='".@$passing_id."' ";
+  $Result2=sqlsrv_query($conn,$Sql);
+
+
+  $reqdet=1;
+}else{
+
+  $reqdet=0;
+}
+
+
+echo json_encode($reqdet);
+} 
+
+
+if($action_type == 'save_consumablesdata' && isset($_REQUEST['passing_id']) && $_REQUEST['passing_id'] != '' ){ 
+
+ $passing_id = $_REQUEST['passing_id'];
+ $acraege = $_REQUEST['acraege'];
+
+
+
+ $CreatedAt=date('Y-m-d H:i:s');
+ $CreatedBy=@$_SESSION['EmpID'];
+
+ if($CreatedBy !=''){
+
+
+   $Sql="UPDATE BreedingAdmin_Consumablestype SET acre='".@$acraege."' output inserted.Id Where id ='".@$passing_id."' ";
+  $Result2=sqlsrv_query($conn,$Sql);
+
+
+  $reqdet=1;
+}else{
+
+  $reqdet=0;
+}
+
+
+echo json_encode($reqdet);
+} 
 
 ?>
 

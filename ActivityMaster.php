@@ -1,127 +1,252 @@
 
 
-<?php include "Header.php"; 
 
-function Generate_Document_No($id)
-{
-    global $conn;
-    //$Emp_Id=$Emp_Id !=''? strtoupper(trim($Emp_Id)) : "";
-    $Doc_No_Auto_Generation_Sql = "Breeding_Generate_No @Id=" . $id . ",@EmployeeCode=" . @$_SESSION['EmpID']. " ";
-
-    //  echo "Vechicle_Auot_Generate_No @Id=".$id."";
-    $Doc_No_Auto_Generation_Dets = sqlsrv_query(
-        $conn,
-        $Doc_No_Auto_Generation_Sql
-    );
-    $Doc_No_Auto_Generation_Result = sqlsrv_fetch_array(
-        $Doc_No_Auto_Generation_Dets
-    );
-    return $MC_Doc_No_Generation_Id =
-        $Doc_No_Auto_Generation_Result["PrimaryId"];
-}
-$Doc_No = Generate_Document_No(0);
+<?php include "header.php" ?>
 
 
+<?php include "topmenubar.php" ?>
 
 
-  /*$sql="SELECT COUNT(*) as count FROM BreedingAdmin_Type Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Currentstatus ='1'";
-$stmt = sqlsrv_query($conn, $sql);
-   $Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
-
-*/
-
-
-
-?>
-
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css">
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
-
-
-<link href="assets/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
-   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-        <link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
-
-                 <!-- DataTables -->
-        <link href="assets/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-        <link href="assets/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-        <!-- Responsive datatable examples -->
-        <link href="assets/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<?php include "sidebarmenu.php" ?>
 
 
 <script>
-function Alert_Msg(Msg,Type){
-    swal({
-  title: Msg,
-  icon: Type,
-});
-}
+    function Alert_Msg(Msg,Type){
+        swal({
+          title: Msg,
+          icon: Type,
+      });
+    }
 
 </script>
 
+<style>
 
-       
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
 
-
-
-
-
-           <div class="wrapper">
-            <div class="container-fluid">
-
-                <!-- Page-Title -->
-
-
-                   <div class="row">
-                    <div class="col-sm-12">
-                        <div class="page-title-box">
-                            <div class="float-right hide-phone">
-                                <ul class="list-inline">
-                                  
-                                  
-                                </ul>                                
-                            </div>
-                            
-                            <div class="btn-group mt-2">
-                                <ol class="breadcrumb hide-phone p-0 m-0">
-                                    <li class="breadcrumb-item"><a href="#">Master</a></li>
-                                    <li class="breadcrumb-item active">Location Master</li>
-                                </ol>
-                            </div>
-                            
-                        </div>
-                    </div>
-                </div>
-
-
-             
-                <!-- end page title end breadcrumb -->
-                
-
-
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                           
-
-
-                           
+	</style>
 
 
 
 
+<style>
+    .bg-secondary {
+        --bs-bg-opacity: 1;
+        background-color: rgb(227 242 255) !important;
+    }.tablecolor{
+
+        background-color: #007bff;
+        color: white;
+    }.monthinputbox{
+
+        border: none;
+        background: transparent;
+    }.close{
+
+      background-color: red;
+  }.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #444;
+    line-height: 13px !important;
+}table thead{
+
+  background-color: #0033c4;
+  color: white;
+}.header-title{
+
+    color: blue;
+    font-weight: 900;
+}
+
+</style>
 
 
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
+<style>
+    body {font-family: Arial, Helvetica, sans-serif;}
 
-                                <!--<h4 class="mt-0 header-title">Field Expenses</h4>-->
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 100%;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  -webkit-animation-name: animatetop;
+  -webkit-animation-duration: 0.4s;
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+  from {top:-300px; opacity:0} 
+  to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+  from {top:-300px; opacity:0}
+  to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+  color: white;
+  float: right;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+
+  background-color: #ffffff;
+  color: white;
+}
+
+.modal-body {padding: 2px 16px;}
+
+.modal-footer {
+  padding: 10px 16px;
+  background-color: #042649;
+  color: white;
+}.name_user{
+
+  font-weight: 700;
+  padding-left: 1000px;
+
+}.name_Id{
+
+  font-weight: 700;
+  padding-left: 1000px;
+
+}.multiselect-container>li>a>label {
+    margin: 0;
+    height: 100%;
+    cursor: pointer;
+    font-weight: 400;
+    padding: 0px 1px 1px 22px; 
+}.select2-container {
+    box-sizing: border-box;
+    /*  display: inline; */
+    margin: 0;
+    position: relative;
+    vertical-align: middle;
+}.closereuest{
+
+  font-size: 11px !important;
+}table tr{
+
+    font-size: 11px !important;
+}.tripdetails,.pagination{
+    font-size: 11px !important;
+
+}.duplicate_row{
+    background: floralwhite;
+}
+
+/*.btn-default{
+  background-color: #bb0e0e;
+  color: white;
+}
 
 
-                                
+*/
+.btn-default{
+border-color: #153754;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}table tr{
+
+    color: black;
+}
+
+.failed_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: grey !important;
+}
+.success_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #5dd099 !important;  
+}
+.mismatch_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #f96e5b !important;  
+}
+</style>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.css"/>
+    <body data-sidebar="colored" class="sidebar-enable vertical-collpsed">
+
+
+        <!-- Loader -->
+        <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
+
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+
+     
+
+         
+
+
+            
+
+
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                      
+
+                        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body bootstrap-select-1">
+<h6 style="text-align: center;color: blue;">Activity Master</h6>
+
+
+                              
 <table id="ActivityMaster" class="table table-striped table-bordered" cellspacing="0" width="100%">
     <thead>
         <tr>
@@ -135,106 +260,52 @@ function Alert_Msg(Msg,Type){
     <tbody>
         
     </tbody>
-</table>
-                              
+</table>    
 
-                                
+                    </div>    
+                </div>
+                <!-- End Page-content -->
 
-                            </div>
-                        </div>
-                    </div> <!-- end col -->
-            
+                
+                
+               <?php include "footer.php"; ?>
+            </div>
+            <!-- end main content-->
 
-
-                       
-
-
-
-
-
-
-
-
-                                    <!-- Modal -->
-
-
-
-                        </div>                                
-                    </div> <!-- end col -->
-                </div> <!-- end row --> 
-
-            
-              
-          
-
-            </div> <!-- end container -->
         </div>
+        <!-- END layout-wrapper -->
 
+       
+        <!-- /Right-bar -->
 
+        <!-- Right bar overlay-->
+        <div class="rightbar-overlay"></div>
 
-        <!-- end wrapper -->
+                             
+        <!-- JAVASCRIPT -->
+         <script src="assets/libs/jquery/jquery.min.js"></script>
+        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+        <script src="assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="assets/libs/node-waves/waves.min.js"></script>
 
+        <script src="assets/libs/select2/js/select2.min.js"></script>
+        <script src="assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+        <script src="assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
+        <script src="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+        <script src="assets/libs/admin-resources/bootstrap-filestyle/bootstrap-filestyle.min.js"></script>
+        <script src="assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+    
+        <script src="assets/js/pages/form-advanced.init.js"></script>
 
-
-
-
-
-
-        <script src="assets/js/jquery.min.js"></script>
-        <script src="assets/js/popper.min.js"></script>
-        <script src="assets/js/bootstrap.min.js"></script>
-        <script src="assets/js/modernizr.min.js"></script>
-        <script src="assets/js/waves.js"></script>
-        <script src="assets/js/jquery.slimscroll.js"></script>
-        <script src="assets/js/jquery.nicescroll.js"></script>
-        <script src="assets/js/jquery.scrollTo.min.js"></script>
-
-        <!-- KNOB JS -->
-        <script src="assets/plugins/jquery-knob/excanvas.js"></script>
-        <script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
-
-        <!-- Plugins js -->
-        <script src="assets/plugins/timepicker/moment.js"></script>
-        <script src="assets/plugins/timepicker/tempusdominus-bootstrap-4.js"></script>
-        <script src="assets/plugins/timepicker/bootstrap-material-datetimepicker.js"></script>
-        <script src="assets/plugins/clockpicker/jquery-clockpicker.min.js"></script>
-        <script src="assets/plugins/colorpicker/jquery-asColor.js"></script>
-        <script src="assets/plugins/colorpicker/jquery-asGradient.js"></script>
-        <script src="assets/plugins/colorpicker/jquery-asColorPicker.min.js"></script>
-        <script src="assets/plugins/select2/select2.min.js"></script>
-
-        <script src="assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
-        <script src="assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-        <script src="assets/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
-        <script src="assets/plugins/bootstrap-touchspin/js/jquery.bootstrap-touchspin.min.js"></script>
-
-
-         <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-        <!-- Buttons examples -->
-        <script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-        <script src="assets/plugins/datatables/jszip.min.js"></script>
-        <script src="assets/plugins/datatables/pdfmake.min.js"></script>
-        <script src="assets/plugins/datatables/vfs_fonts.js"></script>
-        <script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.print.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
-        <!-- Responsive examples -->
-        <script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-        <script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-        <!-- Plugins Init js -->
-        <script src="assets/pages/form-advanced.js"></script> 
-
-        <!-- App js -->
         <script src="assets/js/app.js"></script>
 
-        <script src="../../../common/checkSession.js"></script>
-
-       <!-- Required datatable js -->
        
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.js"></script>
 
+       <script src="../common/checkSession.js"></script>
+
+<!-- Required datatable js -->
 
 
     <script>
@@ -242,10 +313,7 @@ function Alert_Msg(Msg,Type){
 
 
     $(document).ready(function() {
-    //Only needed for the filename of export files.
-    //Normally set in the title tag of your page.
-    document.title='Simple DataTable';
-    // DataTable initialisation
+ 
     $('#ActivityMaster').DataTable(
         {
             "dom": '<"dt-buttons"Bf><"clear">lirtp',
@@ -274,41 +342,36 @@ function Alert_Msg(Msg,Type){
 
 
     </script>
+
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
- <!-- jQuery  -->
-     
 
-        <!-- Required datatable js -->
-        <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script> 
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js"></script>-->
+
+
+   <!-- Required datatable js -->
+        <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
         <!-- Buttons examples -->
-        <script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-        <script src="assets/plugins/datatables/jszip.min.js"></script>
-        <script src="assets/plugins/datatables/pdfmake.min.js"></script>
-        <script src="assets/plugins/datatables/vfs_fonts.js"></script>
-        <script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.print.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+        <script src="assets/libs/jszip/jszip.min.js"></script>
+        <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+        <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
         <!-- Responsive examples -->
-        <script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-        <script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-
-
+        <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
         <!-- Datatable init js -->
-        <script src="assets/pages/datatables.init.js"></script>
+        <script src="assets/js/pages/datatables.init.js"></script> 
 
-        <!-- App js -->
-        <script src="assets/js/app.js"></script>
-
-
-
-<?php include "footer.php"; ?>
+    </body>
+</html>
 
 
-
-
-   
 

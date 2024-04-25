@@ -1,7 +1,15 @@
 
 
-<?php include "Header.php"; 
 
+<?php include "header.php" ?>
+
+
+<?php include "topmenubar.php" ?>
+
+
+<?php include "sidebarmenu.php" ?>
+
+<?php  
 function Generate_Document_No($id)
 {
     global $conn;
@@ -29,24 +37,36 @@ $stmt = sqlsrv_query($conn, $sql);
 $Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
 
 
+ ?>
 
 
+<script>
+    function Alert_Msg(Msg,Type){
+        swal({
+          title: Msg,
+          icon: Type,
+      });
+    }
 
-?>
+</script>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css">
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
+<style>
+.dt-buttons{
+
+  display: none;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+	</style>
 
 
-<link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
-
-<!-- DataTables -->
-<link href="assets/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="assets/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<!-- Responsive datatable examples -->
-<link href="assets/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
 
 
 <style>
@@ -130,7 +150,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 .close {
   color: white;
   float: right;
-  font-size: 28px;
+  font-size: 13px;
   font-weight: bold;
 }
 
@@ -189,10 +209,20 @@ href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
   display: none;
 }.duplicate_row{
     background: floralwhite;
-}.btn-default{
+}
+
+/*.btn-default{
   background-color: #bb0e0e;
   color: white;
-}input[type=number]::-webkit-inner-spin-button, 
+}
+
+
+*/
+.btn-default{
+border-color: #153754;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -202,59 +232,64 @@ input[type=number]::-webkit-outer-spin-button {
 
     color: black;
 }
+
+.failed_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: grey !important;
+}
+.success_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #5dd099 !important;  
+}
+.mismatch_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #f96e5b !important;  
+}
 </style>
-
-<script>
-    function Alert_Msg(Msg,Type){
-        swal({
-          title: Msg,
-          icon: Type,
-      });
-    }
-
-</script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.css"/>
+    <body data-sidebar="colored" class="sidebar-enable vertical-collpsed">
 
 
+        <!-- Loader -->
+        <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
+
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+
+     
+
+         
 
 
+            
 
 
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
 
+                <div class="page-content">
+                    <div class="container-fluid">
 
-<div class="wrapper">
-    <div class="container-fluid">
+                        <!--<div class="page-title-box">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                     <h6 class="page-title">Budget</h6>
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="#">Budget</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Acreage</li>
+                                    </ol>
+                                </div>
+                             
+                            </div>
+                        </div>-->
 
-        <!-- Page-Title -->
-
-
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="page-title-box">
-                    <div class="float-right hide-phone">
-                        <ul class="list-inline">
-
-
-                        </ul>                                
-                    </div>
-
-                    <div class="btn-group mt-2">
-                        <ol class="breadcrumb hide-phone p-0 m-0">
-                            <li class="breadcrumb-item"><a href="#">Breeding</a></li>
-                            <li class="breadcrumb-item active">Project Acrage</li>
-                        </ol>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- end page title end breadcrumb -->
-
-
-
-        <div class="row">
+                        <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body bootstrap-select-1">
@@ -286,11 +321,49 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
-                          <h4 class="header-title mt-0">Location Wise Acreage </h4>
+                          
 
                           <div class="form-group row">
 
-                            <div class="col-md-9">
+
+
+                                                    </div> <!--end row-->    
+
+                        <div class="row">
+                            <div class="col-md-2">
+                                <h6 class="input-title mt-0">Location</h6>
+                                <select class="multiselect mb-3" name="location[]" id="location"  multiple="multiple">
+
+                                   <?php
+                                   $Sql   = "SELECT Distinct Territory from Budget_CostCenter_Mapping_Finance where Territory!='-'";
+                                   $Sql_Connection = sqlsrv_query($conn,$Sql);
+                                   while($row = sqlsrv_fetch_array($Sql_Connection)){
+                                    ?>
+                                    <option value="<?php echo trim($row['Territory']); ?>"> <?php echo $row['Territory']; ?> </option>
+                                <?php } ?>
+
+                            </select>
+                        </div>                                    
+                        <div class="col-md-2">
+                            <h6 class="mt-lg-0 input-title">Project</h6>
+
+                            <select class="multiselect mb-3" name="project[]" id="project" multiple="multiple">
+
+                                <?php
+                                $Sql   = "SELECT  DISTINCT BPM.internal_Order_Description FROM Budget_project_Master AS BPM";
+                                $Sql_Connection = sqlsrv_query($conn,$Sql);
+                                while($row = sqlsrv_fetch_array($Sql_Connection)){
+                                    ?>
+                                    <option value="<?php echo trim($row['internal_Order_Description']); ?>"> <?php echo $row['internal_Order_Description']; ?> </option>
+                                <?php } ?>
+
+                            </select> 
+                        </div>  
+
+
+                        <div class="col-md-3">
+
+
                                 <div class="form-check-inline my-1">
                                     <div class="custom-control custom-radio">
                                         <input type="radio" id="customRadio4" name="breedingloc" class="custom-control-input" value="breeding">
@@ -304,39 +377,17 @@ input[type=number]::-webkit-outer-spin-button {
                                     </div>
                                 </div>
 
+                                  <div class="form-check-inline my-1">
+                                    <div class="custom-control custom-radio">
+                                        <input type="radio" id="customRadio6" name="breedingloc" class="custom-control-input" value="general">
+                                        <label class="custom-control-label" for="customRadio6">General Location</label>
+                                    </div>
+                                </div>
+
                             </div>
-                        </div> <!--end row-->    
 
-                        <div class="row">
-                            <div class="col-md-4">
-                                <h6 class="input-title mt-0">Location</h6>
-                                <select class="select2 mb-3 select2-multiple" name="location[]" id="location"  multiple="multiple" style="width: 100%; height:36px;" data-placeholder="Choose">
 
-                                   <?php
-                                   $Sql   = "SELECT Distinct Territory from Budget_CostCenter_Mapping_Finance where Territory!='-'";
-                                   $Sql_Connection = sqlsrv_query($conn,$Sql);
-                                   while($row = sqlsrv_fetch_array($Sql_Connection)){
-                                    ?>
-                                    <option value="<?php echo trim($row['Territory']); ?>"> <?php echo $row['Territory']; ?> </option>
-                                <?php } ?>
-
-                            </select>
-                        </div>                                    
-                        <div class="col-md-4">
-                            <h6 class="mt-lg-0 input-title">Project</h6>
-
-                            <select class="select2 mb-3 select2-multiple" name="project[]" id="project" style="width: 100%" multiple="multiple" data-placeholder="Choose">
-
-                                <?php
-                                $Sql   = "SELECT  DISTINCT BPM.internal_Order_Description FROM Budget_project_Master AS BPM";
-                                $Sql_Connection = sqlsrv_query($conn,$Sql);
-                                while($row = sqlsrv_fetch_array($Sql_Connection)){
-                                    ?>
-                                    <option value="<?php echo trim($row['internal_Order_Description']); ?>"> <?php echo $row['internal_Order_Description']; ?> </option>
-                                <?php } ?>
-
-                            </select> 
-                        </div>   
+ 
 
 
                         <div class="col-md-3">
@@ -348,31 +399,42 @@ input[type=number]::-webkit-outer-spin-button {
 
                          <!-- <button type="button" class="add_value_click btn btn-primary FinishedMaterialChecking" style="margin-top: 20px;" onclick="return addRow();">Add</button>-->
 
-                         <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button>    
+                         <!-- <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button>     -->
 
 
-                         <button type="button" class="btn btn-danger completedrecord" style="margin-top: 20px;"> Completed Record </button>  
+                         <button type="button" class="btn btn-warning completedrecord" style="margin-top: 20px;"> Completed</button>  
 
 
                      </div>                                             
                  </div>
+
+
+                   </form>
              </div>
 
 
-         </form>
+       
+
+
+
+     </div>
+
+ </div>
+
+</div>
 
 
 
 
 
-         <div class="row projectwisehide" >
+  <div class="row projectwisehide" >
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
 
-                        <h4 class="mt-0 header-title">Location Wise Acreage</h4>
+                       <!-- <h4 class="mt-0 header-title">Location Wise Acreage</h4>-->
 
-                    </p>
+                   
 
                     <form method="post" class="Finaltabledetails">
 
@@ -383,8 +445,8 @@ input[type=number]::-webkit-outer-spin-button {
                                 <th>Location</th>
                                 <th>Project</th>
                                 <th>Type</th>
-                                <th>Acreage</th>       
-                                <th>Sowing and <br> Harvesting<br>(Month Wise)</th>
+                                <th>Acreage <span class="text-danger" style="font-weight: bold !important;font-size: 18px;">*</span></th>       
+                                <th style="line-height:15px;">Sowing and  <span class="text-danger" style="font-weight: bold !important;font-size: 18px;">*</span><br> Harvesting<br>(Month Wise)</th>
                                 <th>Land Block<br> Selection</th>
                                 <th>Responsible<br>Person</th>
                                 <th></th>
@@ -407,7 +469,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 
                 <div align="center">
-                    <button type="button" class="btn btn-sm btn-success finalsubmittion">Submit</button>
+                    <button type="button" class="btn btn-sm btn-success finalsubmittion" style="cursor:pointer;">Submit</button>
 
 
 
@@ -416,9 +478,17 @@ input[type=number]::-webkit-outer-spin-button {
                 </div>
 
             </div>
+
         </div>
-    </div> <!-- end col -->
-</div> <!-- end row -->
+
+    </div>
+
+</div>
+
+
+
+
+
 
 
 <div class="modal" id="Completedrecordpopup" role="dialog">
@@ -430,7 +500,7 @@ input[type=number]::-webkit-outer-spin-button {
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
-              <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Location Wise Project</h6> 
+              <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Completed Record</h6> 
           </div>
           <div class="Conformation-body-completed">
 
@@ -441,9 +511,9 @@ input[type=number]::-webkit-outer-spin-button {
                     <th>S.No</th>
                     <th>Location</th>
                     <th>Project</th>
-                    <th> Type</th>
-                    <th>Acrage</th>       
-                    <th>Sowing and <br> Harvesting<br>(Month Wise)</th>
+                    <th>Type</th>
+                    <th>Acrage <span class="text-danger" style="font-weight: bold !important;font-size: 18px;">*</span></th>       
+                    <th style="line-height: 15px;">Sowing and <span class="text-danger" style="font-weight: bold !important;font-size: 18px;">*</span><br> Harvesting<br>(Month Wise)</th>
                     <th>Land Block<br> Selection</th>
                     <th>Responsible<br>Person</th>
                     <th></th>
@@ -462,6 +532,18 @@ input[type=number]::-webkit-outer-spin-button {
 
             </tbody>
 
+            <tfoot class="completed_Total">
+
+
+                <td colspan="4">Total Acreage</td>
+                <td ></td>
+                 <td colspan="4"></td>
+
+
+
+
+            </tfoot>
+
 
         </table>
 
@@ -475,7 +557,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
-        <button type="button" class="btn btn-sm btn-danger " data-dismiss='modal'>Cancel</button>
+        <button type="button" class="btn btn-sm btn-danger " data-bs-dismiss='modal'>Cancel</button>
 
 
 
@@ -491,13 +573,17 @@ input[type=number]::-webkit-outer-spin-button {
 </div>  
 
 
+
+
+
+
 <!-- Modal -->
 <div class="modal" id="monthwisedetails" role="dialog">
 
 
     <form method="POST" class="monthwisedetails">
 
-        <div class="modal-dialog modal-lg" style="max-width: 1200px !important">
+        <div class="modal-dialog modal-lg" style="max-width: 1350px !important">
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
@@ -524,82 +610,58 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
-</div>                                
-</div> <!-- end col -->
-</div> <!-- end row --> 
+                    
+                        <!-- end row -->
+        
+                        <!-- end row -->
+        
+                   
+                        <!-- end row -->
 
+                    </div>    
+                </div>
+                <!-- End Page-content -->
 
-<!-- Modal -->
+                
+                
+               <?php include "footer.php"; ?>
+            </div>
+            <!-- end main content-->
 
+        </div>
+        <!-- END layout-wrapper -->
 
+       
+        <!-- /Right-bar -->
 
-</div> <!-- end container -->
-</div>
+        <!-- Right bar overlay-->
+        <div class="rightbar-overlay"></div>
 
+                             
+        <!-- JAVASCRIPT -->
+         <script src="assets/libs/jquery/jquery.min.js"></script>
+        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+        <script src="assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="assets/libs/node-waves/waves.min.js"></script>
 
+        <script src="assets/libs/select2/js/select2.min.js"></script>
+        <script src="assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+        <script src="assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
+        <script src="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+        <script src="assets/libs/admin-resources/bootstrap-filestyle/bootstrap-filestyle.min.js"></script>
+        <script src="assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+    
+        <script src="assets/js/pages/form-advanced.init.js"></script>
 
-<!-- end wrapper -->
+        <script src="assets/js/app.js"></script>
 
+       
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.js"></script>
 
-
-
-
-
-
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/modernizr.min.js"></script>
-<script src="assets/js/waves.js"></script>
-<script src="assets/js/jquery.slimscroll.js"></script>
-<script src="assets/js/jquery.nicescroll.js"></script>
-<script src="assets/js/jquery.scrollTo.min.js"></script>
-
-<!-- KNOB JS -->
-<script src="assets/plugins/jquery-knob/excanvas.js"></script>
-<script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
-
-<!-- Plugins js -->
-<script src="assets/plugins/timepicker/moment.js"></script>
-<script src="assets/plugins/timepicker/tempusdominus-bootstrap-4.js"></script>
-<script src="assets/plugins/timepicker/bootstrap-material-datetimepicker.js"></script>
-<script src="assets/plugins/clockpicker/jquery-clockpicker.min.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asColor.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asGradient.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asColorPicker.min.js"></script>
-<script src="assets/plugins/select2/select2.min.js"></script>
-
-<script src="assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
-<script src="assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script src="assets/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
-<script src="assets/plugins/bootstrap-touchspin/js/jquery.bootstrap-touchspin.min.js"></script>
-
-
-<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-<!-- Buttons examples -->
-<script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-<script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-<script src="assets/plugins/datatables/jszip.min.js"></script>
-<script src="assets/plugins/datatables/pdfmake.min.js"></script>
-<script src="assets/plugins/datatables/vfs_fonts.js"></script>
-<script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-<script src="assets/plugins/datatables/buttons.print.min.js"></script>
-<script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
-<!-- Responsive examples -->
-<script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-<script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-<!-- Plugins Init js -->
-<script src="assets/pages/form-advanced.js"></script> 
-
-<!-- App js -->
-<script src="assets/js/app.js"></script>
-
-<script src="../../../common/checkSession.js"></script>
+       <script src="../common/checkSession.js"></script>
 
 <!-- Required datatable js -->
-
 
 
 
@@ -767,7 +829,13 @@ input[type=number]::-webkit-outer-spin-button {
             {
               "url": "Common_Ajax.php", 
               "type": "POST",
-              "data": {Action:"ProjectWiseDetails",Autoincnum:Autoincnum,autoid:autoid}
+              "data": {Action:"ProjectWiseDetails",Autoincnum:Autoincnum,autoid:autoid},
+              complete: function (data) {
+                $('.finalsubmittion').attr('disabled',false);
+                if(data['responseJSON'].acrage_completed_status == false) {
+                    $('.finalsubmittion').attr('disabled',true);
+                } 
+            }
           },drawCallback: function() {
            $('.dt-select2').select2();
        }
@@ -778,7 +846,7 @@ input[type=number]::-webkit-outer-spin-button {
 
     function LocationwiscompletedeprojectDetails(destroy_status,user_input)
     {
-
+Get_total_Footer_Value(user_input);
 
         Autoincnum=user_input.Autoincnum;
         autoid=user_input.autoid;
@@ -814,18 +882,37 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
+
+
+ function Get_total_Footer_Value(user_input){
+
+
+   $.ajax({
+              type:'POST',
+              url:'Datatable_Footer_total.php',
+              "data": {Action:'Get_total_Footer_Value_Acreage'},
+              success:function(html){
+            $(".completed_Total").html(html);
+             
+              }
+              });
+  
+}
+    
+
+
     $(document).ready(function(){
     // $('.js-example-basic-single').select2();
-
+       
 
         var headercount=$(".headercount").val();
 
         if(headercount ==0){
 
-            $(".projectwisehide").css("display","none")
+           // $(".projectwisehide").css("display","none")
         }else{
 
-          $(".projectwisehide").css("display","block")
+         // $(".projectwisehide").css("display","block")
       }
 
 
@@ -942,8 +1029,8 @@ input[type=number]::-webkit-outer-spin-button {
             if (isNaN(Total_standing_2) ) {
                 var Total_standing_2=0;
             }
-            var amt=(Total_standing_1)-(Total_standing_2);
-            $(".stand_acrage_netsatanding").val(amt);
+            var standamt=(Total_standing_1)-(Total_standing_2);
+            $(".stand_acrage_netsatanding").val(standamt);
 
 
 
@@ -955,9 +1042,9 @@ input[type=number]::-webkit-outer-spin-button {
             if (isNaN(Total_2) ) {
                 var Total_2=0;
             }
-            var amtjun=(amt+Total_1)-(Total_2);
+            var amt=(Total_1)-(Total_2);
     //console.log('amt;'+amt);
-            $(".jun_acrage_netsatanding").val(amtjun);
+            $(".jun_acrage_netsatanding").val(amt);
             var decreased_harvest_count = Total_1 + Total_2;
 
 
@@ -969,7 +1056,7 @@ input[type=number]::-webkit-outer-spin-button {
             if (isNaN(Total_jul_2) ) {
                 var Total_jul_2=0;
             }
-            var amtjul=(amtjun+Total_jul_1)-(Total_jul_2);
+            var amtjul=(amt+Total_jul_1)-(Total_jul_2);
     //console.log('jul;'+jul);
             $(".jul_acrage_netsatanding").val(amtjul);
             decreased_harvest_count = Total_jul_1 + Total_jul_2;
@@ -1011,10 +1098,10 @@ input[type=number]::-webkit-outer-spin-button {
             if (isNaN(Total_oct_2) ) {
                 var Total_oct_2=0;
             }
-            var amtoct=(amtsep+Total_oct_1)-(Total_oct_1);
+            var amtoct=(amtsep+Total_oct_1)-(Total_oct_2);
 
             $(".oct_acrage_netsatanding").val(amtoct);
-            decreased_harvest_count = Total_oct_1 + Total_oct_1;
+            decreased_harvest_count = Total_oct_1 + Total_oct_2;
 
 
             var Total_nov_1=parseFloat($(".nov_acrage").val(),10);
@@ -1114,6 +1201,7 @@ input[type=number]::-webkit-outer-spin-button {
             var amtmay=(amtapr+Total_may_1)-(Total_may_2);
 
             $(".may_acrage_netsatanding").val(amtmay);
+
             decreased_harvest_count = Total_may_1 + Total_may_2;            
             $('.decreased_harvest_count').val(decreased_harvest_count);
 
@@ -1180,11 +1268,11 @@ $(document).on('keyup','.Harvesting',function(){
             if (isNaN(Total_2) ) {
                 var Total_2=0;
             }
-            var amtjun=(amt+Total_1)-(Total_2);
-            tot_amount =  amtjun;
+            var amtjun=(Total_1)-(Total_2);
+            var tot_amount =  amtjun;
 
             if(Total_1 > 0 && Total_2 > 0) {
-                 decreased_harvest_count = amt+Total_1;
+                 decreased_harvest_count = Total_1;
             }
 
 
@@ -1603,6 +1691,11 @@ $(document).on("click",".finalsubmittion",function(){
     $('.locationwise').DataTable().page.len(50000).draw();
     var table = $('.locationwise').DataTable();
     table.on('draw.dt', function () {
+        $('input[name="acragevaluemain[]"]').each(function(){
+            if($(this).val() == '') {
+                $(this).val(0);
+            }
+        });
         let Uset_Input=$(".Finaltabledetails").serializeArray();
         Uset_Input.push({"name":"Action","value":"Finalsubmittiondetails"});
         acrage_final_submit(Uset_Input);
@@ -1882,54 +1975,71 @@ success: function (output) {
 
 
 
+
+    $(document).ready(function(){
+    // $('.js-example-basic-single').select2();
+        $('.multiselect').multiselect({
+          maxHeight: 250,
+          buttonWidth: 150,
+        // selectAllText:' Select all',
+          includeSelectAllOption:true,
+          dropdownPosition: 'below',
+          enableFiltering: true,
+          enableCaseInsensitiveFiltering: true, 
+          nonSelectedText: 'Choose ',
+        });
+
+    
+
+
+  });
+
+$(document).on('change','.Responsible_person',function(){
+    var location_id   = $(this).parents('tr').find('.passing_id_loc').val();
+    var res_person    = $(this).val();
+    $.ajax ({
+      type: "POST",
+      url: "Common_Ajax.php",
+      data: { Action: 'update_location_responsible_person',location_id : location_id,res_person : res_person },
+      success: function(data){
+      }
+    });
+
+});
+
+
 </script>
+
+
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-<!-- jQuery  -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/modernizr.min.js"></script>
-<script src="assets/js/waves.js"></script>
-<script src="assets/js/jquery.slimscroll.js"></script>
-<script src="assets/js/jquery.nicescroll.js"></script>
-<script src="assets/js/jquery.scrollTo.min.js"></script>
 
-<!-- KNOB JS -->
-<script src="assets/plugins/jquery-knob/excanvas.js"></script>
-<script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
-
-<!-- Required datatable js -->
-<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-<!-- Buttons examples -->
-<script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-<script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-<script src="assets/plugins/datatables/jszip.min.js"></script>
-<script src="assets/plugins/datatables/pdfmake.min.js"></script>
-<script src="assets/plugins/datatables/vfs_fonts.js"></script>
-<script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-<script src="assets/plugins/datatables/buttons.print.min.js"></script>
-<script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
-<!-- Responsive examples -->
-<script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-<script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script> 
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js"></script>-->
 
 
+   <!-- Required datatable js -->
+        <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <!-- Buttons examples -->
+        <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+        <script src="assets/libs/jszip/jszip.min.js"></script>
+        <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+        <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+        <!-- Responsive examples -->
+        <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
+        <!-- Datatable init js -->
+        <script src="assets/js/pages/datatables.init.js"></script> 
 
-
-<!-- Datatable init js -->
-<script src="assets/pages/datatables.init.js"></script>
-
-<!-- App js -->
-<script src="assets/js/app.js"></script>
-
-
-
-<?php include "footer.php"; ?>
-
-
-
+    </body>
+</html>
 
 
 

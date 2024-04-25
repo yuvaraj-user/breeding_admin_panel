@@ -1,0 +1,27 @@
+// 
+// backgrounds.scss
+//
+
+
+@each $color,
+$value in $theme-colors {
+    .bg-soft-#{$color} {
+        background-color: rgba(($value), 0.25) !important;
+    }
+}
+// 
+// login page
+// 
+.accountbg {
+    background: var(--#{$prefix}bg-gradient) !important;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+}
+.home-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+}
+

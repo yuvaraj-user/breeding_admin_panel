@@ -1,7 +1,15 @@
 
 
-<?php include "Header.php"; 
 
+<?php include "header.php" ?>
+
+
+<?php include "topmenubar.php" ?>
+
+
+<?php include "sidebarmenu.php" ?>
+
+<?php  
 function Generate_Document_No($id)
 {
     global $conn;
@@ -17,64 +25,74 @@ function Generate_Document_No($id)
         $Doc_No_Auto_Generation_Dets
     );
     return $MC_Doc_No_Generation_Id =
-        $Doc_No_Auto_Generation_Result["PrimaryId"];
+    $Doc_No_Auto_Generation_Result["PrimaryId"];
 }
 $Doc_No = Generate_Document_No(0);
 
 
 
 
-  /*$sql="SELECT COUNT(*) as count FROM BreedingAdmin_Type Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Currentstatus ='1'";
+$sql="SELECT COUNT(*) as count FROM BreedingAdmin_Type Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Currentstatus ='1'";
 $stmt = sqlsrv_query($conn, $sql);
-   $Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
-
-*/
+$Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
 
 
-
-?>
-
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css">
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
+ ?>
 
 
-<link href="assets/plugins/sweet-alert2/sweetalert2.min.css" rel="stylesheet" type="text/css">
-   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-        <link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+<script>
+    function Alert_Msg(Msg,Type){
+        swal({
+          title: Msg,
+          icon: Type,
+      });
+    }
 
-                 <!-- DataTables -->
-        <link href="assets/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-        <link href="assets/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-        <!-- Responsive datatable examples -->
-        <link href="assets/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+</script>
+
+<style>
+.dt-buttons{
+
+  display: none;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+	</style>
+
+
 
 
 <style>
-.bg-secondary {
-    --bs-bg-opacity: 1;
-    background-color: rgb(227 242 255) !important;
-}.tablecolor{
+    .bg-secondary {
+        --bs-bg-opacity: 1;
+        background-color: rgb(227 242 255) !important;
+    }.tablecolor{
 
-    background-color: #007bff;
-    color: white;
-}.dt-buttons{
-    display: none;
-}.monthinputbox{
+        background-color: #007bff;
+        color: white;
+    }.dt-buttons{
+        display: none;
+    }.monthinputbox{
 
         border: none;
-    background: transparent;
-}.close{
+        background: transparent;
+    }.close{
 
-  background-color: red;
-}.select2-container--default .select2-selection--single .select2-selection__rendered {
+      background-color: red;
+  }.select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #444;
     line-height: 13px !important;
 }table thead{
 
-      background-color: #0033c4;
-    color: white;
+  background-color: #0033c4;
+  color: white;
 }.header-title{
 
     color: blue;
@@ -84,8 +102,8 @@ $stmt = sqlsrv_query($conn, $sql);
 </style>
 
 
- <style>
-body {font-family: Arial, Helvetica, sans-serif;}
+<style>
+    body {font-family: Arial, Helvetica, sans-serif;}
 
 /* The Modal (background) */
 .modal {
@@ -132,7 +150,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 .close {
   color: white;
   float: right;
-  font-size: 28px;
+  font-size: 13px;
   font-weight: bold;
 }
 
@@ -170,10 +188,10 @@ body {font-family: Arial, Helvetica, sans-serif;}
     height: 100%;
     cursor: pointer;
     font-weight: 400;
-     padding: 0px 1px 1px 22px; 
+    padding: 0px 1px 1px 22px; 
 }.select2-container {
     box-sizing: border-box;
-  /*  display: inline; */
+    /*  display: inline; */
     margin: 0;
     position: relative;
     vertical-align: middle;
@@ -184,17 +202,27 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
     font-size: 11px !important;
 }.tripdetails,.pagination{
-font-size: 11px !important;
+    font-size: 11px !important;
 
 }.dt-buttons{
 
   display: none;
 }.duplicate_row{
-background: floralwhite;
-  }.btn-default{
+    background: floralwhite;
+}
+
+/*.btn-default{
   background-color: #bb0e0e;
   color: white;
-}input[type=number]::-webkit-inner-spin-button, 
+}
+
+
+*/
+.btn-default{
+border-color: #153754;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -203,37 +231,25 @@ input[type=number]::-webkit-outer-spin-button {
 }table tr{
 
     color: black;
-}.fontdesign{
+}
 
-    font-size: 9px !important;
-}.swal-text {
-    font-size: 13px !important;
-
-}table td{
-    font-size: 10px;
-}table th{
-    font-size: 11px;
-}.nav {
-    display: -ms-flexbox;
-    display: contents !important;
-    -ms-flex-wrap: wrap;
-    flex-wrap: nowrap;
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
-    flex-direction: column;
+.failed_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: grey !important;
+}
+.success_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #5dd099 !important;  
+}
+.mismatch_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #f96e5b !important;  
 }
 </style>
 
-<script>
-function Alert_Msg(Msg,Type){
-    swal({
-  title: Msg,
-  icon: Type,
-});
-}
-
-</script>
 
 <style>
 
@@ -365,44 +381,37 @@ margin: 200px auto;
 
 
 
-
-           <div class="wrapper">
-            <div class="container-fluid">
-
-                <!-- Page-Title -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.css"/>
+    <body data-sidebar="colored" class="sidebar-enable vertical-collpsed">
 
 
-                   <div class="row">
-                    <div class="col-sm-12">
-                        <div class="page-title-box">
-                            <div class="float-right hide-phone">
-                                <ul class="list-inline">
-                                  
-                                  
-                                </ul>                                
-                            </div>
-                            
-                            <div class="btn-group mt-2">
-                                <ol class="breadcrumb hide-phone p-0 m-0">
-                                    <li class="breadcrumb-item"><a href="#">Breeding</a></li>
-                                    <li class="breadcrumb-item active">Project Acrage</li>
-                                </ol>
-                            </div>
-                            
-                        </div>
-                    </div>
-                </div>
+        <!-- Loader -->
+        <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
+
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+
+     
+
+         
 
 
-             
-                <!-- end page title end breadcrumb -->
-                
+            
 
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body bootstrap-select-1">
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                    
+
+  
+<div class="card-body bootstrap-select-1">
 
 
 
@@ -430,12 +439,12 @@ margin: 200px auto;
 
 
 
-                                <h4 class="header-title mt-0">Activity Wise  </h4>
+                                <h4 class="header-title mt-0">Consumables </h4>
 
                                  
                                 
                                 <div class="row  ">
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <h6 class="input-title mt-0">Location</h6>
                                         <select class="select2 mb-3 select2-single locationvalue" name="location" id="location"   style="width: 100%; height:36px;" >
 
@@ -445,9 +454,16 @@ margin: 200px auto;
 
 
 
-                                            $Sql   = "SELECT  DISTINCT BreedingAdmin_Location.BreedingLocation  from BreedingAdmin_Location
-                                            LEFT Join BreedingAdmin_Assumption On BreedingAdmin_Assumption.AssumLocation=BreedingAdmin_Location.BreedingLocation where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "' 
-                                            And BreedingAdmin_Assumption.AssumProject is Not NULL";
+ $Sql   = "SELECT  DISTINCT BreedingAdmin_Location.BreedingLocation  from BreedingAdmin_Location
+
+
+LEFT Join BreedingAdmin_Project On BreedingAdmin_Project.Docid=BreedingAdmin_Location.Docid
+
+LEFT JOIN (Select * from BreedingAdmin_Consumables Where Rejectionstatus is NULL)BreedingAdmin_Consumables On BreedingAdmin_Consumables.ConsumLocation=BreedingAdmin_Location.BreedingLocation and BreedingAdmin_Project.Project=BreedingAdmin_Consumables.ConsumProject
+where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and BreedingAdmin_Consumables.ConsumProject is NULL and BreedingAdmin_Consumables.Rejectionstatus is NULL and BreedingAdmin_Location.Currentstatus='2'
+
+
+";
                                                                     $Sql_Connection = sqlsrv_query($conn,$Sql);
                                                                     while($row = sqlsrv_fetch_array($Sql_Connection)){
                                                                     ?>
@@ -457,11 +473,13 @@ margin: 200px auto;
                                                                     <?php } ?>
                                             
                                         </select>
-                                    </div>                                    
-                                    <div class="col-md-3">
+                                    </div>                                 
+                                     <div class="col-md-2">
                                         <h6 class="mt-lg-0 input-title">Project</h6>
 
-                                        <select class="select2 mb-3 select2-multiple locbaseprojectvalue" name="project[]" id="project" style="width: 100%" multiple="multiple" data-placeholder="Choose">
+                                        <!-- <select class="select2 mb-3 select2-multiple locbaseprojectvalue" name="project[]" id="project" style="width: 100%" multiple="multiple" data-placeholder="Choose"> -->
+
+                                            <select class="locbaseprojectvalue" name="project[]" id="project" style="width: 100%" multiple="multiple" data-placeholder="Choose">
 
                                             <?php
                                                                     $Sql   = "SELECT  DISTINCT BPM.internal_Order_Description FROM Budget_project_Master AS BPM";
@@ -472,16 +490,19 @@ margin: 200px auto;
                                                                     <?php } ?>
                                             
                                         </select> 
-                                    </div>   
+                                    </div>  
 
 
 
-                                      <div class="col-md-2">
+                                     <div class="col-md-2">
                                         <h6 class="mt-lg-0 input-title">Consumables</h6>
 
-                                        <select class="select2 mb-3 select2-multiple Consumables" name="Consumables[]" id="Consumables" style="width: 100%" multiple="multiple" data-placeholder="Choose">
+                                        <!-- <select class="select2 mb-3 select2-multiple WorkActivity" name="WorkActivity[]" id="WorkActivity" style="width: 100%" multiple="multiple" data-placeholder="Choose"> -->
 
-                                            <?php
+                                            <select class="Consumables" name="Consumables[]" id="Consumables" style="width: 100%" multiple="multiple" data-placeholder="Choose">
+
+
+                                           <?php
                                                                     $Sql   = "Select DISTINCT Material_Description from Farm_Onhand_Stock";
                                                                     $Sql_Connection = sqlsrv_query($conn,$Sql);
                                                                     while($row = sqlsrv_fetch_array($Sql_Connection)){
@@ -491,6 +512,9 @@ margin: 200px auto;
                                             
                                         </select> 
                                     </div>  
+
+
+
 
 
 
@@ -506,18 +530,18 @@ margin: 200px auto;
 
 
 
-                                                                        <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button> 
+                                                                       <!-- <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button> -->
 
 
-                                                                         <button type="button" class="btn btn-danger completedrecord" style="margin-top: 20px;"> Completed </button> 
+                                                                         <button type="button" class="btn btn-warning completedrecord" style="margin-top: 20px;"> Completed </button> 
 
-                                                                <div style=" margin-top: -38px;
+                                                                <!--<div style=" margin-top: -38px;
                                                                 margin-left: 229px;">   <label class="switch3 switch3-checked " >
                                                                 <input type="checkbox" class="onofbutton" checked />
                                                                 <div></div>
                                                                 </label> 
 
-                                                                </div>
+                                                                </div>-->
 
 
 
@@ -539,7 +563,7 @@ margin: 200px auto;
                        <div class="row Mainvalueshow">
 
 
-                    <div class="col-lg-8">
+                    <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
 
@@ -596,7 +620,7 @@ margin: 200px auto;
 
 
 
-                    <div class="col-lg-4">
+                   <!-- <div class="col-lg-4">
                         <div class="card">
                             <div class="card-body">
 
@@ -646,7 +670,7 @@ margin: 200px auto;
                                 
                             </div>
                         </div>
-                    </div> 
+                    </div> -->
 
                   
 
@@ -842,9 +866,7 @@ margin: 200px auto;
                                     <li class="nav-item waves-effect waves-light">
                                         <a class="nav-link active" data-toggle="tab" href="#home-1" role="tab">CONSUMABLES PER ACREAGE</a>
                                     </li>
-                                    <li class="nav-item waves-effect waves-light">
-                                        <a class="nav-link labourratedesign" data-toggle="tab" href="#profile-1" role="tab">UOM </a>
-                                    </li>
+                                  
                                   
                                 </ul>
 
@@ -870,6 +892,7 @@ margin: 200px auto;
                     <th style="font-size: 11px !important;"> Consumables</th>
 
                     <th style="font-size: 11px !important;"><span>Consumables<span><br> Acreage</th>
+                        <th>Action</th>
                     
 
 
@@ -901,49 +924,7 @@ margin: 200px auto;
 
 
                                     </div>
-                                    <div class="tab-pane p-3" id="profile-1" role="tabpanel">
-                                        
-                                <div class="table-responsive">
-
-
-                                  
-
-                            
-
-                                      <table  class="table table-bordered  nowrap consumablesentryuom_confirm" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              <thead  >
-                  <tr>                    
-                   
-                    <th style="font-size: 11px !important;">Consumables</th>
-                   
-                    <th style="font-size: 11px !important;"> Rate Per UOM</th>
-                    
-
-
-                   
-
-
-
-                 
-                   
-        
-                    
-                  </tr>
-              </thead >
-
-
-              <tbody class="">
-
-
-              </tbody>
-             
-              </table>
-                           
-
-                           
                                    
-                                </div>
-                                    </div>
                                   
                                 </div>
 
@@ -957,7 +938,7 @@ margin: 200px auto;
 
 
 
-                    <button type="button" class="btn btn-sm btn-danger " data-dismiss='modal'>Cancel</button>
+                    <button type="button" class="btn btn-sm btn-danger " data-bs-dismiss='modal'>Cancel</button>
 
                   
 
@@ -974,76 +955,71 @@ margin: 200px auto;
 
 
 
-              
-          
 
-            </div> <!-- end container -->
+
+
+
+
+
+
+
+
+
+
+
+                    
+                        <!-- end row -->
+        
+                        <!-- end row -->
+        
+                   
+                        <!-- end row -->
+
+                    </div>    
+                </div>
+                <!-- End Page-content -->
+
+                
+                
+               <?php include "footer.php"; ?>
+            </div>
+            <!-- end main content-->
+
         </div>
+        <!-- END layout-wrapper -->
 
+       
+        <!-- /Right-bar -->
 
+        <!-- Right bar overlay-->
+        <div class="rightbar-overlay"></div>
 
-        <!-- end wrapper -->
+                             
+        <!-- JAVASCRIPT -->
+         <script src="assets/libs/jquery/jquery.min.js"></script>
+        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+        <script src="assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="assets/libs/node-waves/waves.min.js"></script>
 
+        <script src="assets/libs/select2/js/select2.min.js"></script>
+        <script src="assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+        <script src="assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
+        <script src="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+        <script src="assets/libs/admin-resources/bootstrap-filestyle/bootstrap-filestyle.min.js"></script>
+        <script src="assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+    
+        <script src="assets/js/pages/form-advanced.init.js"></script>
 
-
-
-
-
-
-        <script src="assets/js/jquery.min.js"></script>
-        <script src="assets/js/popper.min.js"></script>
-        <script src="assets/js/bootstrap.min.js"></script>
-        <script src="assets/js/modernizr.min.js"></script>
-        <script src="assets/js/waves.js"></script>
-        <script src="assets/js/jquery.slimscroll.js"></script>
-        <script src="assets/js/jquery.nicescroll.js"></script>
-        <script src="assets/js/jquery.scrollTo.min.js"></script>
-
-        <!-- KNOB JS -->
-        <script src="assets/plugins/jquery-knob/excanvas.js"></script>
-        <script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
-
-        <!-- Plugins js -->
-        <script src="assets/plugins/timepicker/moment.js"></script>
-        <script src="assets/plugins/timepicker/tempusdominus-bootstrap-4.js"></script>
-        <script src="assets/plugins/timepicker/bootstrap-material-datetimepicker.js"></script>
-        <script src="assets/plugins/clockpicker/jquery-clockpicker.min.js"></script>
-        <script src="assets/plugins/colorpicker/jquery-asColor.js"></script>
-        <script src="assets/plugins/colorpicker/jquery-asGradient.js"></script>
-        <script src="assets/plugins/colorpicker/jquery-asColorPicker.min.js"></script>
-        <script src="assets/plugins/select2/select2.min.js"></script>
-
-        <script src="assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
-        <script src="assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-        <script src="assets/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
-        <script src="assets/plugins/bootstrap-touchspin/js/jquery.bootstrap-touchspin.min.js"></script>
-
-
-         <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-        <!-- Buttons examples -->
-        <script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-        <script src="assets/plugins/datatables/jszip.min.js"></script>
-        <script src="assets/plugins/datatables/pdfmake.min.js"></script>
-        <script src="assets/plugins/datatables/vfs_fonts.js"></script>
-        <script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.print.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
-        <!-- Responsive examples -->
-        <script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-        <script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-        <!-- Plugins Init js -->
-        <script src="assets/pages/form-advanced.js"></script> 
-
-        <!-- App js -->
         <script src="assets/js/app.js"></script>
 
-        <script src="../../../common/checkSession.js"></script>
-
-       <!-- Required datatable js -->
        
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.js"></script>
+
+       <script src="../common/checkSession.js"></script>
+
+<!-- Required datatable js -->
+
 
 
 
@@ -1147,30 +1123,6 @@ return false;
       
       
 });
-
-
-
-$(document).on("change",".locationvalue",function(){
-    ///$(this).closest("tr").find(".QtyInBag").removeAttr("readonly");
-    var locbaseproject=$(this).val();
-    //var curren_tr=$(this).closest("tr");
-     $.ajax 
-      ({
-      type: "POST",
-      url: "AutoFill_Details.php",
-      data:{"Action":"Get_Location_Based_Project_Consumables","locbaseproject":locbaseproject},
-       async:false,
-     
-
-       success: function(html){
-
-          $(".locbaseprojectvalue").html(html);
-        
-        }
-
-
-    });
-   });
 
 
 
@@ -1642,9 +1594,9 @@ var user_input={};
 
 
 
-     Consumbaleslocationwisetable_confirm("no",user_input);
+     Consumbaleslocationwisetable_confirm("yes",user_input);
 
-    Consumbaleslocationwisetableuom_confirm("yes",user_input);
+    //Consumbaleslocationwisetableuom_confirm("yes",user_input);
 
 
 
@@ -1664,7 +1616,7 @@ var user_input={};
   
  
 
-Consumbaleslocationwisetableuom_confirm("yes",user_input);
+///Consumbaleslocationwisetableuom_confirm("yes",user_input);
 
     });
 
@@ -1938,42 +1890,250 @@ $(document).on("click",".Savemonthvalue",function(){
 });
 
 
+
+
+
+
+
+
+  $(document).ready(function(){
+
+   //$('.btn.btn-default.multiselect-clear-filter').css('display', 'none');
+
+     $('.locbaseprojectvalue').multiselect({
+        includeSelectAllOption: true,
+        enableFiltering: true,
+         enableCaseInsensitiveFiltering: true,
+         maxHeight: 250,
+          buttonWidth: 150,
+        buttonText: function(options, select) {
+            if (options.length === 0) {
+                return 'Select Projects';
+            } else {
+                return options.length + ' selected';
+            }
+        }
+    });
+
+
+
+      $('.Consumables').multiselect({
+        includeSelectAllOption: true,
+        enableFiltering: true,
+         enableCaseInsensitiveFiltering: true,
+        maxHeight: 250,
+          buttonWidth: 150,
+        buttonText: function(options, select) {
+            if (options.length === 0) {
+                return 'Select Consumables';
+            } else {
+                return options.length + ' selected';
+            }
+        }
+    });
+
+
+     $('.js-example-basic-single').select2();
+
+
+  
+
+
+   var user_input={};
+
+  
+     /// assumptionwiseprojectDetails("no",user_input);
+     // assumptionwiseprojectDetails_month_amount("no",user_input);
+
+
+
+     // Handle change event on .locationvalue
+    $(document).on("change", ".locationvalue", function() {
+        var locbaseproject = $(this).val();
+
+        // Make AJAX request to fetch updated options
+        $.ajax({
+            type: "POST",
+            url: "AutoFill_Details.php",
+            data: {
+                "Action": "Get_Location_Based_Project_Consumables",
+                "locbaseproject": locbaseproject
+            },
+            success: function(html) {
+                // Replace options in the select element
+                $('.locbaseprojectvalue').empty().append(html);
+
+                // Update bootstrap-multiselect with new options
+                $('.locbaseprojectvalue').multiselect('rebuild');
+            }
+        });
+    });
+
+
+
+  });
+
+
+$(document).on("click",".deletebutton",function(){
+
+
+  var passing_id=$(this).parents('tr').find(".ConsumId").val();
+  
+
+
+  
+  var currentRequest = $.ajax({
+    type: "POST",
+    url: "ajax_popup_details_View.php",
+    beforeSend: function() {
+        var sdata = checkSession();
+        if(sdata.status=='expired')
+          currentRequest.abort();
+  },
+  data: {
+    passing_id: passing_id,
+   
+    action_type:"deleterowwisedata_consumables"
+},
+success: function (output) {
+  var rowdata = JSON.parse(output);
+
+  if(rowdata==1){
+
+
+
+      Alert_Msg("Deleted.","success");
+
+window.location.href ='Consumables.php';
+      var Autoincnum=$(".Autonumloc").val();
+      var  autoid=$(".Autonumid").val();
+         // window.location.href ='VechicleRequest.php';
+      var user_input={};
+
+
+      user_input.Autoincnum=Autoincnum;
+      user_input.autoid=autoid;
+
+     // LocationwiseprojectDetails("yes",user_input);
+///LocationwiscompletedeprojectDetails("yes",user_input);
+
+
+
+
+
+  }else{
+
+
+   Alert_Msg("Something Went Wrong.","error");
+   return false;
+
+
+
+
+}
+
+}
+});
+
+
+
+
+
+});
+
+
+
+
+
+
+$(document).on("change",".acraege",function(){
+
+
+  var passing_id=$(this).parents('tr').find(".type_id").val();
+  var acraege=$(this).parents('tr').find(".acraege").val();
+  
+
+
+  
+  var currentRequest = $.ajax({
+    type: "POST",
+    url: "ajax_popup_details_View.php",
+    beforeSend: function() {
+        var sdata = checkSession();
+        if(sdata.status=='expired')
+          currentRequest.abort();
+  },
+  data: {
+    passing_id: passing_id,
+    acraege: acraege,
+   
+    action_type:"save_consumablesdata"
+},
+success: function (output) {
+  var rowdata = JSON.parse(output);
+
+  if(rowdata==1){
+
+
+
+     // Alert_Msg("Added.","success");
+
+
+
+
+
+  }else{
+
+
+   Alert_Msg("Something Went Wrong.","error");
+   return false;
+
+
+
+
+}
+
+}
+});
+
+
+
+
+
+});
+
+
+
     </script>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
- <!-- jQuery  -->
-     
 
-        <!-- Required datatable js -->
-        <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script> 
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js"></script>-->
+
+
+   <!-- Required datatable js -->
+        <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
         <!-- Buttons examples -->
-        <script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-        <script src="assets/plugins/datatables/jszip.min.js"></script>
-        <script src="assets/plugins/datatables/pdfmake.min.js"></script>
-        <script src="assets/plugins/datatables/vfs_fonts.js"></script>
-        <script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.print.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+        <script src="assets/libs/jszip/jszip.min.js"></script>
+        <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+        <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
         <!-- Responsive examples -->
-        <script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-        <script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-
-
+        <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
         <!-- Datatable init js -->
-        <script src="assets/pages/datatables.init.js"></script>
+        <script src="assets/js/pages/datatables.init.js"></script> 
 
-        <!-- App js -->
-        <script src="assets/js/app.js"></script>
-
-
-
-<?php include "footer.php"; ?>
+    </body>
+</html>
 
 
-
-
-   
 

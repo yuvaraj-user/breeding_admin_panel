@@ -1,0 +1,49 @@
+
+//
+// Range slider
+//
+
+
+.irs--modern{
+  .irs-bar, .irs-to, .irs-from, .irs-single {
+    background: var(--#{$prefix}primary) !important;
+    font-size: 11px;
+  }
+  .irs-to, .irs-from, .irs-single{
+    &:before{
+      border-top-color: var(--#{$prefix}primary);
+    }
+  }
+
+  .irs-line{
+    background: var(--#{$prefix}border-color);
+    border-color: var(--#{$prefix}border-color);
+  }
+  .irs-grid-text{
+    font-size: 11px;
+    color: $gray-400;
+  }
+  .irs-min, .irs-max{
+    color: $gray-500;
+    background: var(--#{$prefix}border-color);
+    font-size: 11px;
+  }
+
+  .irs-handle{
+    width: 12px;
+    height: 12px;
+    top: 40px;
+    background-color: $card-bg !important;
+  }
+  .irs-handle>i:nth-child(1) {
+    position: absolute;
+    display: block;
+    top: -4px;
+    left: 1px;
+    width: 8px;
+    height: 8px;
+    border: 1px solid #a3adc1;
+    background: white;
+    transform: rotate(45deg);
+  }
+}

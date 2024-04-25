@@ -1,7 +1,15 @@
 
 
-<?php include "Header.php"; 
 
+<?php include "header.php" ?>
+
+
+<?php include "topmenubar.php" ?>
+
+
+<?php include "sidebarmenu.php" ?>
+
+<?php  
 function Generate_Document_No($id)
 {
     global $conn;
@@ -17,63 +25,72 @@ function Generate_Document_No($id)
         $Doc_No_Auto_Generation_Dets
     );
     return $MC_Doc_No_Generation_Id =
-        $Doc_No_Auto_Generation_Result["PrimaryId"];
+    $Doc_No_Auto_Generation_Result["PrimaryId"];
 }
 $Doc_No = Generate_Document_No(0);
 
 
 
 
-  /*$sql="SELECT COUNT(*) as count FROM BreedingAdmin_Type Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Currentstatus ='1'";
-$stmt = sqlsrv_query($conn, $sql);
-   $Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
-
-*/
 
 
 
-?>
-
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css">
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
+ ?>
 
 
+<script>
+    function Alert_Msg(Msg,Type){
+        swal({
+          title: Msg,
+          icon: Type,
+      });
+    }
 
-        <link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
+</script>
 
-                 <!-- DataTables -->
-        <link href="assets/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-        <link href="assets/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-        <!-- Responsive datatable examples -->
-        <link href="assets/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<style>
+.dt-buttons{
+
+  display: none;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+
+	</style>
+
+
 
 
 <style>
-.bg-secondary {
-    --bs-bg-opacity: 1;
-    background-color: rgb(227 242 255) !important;
-}.tablecolor{
+    .bg-secondary {
+        --bs-bg-opacity: 1;
+        background-color: rgb(227 242 255) !important;
+    }.tablecolor{
 
-    background-color: #007bff;
-    color: white;
-}.dt-buttons{
-    display: none;
-}.monthinputbox{
+        background-color: #007bff;
+        color: white;
+    }.dt-buttons{
+        display: none;
+    }.monthinputbox{
 
         border: none;
-    background: transparent;
-}.close{
+        background: transparent;
+    }.close{
 
-  background-color: red;
-}.select2-container--default .select2-selection--single .select2-selection__rendered {
+      background-color: red;
+  }.select2-container--default .select2-selection--single .select2-selection__rendered {
     color: #444;
     line-height: 13px !important;
 }table thead{
 
-      background-color: #0033c4;
-    color: white;
+  background-color: #0033c4;
+  color: white;
 }.header-title{
 
     color: blue;
@@ -83,8 +100,8 @@ $stmt = sqlsrv_query($conn, $sql);
 </style>
 
 
- <style>
-body {font-family: Arial, Helvetica, sans-serif;}
+<style>
+    body {font-family: Arial, Helvetica, sans-serif;}
 
 /* The Modal (background) */
 .modal {
@@ -131,7 +148,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 .close {
   color: white;
   float: right;
-  font-size: 28px;
+  font-size: 13px;
   font-weight: bold;
 }
 
@@ -169,10 +186,10 @@ body {font-family: Arial, Helvetica, sans-serif;}
     height: 100%;
     cursor: pointer;
     font-weight: 400;
-     padding: 0px 1px 1px 22px; 
+    padding: 0px 1px 1px 22px; 
 }.select2-container {
     box-sizing: border-box;
-  /*  display: inline; */
+    /*  display: inline; */
     margin: 0;
     position: relative;
     vertical-align: middle;
@@ -183,17 +200,27 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
     font-size: 11px !important;
 }.tripdetails,.pagination{
-font-size: 11px !important;
+    font-size: 11px !important;
 
 }.dt-buttons{
 
   display: none;
 }.duplicate_row{
-background: floralwhite;
-  }.btn-default{
+    background: floralwhite;
+}
+
+/*.btn-default{
   background-color: #bb0e0e;
   color: white;
-}input[type=number]::-webkit-inner-spin-button, 
+}
+
+
+*/
+.btn-default{
+border-color: #153754;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
 input[type=number]::-webkit-outer-spin-button { 
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -202,82 +229,84 @@ input[type=number]::-webkit-outer-spin-button {
 }table tr{
 
     color: black;
-}.fontdesign{
+}
 
-    font-size: 9px !important;
-}.swal-text {
-    font-size: 13px !important;
-
-}table td{
-    font-size: 10px;
-}table th{
-    font-size: 11px;
-}.nav {
-    display: -ms-flexbox;
-    display: contents !important;
-    -ms-flex-wrap: wrap;
-    flex-wrap: nowrap;
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
-    flex-direction: column;
+.failed_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: grey !important;
+}
+.success_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #5dd099 !important;  
+}
+.mismatch_completion {
+    font-size: 30px;
+    vertical-align: middle;
+    color: #f96e5b !important;  
 }
 </style>
 
-<script>
-function Alert_Msg(Msg,Type){
-    swal({
-  title: Msg,
-  icon: Type,
-});
+<style>
+
+.vijaylogo {
+    height: 51px !important;
+ 
 }
-
-</script>
-
-
-       
-
-
-
-
-
-           <div class="wrapper">
-            <div class="container-fluid">
-
-                <!-- Page-Title -->
+#ajax_loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f5f5f5;
+    z-index: 9999999;
+    opacity: 0.8;
+}
+  </style>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css">
 
 
-                   <div class="row">
-                    <div class="col-sm-12">
-                        <div class="page-title-box">
-                            <div class="float-right hide-phone">
-                                <ul class="list-inline">
-                                  
-                                  
-                                </ul>                                
-                            </div>
-                            
-                            <div class="btn-group mt-2">
-                                <ol class="breadcrumb hide-phone p-0 m-0">
-                                    <li class="breadcrumb-item"><a href="#">Breeding</a></li>
-                                    <li class="breadcrumb-item active">Assumption</li>
-                                </ol>
-                            </div>
-                            
-                        </div>
-                    </div>
-                </div>
+<div id="ajax_loader" style="display: none;"><div id="status"><div class="spinner"></div></div></div>
 
 
-             
-                <!-- end page title end breadcrumb -->
-                
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.css"/>
+    <body data-sidebar="colored" class="sidebar-enable vertical-collpsed">
 
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-body bootstrap-select-1">
+        <!-- Loader -->
+        <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
+
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+
+     
+
+         
+
+
+            
+
+
+            <!-- ============================================================== -->
+            <!-- Start right Content here -->
+            <!-- ============================================================== -->
+            <div class="main-content">
+
+                <div class="page-content">
+                    <div class="container-fluid">
+
+                     
+
+                        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+
+
+
+
+ <div class="card-body bootstrap-select-1">
 
 
 
@@ -305,12 +334,12 @@ function Alert_Msg(Msg,Type){
 
 
 
-                                <h4 class="header-title mt-0">Activity Wise  </h4>
+                                <h4 class="header-title mt-0">Labour Count  </h4>
 
                                  
                                 
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <h6 class="input-title mt-0">Location</h6>
                                         <select class="select2 mb-3 select2-single locationvalue" name="location" id="location"   style="width: 100%; height:36px;" >
 
@@ -320,7 +349,7 @@ function Alert_Msg(Msg,Type){
 
 
 
-                                                                    $Sql   = "SELECT  DISTINCT BreedingAdmin_Location.BreedingLocation   from BreedingAdmin_Location
+ $Sql   = "SELECT  DISTINCT BreedingAdmin_Location.BreedingLocation   from BreedingAdmin_Location
 
 LEFT Join BreedingAdmin_Project On BreedingAdmin_Project.Docid=BreedingAdmin_Location.Docid
 
@@ -329,7 +358,7 @@ LEFT Join BreedingAdmin_Project On BreedingAdmin_Project.Docid=BreedingAdmin_Loc
 Left Join BreedingAdmin_Assumption On BreedingAdmin_Assumption.AssumProject=BreedingAdmin_Project.Project  and BreedingAdmin_Location.BreedingLocation=BreedingAdmin_Assumption.AssumLocation
 
 
-where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and BreedingAdmin_Assumption.AssumProject is NULL";
+where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and BreedingAdmin_Assumption.AssumProject is NULL and BreedingAdmin_project.Rejectionstatus is NULL";
                                                                     $Sql_Connection = sqlsrv_query($conn,$Sql);
                                                                     while($row = sqlsrv_fetch_array($Sql_Connection)){
                                                                     ?>
@@ -339,11 +368,14 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
                                                                     <?php } ?>
                                             
                                         </select>
-                                    </div>                                    
-                                    <div class="col-md-3">
+                                    </div>
+
+                                    <div class="col-md-2">
                                         <h6 class="mt-lg-0 input-title">Project</h6>
 
-                                        <select class="select2 mb-3 select2-multiple locbaseprojectvalue" name="project[]" id="project" style="width: 100%" multiple="multiple" data-placeholder="Choose">
+                                        <!-- <select class="select2 mb-3 select2-multiple locbaseprojectvalue" name="project[]" id="project" style="width: 100%" multiple="multiple" data-placeholder="Choose"> -->
+
+                                            <select class="locbaseprojectvalue" name="project[]" id="project" style="width: 100%" multiple="multiple" data-placeholder="Choose">
 
                                             <?php
                                                                     $Sql   = "SELECT  DISTINCT BPM.internal_Order_Description FROM Budget_project_Master AS BPM";
@@ -361,7 +393,10 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
                                       <div class="col-md-2">
                                         <h6 class="mt-lg-0 input-title">Activity</h6>
 
-                                        <select class="select2 mb-3 select2-multiple WorkActivity" name="WorkActivity[]" id="WorkActivity" style="width: 100%" multiple="multiple" data-placeholder="Choose">
+                                        <!-- <select class="select2 mb-3 select2-multiple WorkActivity" name="WorkActivity[]" id="WorkActivity" style="width: 100%" multiple="multiple" data-placeholder="Choose"> -->
+
+                                            <select class="WorkActivity" name="WorkActivity[]" id="WorkActivity" style="width: 100%" multiple="multiple" data-placeholder="Choose">
+
 
                                             <?php
                                                                     $Sql   = "Select DISTINCT work from Farm_DRS_New_Labour_Workcode_DETAILS";
@@ -382,16 +417,16 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
 
-                                                                       <button type="button" class="btn btn-primary addbtn" id="addbtn" style="margin-top: 20px;"> Add </button>
+                                                                       <button type="button" class="btn btn-primary addbtn" id="addbtn" style="margin-top: 20px;"> Single </button>
 
-                                                                       <button type="button" class="btn btn-info singleseletion" id="singleseletion" style="margin-top: 20px;"> Single </button>
-
-
-
-                                                                        <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button> 
+                                                                       <button type="button" class="btn btn-info singleseletion" id="singleseletion" style="margin-top: 20px;"> Bulk </button>
 
 
-                                                                         <button type="button" class="btn btn-danger completedrecord" style="margin-top: 20px;"> Completed </button>  
+
+                                                                        <!--<button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button> -->
+
+
+                                                                         <button type="button" class="btn btn-warning completedrecord" style="margin-top: 20px;"> Completed </button>  
 
 
 
@@ -402,8 +437,6 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
                            
-
-
 
 
 <div class="modal" id="Assumptionpopup" role="dialog">
@@ -453,7 +486,7 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
 
-                     <button type='button' class='btn btn-default closebutton' data-dismiss='modal'>Close</button>
+                     <button type='button' class='btn btn-default closebutton' data-bs-dismiss='modal'>Close</button>
 
                     </div>
                                                 
@@ -485,11 +518,11 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
                        <div class="row">
 
 
-                    <div class="col-lg-7">
+                    <div class="col-lg-12">
                         <div class="card">
                             <div class="card-body">
 
-                                <h4 class="mt-0 header-title">Mandays Per Acre</h4>
+                                <h4 class="mt-0 header-title ml-5">Mandays Per Acre</h4>
                               
 
                                 <div class="table-responsive">
@@ -544,7 +577,7 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
 
-  <div class="col-lg-5">
+<!--   <div class="col-lg-5">
                         <div class="card">
                             <div class="card-body">
 
@@ -587,12 +620,12 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
                                 
                             </div>
                         </div>
-                    </div> <!-- end col -->
+                    </div> --> <!-- end col -->
                     
 
 
 
-                </div> <!-- end row -->
+                </div>
 
 
 
@@ -602,14 +635,6 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
 
-
-
-
-
-
-
-
-                                    <!-- Modal -->
 
 
                  <div align="center">
@@ -623,7 +648,7 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
                         </div>                                
-                    </div> <!-- end col -->
+                    </div>
                 </div> <!-- end row --> 
 
          
@@ -633,8 +658,7 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
 
-
-  <div class="modal" id="Completedrecordpopup" role="dialog">
+   <div class="modal" id="Completedrecordpopup" role="dialog">
 
 
     <form method="POST" class="Completedrecordpopup">
@@ -654,18 +678,16 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
                                 
                               
 
-                                <!-- Nav tabs -->
                                 <ul class="nav nav-pills nav-justified" role="tablist">
                                     <li class="nav-item waves-effect waves-light">
                                         <a class="nav-link active" data-toggle="tab" href="#home-1" role="tab">MANDAYS PER ACRE</a>
                                     </li>
-                                    <li class="nav-item waves-effect waves-light">
+                                  <!--   <li class="nav-item waves-effect waves-light">
                                         <a class="nav-link labourratedesign" data-toggle="tab" href="#profile-1" role="tab">LABOUR RATE PER MONTH</a>
-                                    </li>
+                                    </li> -->
                                   
                                 </ul>
 
-                                <!-- Tab panes -->
                                 <div class="tab-content">
                                     <div class="tab-pane active p-3" id="home-1" role="tabpanel">
                                        
@@ -734,7 +756,7 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
 
 
 
-                    <button type="button" class="btn btn-sm btn-danger " data-dismiss='modal'>Cancel</button>
+                    <button type="button" class="btn btn-sm btn-danger " data-bs-dismiss='modal'>Cancel</button>
 
                   
 
@@ -747,80 +769,60 @@ where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and Breedin
   </form>
 
 
-  </div>  
+  </div>   
 
 
+                    
 
-              
-          
 
-            </div> <!-- end container -->
+                    </div>    
+                </div>
+
+            </div>
+                <!-- End Page-content -->
+
+                
+                
+               <?php include "footer.php"; ?>
+            </div>
+            <!-- end main content-->
+
         </div>
 
+    </div>
+        <!-- END layout-wrapper -->
 
+       
+        <!-- /Right-bar -->
 
-        <!-- end wrapper -->
+        <!-- Right bar overlay-->
+        <div class="rightbar-overlay"></div>
 
+                             
+        <!-- JAVASCRIPT -->
+         <script src="assets/libs/jquery/jquery.min.js"></script>
+        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+        <script src="assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="assets/libs/node-waves/waves.min.js"></script>
 
+        <script src="assets/libs/select2/js/select2.min.js"></script>
+        <script src="assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+        <script src="assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
+        <script src="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+        <script src="assets/libs/admin-resources/bootstrap-filestyle/bootstrap-filestyle.min.js"></script>
+        <script src="assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
+    
+        <script src="assets/js/pages/form-advanced.init.js"></script>
 
-
-
-
-
-        <script src="assets/js/jquery.min.js"></script>
-        <script src="assets/js/popper.min.js"></script>
-        <script src="assets/js/bootstrap.min.js"></script>
-        <script src="assets/js/modernizr.min.js"></script>
-        <script src="assets/js/waves.js"></script>
-        <script src="assets/js/jquery.slimscroll.js"></script>
-        <script src="assets/js/jquery.nicescroll.js"></script>
-        <script src="assets/js/jquery.scrollTo.min.js"></script>
-
-        <!-- KNOB JS -->
-        <script src="assets/plugins/jquery-knob/excanvas.js"></script>
-        <script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
-
-        <!-- Plugins js -->
-        <script src="assets/plugins/timepicker/moment.js"></script>
-        <script src="assets/plugins/timepicker/tempusdominus-bootstrap-4.js"></script>
-        <script src="assets/plugins/timepicker/bootstrap-material-datetimepicker.js"></script>
-        <script src="assets/plugins/clockpicker/jquery-clockpicker.min.js"></script>
-        <script src="assets/plugins/colorpicker/jquery-asColor.js"></script>
-        <script src="assets/plugins/colorpicker/jquery-asGradient.js"></script>
-        <script src="assets/plugins/colorpicker/jquery-asColorPicker.min.js"></script>
-        <script src="assets/plugins/select2/select2.min.js"></script>
-
-        <script src="assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
-        <script src="assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-        <script src="assets/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
-        <script src="assets/plugins/bootstrap-touchspin/js/jquery.bootstrap-touchspin.min.js"></script>
-
-
-         <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-        <!-- Buttons examples -->
-        <script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-        <script src="assets/plugins/datatables/jszip.min.js"></script>
-        <script src="assets/plugins/datatables/pdfmake.min.js"></script>
-        <script src="assets/plugins/datatables/vfs_fonts.js"></script>
-        <script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.print.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
-        <!-- Responsive examples -->
-        <script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-        <script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-        <!-- Plugins Init js -->
-        <script src="assets/pages/form-advanced.js"></script> 
-
-        <!-- App js -->
         <script src="assets/js/app.js"></script>
 
-        <script src="../../../common/checkSession.js"></script>
-
-       <!-- Required datatable js -->
        
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.js"></script>
+
+       <script src="../common/checkSession.js"></script>
+
+<!-- Required datatable js -->
 
 
 
@@ -891,7 +893,7 @@ if(projectnvalue ==''){
   
    assumptionwiseprojectDetails("yes",user_input);
 
-       assumptionwiseprojectDetails_month_amount("yes",user_input);
+       // assumptionwiseprojectDetails_month_amount("yes",user_input);
 
 
        window.location.href ='Assumptions.php';
@@ -1020,31 +1022,29 @@ return false;
 */
 
 
-$(document).on("change",".locationvalue",function(){
-    ///$(this).closest("tr").find(".QtyInBag").removeAttr("readonly");
-    var locbaseproject=$(this).val();
-    //var curren_tr=$(this).closest("tr");
-     $.ajax 
-      ({
-      type: "POST",
-      url: "AutoFill_Details.php",
-      data:{"Action":"Get_Location_Based_Project","locbaseproject":locbaseproject},
-       async:false,
+// $(document).on("change",".locationvalue",function(){
+//     ///$(this).closest("tr").find(".QtyInBag").removeAttr("readonly");
+//     var locbaseproject=$(this).val();
+//     //var curren_tr=$(this).closest("tr");
+//      $.ajax 
+//       ({
+//       type: "POST",
+//       url: "AutoFill_Details.php",
+//       data:{"Action":"Get_Location_Based_Project","locbaseproject":locbaseproject},
+//        async:false,
      
 
-       success: function(html){
+//        success: function(html){
 
-          $(".locbaseprojectvalue").html(html);
+//         console.log(html)
+
+//           $(".locbaseprojectvalue").html(html);
         
-        }
+//         }
 
 
-    });
-   });
-
-
-
-
+//     });
+//    });
 
 
 
@@ -1122,6 +1122,39 @@ autoid=user_input.autoid;
 
 
   $(document).ready(function(){
+
+   //$('.btn.btn-default.multiselect-clear-filter').css('display', 'none');
+
+     $('.locbaseprojectvalue').multiselect({
+        includeSelectAllOption: true,
+         enableCaseInsensitiveFiltering: true,
+        enableFiltering: true,
+         maxHeight: 250,
+          buttonWidth: 150,
+        buttonText: function(options, select) {
+            if (options.length === 0) {
+                return 'Select Projects';
+            } else {
+                return options.length + ' selected';
+            }
+        }
+    });
+
+     $('.WorkActivity').multiselect({
+        includeSelectAllOption: true,
+        enableFiltering: true,
+         enableCaseInsensitiveFiltering: true,
+        maxHeight: 250,
+          buttonWidth: 150,
+        buttonText: function(options, select) {
+            if (options.length === 0) {
+                return 'Select Activity';
+            } else {
+                return options.length + ' selected';
+            }
+        }
+    });
+
      $('.js-example-basic-single').select2();
 
 
@@ -1132,7 +1165,31 @@ autoid=user_input.autoid;
 
   
       assumptionwiseprojectDetails("no",user_input);
-     assumptionwiseprojectDetails_month_amount("no",user_input);
+     // assumptionwiseprojectDetails_month_amount("no",user_input);
+
+
+
+     // Handle change event on .locationvalue
+    $(document).on("change", ".locationvalue", function() {
+        var locbaseproject = $(this).val();
+
+        // Make AJAX request to fetch updated options
+        $.ajax({
+            type: "POST",
+            url: "AutoFill_Details.php",
+            data: {
+                "Action": "Get_Location_Based_Project",
+                "locbaseproject": locbaseproject
+            },
+            success: function(html) {
+                // Replace options in the select element
+                $('.locbaseprojectvalue').empty().append(html);
+
+                // Update bootstrap-multiselect with new options
+                $('.locbaseprojectvalue').multiselect('rebuild');
+            }
+        });
+    });
 
 
 
@@ -1391,7 +1448,7 @@ if(projectnvalue ==''){
 
              var user_input={};
 
-   $(".close").trigger('closebutton'); 
+   $(".closebutton").trigger("click");
   
    assumptionwiseprojectDetails("yes",user_input);
 
@@ -1417,24 +1474,46 @@ return false;
 
 
 $(document).on("click",".finalassumptionsubmit",function(){
-   $('#ajax_loader').show();
+    $('#ajax_loader').show();
    $('.assumptionwise').DataTable().page.len(50000).draw();
-   $('.assumptionwise_Amount').DataTable().page.len(50000).draw();
+   // $('.assumptionwise_Amount').DataTable().page.len(50000).draw();
    
    var table = $('.assumptionwise').DataTable();
-   var table1 = $('.assumptionwise_Amount').DataTable();
+   // var table1 = $('.assumptionwise_Amount').DataTable();
    table.on('draw.dt', function () {
-    table1.on('draw.dt', function () {
+    // table1.on('draw.dt', function () {
        let Uset_Input=$(".tablewisedataassumption").serializeArray();
 
        Uset_Input.push({"name":"Action","value":"finalassumptiondata"});
        assumption_submit(Uset_Input);
-   });
+   // });
+  
 
 });
     
 
 });
+
+
+
+$(document).on("click",".finalsubmittioncompleted",function(){
+   $('#ajax_loader').show();
+   $('.assumptionwisecompleted').DataTable().page.len(50000).draw();
+   
+   var table = $('.assumptionwisecompleted').DataTable();
+   table.on('draw.dt', function () {
+       let Uset_Input=$(".Completedrecordpopup").serializeArray();
+       Uset_Input.push({"name":"Action","value":"finalassumptiondata"});
+       assumption_submit(Uset_Input);
+
+});
+    
+
+});
+
+
+
+
 
 function assumption_submit(Uset_Input)
 {
@@ -1469,7 +1548,7 @@ function assumption_submit(Uset_Input)
 
             assumptionwiseprojectDetails("yes",user_input);
 
-            assumptionwiseprojectDetails_month_amount("yes",user_input);
+            // assumptionwiseprojectDetails_month_amount("yes",user_input);
 
 
             return false;
@@ -1644,41 +1723,35 @@ $(document).on('keyup','.amount',function(){
 });
 
 </script>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
- <!-- jQuery  -->
-     
 
-        <!-- Required datatable js -->
-        <script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-        <script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script> 
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js"></script>-->
+
+
+   <!-- Required datatable js -->
+        <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
         <!-- Buttons examples -->
-        <script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-        <script src="assets/plugins/datatables/jszip.min.js"></script>
-        <script src="assets/plugins/datatables/pdfmake.min.js"></script>
-        <script src="assets/plugins/datatables/vfs_fonts.js"></script>
-        <script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.print.min.js"></script>
-        <script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+        <script src="assets/libs/jszip/jszip.min.js"></script>
+        <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+        <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
         <!-- Responsive examples -->
-        <script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-        <script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-
-
+        <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
         <!-- Datatable init js -->
-        <script src="assets/pages/datatables.init.js"></script>
+        <script src="assets/js/pages/datatables.init.js"></script> 
 
-        <!-- App js -->
-        <script src="assets/js/app.js"></script>
-
-
-
-<?php include "footer.php"; ?>
+    </body>
+</html>
 
 
-
-
-   
 

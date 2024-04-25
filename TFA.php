@@ -1,89 +1,49 @@
-
-
-<?php include "Header.php"; 
-
+<?php 
+include "header.php";
+include "topmenubar.php";
+include "sidebarmenu.php";
 function Generate_Document_No($id)
 {
-  global $conn;
+    global $conn;
     //$Emp_Id=$Emp_Id !=''? strtoupper(trim($Emp_Id)) : "";
-  $Doc_No_Auto_Generation_Sql = "Breeding_Generate_No @Id=" . $id . ",@EmployeeCode=" . @$_SESSION['EmpID']. " ";
+    $Doc_No_Auto_Generation_Sql = "Breeding_Generate_No @Id=" . $id . ",@EmployeeCode=" . @$_SESSION['EmpID']. " ";
 
     //  echo "Vechicle_Auot_Generate_No @Id=".$id."";
-  $Doc_No_Auto_Generation_Dets = sqlsrv_query(
-    $conn,
-    $Doc_No_Auto_Generation_Sql
-  );
-  $Doc_No_Auto_Generation_Result = sqlsrv_fetch_array(
-    $Doc_No_Auto_Generation_Dets
-  );
-  return $MC_Doc_No_Generation_Id =
-  $Doc_No_Auto_Generation_Result["PrimaryId"];
+    $Doc_No_Auto_Generation_Dets = sqlsrv_query(
+        $conn,
+        $Doc_No_Auto_Generation_Sql
+    );
+    $Doc_No_Auto_Generation_Result = sqlsrv_fetch_array(
+        $Doc_No_Auto_Generation_Dets
+    );
+    return $MC_Doc_No_Generation_Id =
+    $Doc_No_Auto_Generation_Result["PrimaryId"];
 }
 $Doc_No = Generate_Document_No(0);
 
 
 
 
-  /*$sql="SELECT COUNT(*) as count FROM BreedingAdmin_Type Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Currentstatus ='1'";
+$sql="SELECT COUNT(*) as count FROM BreedingAdmin_Type Where CreatedBy='" . @$_SESSION['EmpID']. "' AND Currentstatus ='1'";
 $stmt = sqlsrv_query($conn, $sql);
-   $Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
-
-*/
+$Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
 
 
-
-   ?>
-
-   <link rel="stylesheet"
-   href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css">
-   <link rel="stylesheet"
-   href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
+?>
 
 
-   
-   <link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
-
-   <!-- DataTables -->
-   <link href="assets/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-   <link href="assets/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-   <!-- Responsive datatable examples -->
-   <link href="assets/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
-
-   <style>
-    .bg-secondary {
-      --bs-bg-opacity: 1;
-      background-color: rgb(227 242 255) !important;
-    }.tablecolor{
-
-      background-color: #007bff;
-      color: white;
-    }.dt-buttons{
-      display: none;
-    }.monthinputbox{
-
-      border: none;
-      background: transparent;
-    }.close{
-
-      background-color: red;
-    }.select2-container--default .select2-selection--single .select2-selection__rendered {
-      color: #444;
-      line-height: 13px !important;
-    }table thead{
-
-      background-color: #0033c4;
-      color: white;
-    }.header-title{
-
-      color: blue;
-      font-weight: 900;
+<script>
+    function Alert_Msg(Msg,Type){
+        swal({
+          title: Msg,
+          icon: Type,
+      });
     }
 
-  </style>
+</script>
 
+<style>
 
-  <style>
     body {font-family: Arial, Helvetica, sans-serif;}
 
 /* The Modal (background) */
@@ -131,16 +91,16 @@ $stmt = sqlsrv_query($conn, $sql);
 .close {
   color: white;
   float: right;
-  font-size: 28px;
+  font-size: 14px;
   font-weight: bold;
 }
 
-.close:hover,
+/*.close:hover,
 .close:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
-}
+}*/
 
 .modal-header {
 
@@ -223,336 +183,358 @@ input[type=number]::-webkit-outer-spin-button {
   flex-direction: column;
 }
 
+
+.multiselect.dropdown-toggle {
+    width: 217px !important;
+    background-color: white !important;
+    border: 1px solid #ddd !important;
+    color: #444 !important;
+    padding: 3px !important;
+}
+
+
+
+.bg-secondary {
+--bs-bg-opacity: 1;
+background-color: rgb(227 242 255) !important;
+}.tablecolor{
+
+background-color: #007bff;
+color: white;
+}.dt-buttons{
+display: none;
+}.monthinputbox{
+
+border: none;
+background: transparent;
+}.close{
+
+background-color: red;
+}.select2-container--default .select2-selection--single .select2-selection__rendered {
+color: #444;
+line-height: 13px !important;
+}table thead{
+
+background-color: #0033c4;
+color: white;
+}.header-title{
+
+color: blue;
+font-weight: 900;
+}
 #select2-location-container {
   margin-top: 6px;
 }
+.inputs {
+    border: 1px solid #b8b8eb;
+}
+.select2-selection__rendered {
+  margin-top: 6px;
+}
+.ui-datepicker-calendar thead tr {
+  background: #f4f4f4;
+}    
+
+.datepicker .datepicker-switch {
+    width: 257px !important;
+}
+
+.datepicker table thead {
+    background-color: #f4f4f4;
+    color: white !important;
+}
+
+.tfa_add_row {
+  background: #655be6;
+  border-radius: 50%;
+  color: white;
+}
+
 </style>
 
-<script>
-  function Alert_Msg(Msg,Type){
-    swal({
-      title: Msg,
-      icon: Type,
-    });
-  }
 
-</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.css"/>
+  <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"> -->
 
-<!-- Modal -->
-<div class="modal fade" id="labour_rate_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2000;">
-  <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Labour Rate(Month Wise)</h6>
-      </div>
-      <div class="modal-body" id="labour_rate_modal_body">
+<body data-sidebar="colored" class="sidebar-enable vertical-collpsed">
+    <!-- Loader -->
+    <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
 
-      </div>
-      <div class="modal-footer">
-       <button type='button'  class='btn  btn-success tfa_month_det_save Addmonthvaue'>Add</button>
-       <button type='button' class='btn btn-default close' data-dismiss='modal'>Close</button>
-     </div>
-   </div>
- </div>
-</div>
+    <!-- Begin page -->
+    <div id="layout-wrapper">
 
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
 
-<!-- Modal -->
-<div class="modal fade" id="Completedrecordpopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Completed Data</h6>
-      </div>
-      <div class="modal-body">
-       <form method="POST" class="Completed_TFA_tablewisedata">   
-         <div class="row">
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-body">
+            <div class="page-content">
+                <!-- Modal -->
+                <div class="modal fade" id="labour_rate_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2000;">
+                  <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Labour Rate(Month Wise)</h6>
+                      </div>
+                      <div class="modal-body" id="labour_rate_modal_body">
 
-                <h4 class="mt-0 header-title ml-5">Labour rate</h4>
-
-                <div class="table-responsive">
-                  <table class="table table-bordered" id="TFA_completed_table" style="border-collapse: collapse; border-spacing: 0; width: 100%!important;">
-                    <thead >
-                      <tr>                    
-                        <th style="font-size: 11px !important;">S.No</th>
-                        <th style="font-size: 11px !important;">Location</th>
-                        <th style="font-size: 11px !important;">Name</th>
-                        <th style="font-size: 11px !important;">No of persons</th>
-                        <th style="font-size: 11px !important;">Labour Rate</th>
-                      </tr>
-                    </thead >
-
-
-                    <tbody class="Completed_TFA_tablewisedata_body">
-
-
-                    </tbody>
-
-                  </table>
+                      </div>
+                      <div class="modal-footer">
+                       <button type='button'  class='btn  btn-success tfa_month_det_save Addmonthvaue'>Add</button>
+                       <button type='button' class='btn btn-default close' data-bs-dismiss='modal'>Close</button>
+                     </div>
+                   </div>
+                 </div>
                 </div>
 
-              </div>
-            </div>
-          </div> <!-- end col -->
+                <!-- Modal -->
+                <div class="modal fade" id="Completedrecordpopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Completed Data</h6>
+                      </div>
+                      <div class="modal-body">
+                       <form method="POST" class="Completed_TFA_tablewisedata">   
+                         <div class="row">
+                          <div class="col-lg-12">
+                            <div class="card">
+                              <div class="card-body">
 
-        </div> <!-- end row -->
-      </form>
-      <div align="center">
-        <button type="button" class="btn btn-sm btn-success finalassumptionsubmit">Submit</button>
-        <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton" data-dismiss="modal">Cancel</button>
-      </div>
-      </div>
-   </div>
- </div>
-</div>
+                                <h4 class="mt-0 header-title ml-5">Labour rate</h4>
 
-
-
-<div class="wrapper">
-  <div class="container-fluid">
-
-    <!-- Page-Title -->
-
-
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="page-title-box">
-          <div class="float-right hide-phone">
-            <ul class="list-inline">
-
-
-            </ul>                                
-          </div>
-
-          <div class="btn-group mt-2">
-            <ol class="breadcrumb hide-phone p-0 m-0">
-              <li class="breadcrumb-item"><a href="#">Breeding</a></li>
-              <li class="breadcrumb-item active">TFA/PCL</li>
-            </ol>
-          </div>
-
-        </div>
-      </div>
-    </div>
+                                <div class="table-responsive">
+                                  <table class="table table-bordered" id="TFA_completed_table" style="border-collapse: collapse; border-spacing: 0; width: 100%!important;">
+                                    <thead >
+                                      <tr>                    
+                                        <th style="font-size: 11px !important;">S.No</th>
+                                        <th style="font-size: 11px !important;">Location</th>
+                                        <th style="font-size: 11px !important;">Name</th>
+                                        <th style="font-size: 11px !important;">No of persons</th>
+                                        <th style="font-size: 11px !important;">Labour Rate</th>
+                                      </tr>
+                                    </thead >
 
 
-
-    <!-- end page title end breadcrumb -->
-
+                                    <tbody class="Completed_TFA_tablewisedata_body">
 
 
-    <div class="row">
-      <div class="col-lg-12">
-        <div class="card">
-          <div class="card-body bootstrap-select-1">
+                                    </tbody>
 
-            <form method="POST"  class="TFA_add_form" >  
+                                  </table>
+                                </div>
 
-              <!-- <h4 class="header-title mt-0">Activity Wise  </h4> -->
+                              </div>
+                            </div>
+                          </div> <!-- end col -->
 
-
-              <div class="row">
-                <div class="col-md-4">
-                  <h6 class="input-title mt-0">Location</h6>
-                  <select class="select2 mb-3" name="location" id="location" style="width: 100%; height:36px;" data-placeholder="Choose">
-                    <option value="">Choose Loaction</option>
-
-                    <?php
-                    $Sql   = "SELECT Distinct Territory from Budget_CostCenter_Mapping_Finance where Territory!='-'";
-                    $Sql_Connection = sqlsrv_query($conn,$Sql);
-                    while($row = sqlsrv_fetch_array($Sql_Connection)){
-                      ?>
-                      <option value="<?php echo trim($row['Territory']); ?>"> <?php echo $row['Territory']; ?> </option>
-                    <?php } ?>
-
-                  </select>
-                </div>     
-
-                <div class="row">
-                  <div class="col-md-12">
-                    <h6 class="input-title mt-0">Name</h6>
-                    <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" autocomplete="off">
-                  </div>
-                </div>     
-
-                <div class="row ml-1">
-                  <div class="col-md-12">
-                    <h6 class="input-title mt-0">No of Persons</h6>
-                    <input type="number" class="form-control" name="no_of_persons" id="no_of_persons" placeholder="Enter no of persons">
-                  </div>
-                </div>                             
-
-
-                <div class="col-md-4">
-
-
-
-                 <button type="button" class="btn btn-primary addbtn" id="addbtn" style="margin-top: 20px;"> Add </button>
-
-                 <!-- <button type="button" class="btn btn-info singleseletion" id="singleseletion" style="margin-top: 20px;"> Single </button> -->
-
-
-
-                 <button type="reset" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button> 
-
-
-                 <button type="button" class="btn btn-danger completedrecord" style="margin-top: 20px;"> Completed </button>  
-
-
-
-               </form>
-             </div>                                             
-           </div>
-         </div>
-       </div>
-
-
-
-       <form method="POST" class="TFA_tablewisedata">   
-
-         <div class="row">
-
-
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-body">
-
-                <h4 class="mt-0 header-title ml-5">Labour rate</h4>
-
-
-                <div class="table-responsive">
-                  <table class="table table-bordered nowrap" id="TFA_labour_rate_tbl" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                    <thead >
-                      <tr>                    
-                        <th style="font-size: 11px !important;">S.No</th>
-                        <th style="font-size: 11px !important;">Location</th>
-                        <th style="font-size: 11px !important;">Name</th>
-                        <th style="font-size: 11px !important;">No of persons</th>
-                        <th style="font-size: 11px !important;">Labour Rate</th>
-                      </tr>
-                    </thead >
-
-
-                    <tbody class="">
-
-
-                    </tbody>
-
-                  </table>
+                        </div> <!-- end row -->
+                      </form>
+                      <div align="center">
+                        <button type="button" class="btn btn-sm btn-success final_tfa_submit">Submit</button>
+                        <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton" data-bs-dismiss="modal">Cancel</button>
+                      </div>
+                      </div>
+                   </div>
+                 </div>
                 </div>
 
-              </div>
+                <div class="card">
+                    <div class="card-body bootstrap-select-1">
+
+                        <form method="POST" class="TFA_add_form" >
+
+                            <input type="hidden" class="autonum" name="autonum" value="<?php echo $Doc_No;  ?>">  
+
+                            <input type="hidden" class="headercount" name="headercount" value="<?=@$Header_data['count']?>">    
+
+                            <input type="hidden" class="Autonumloc" name="Autonumloc" >   
+
+                            <input type="hidden" class="Autonumid" name="Autonumid" >     
+
+                            <h4 class="header-title mt-0">TFA</h4>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <h6 class="input-title mt-0">Location</h6>
+                                    <select class="select2 mb-3" name="location" id="location" style="width: 100%; height:36px;" data-placeholder="Choose">
+                                        <option value="">Choose Loaction</option>
+                                        <?php
+                                        $Sql   = "SELECT DISTINCT BreedingAdmin_Location.BreedingLocation  from BreedingAdmin_Location
+                                                  LEFT Join BreedingAdmin_Project On BreedingAdmin_Project.Docid=BreedingAdmin_Location.Docid
+                                                  where BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "' and BreedingAdmin_Location.Currentstatus='2'";
+                                        $Sql_Connection = sqlsrv_query($conn,$Sql);
+                                        while($row = sqlsrv_fetch_array($Sql_Connection)){
+                                          ?>
+                                          <option value="<?php echo trim($row['BreedingLocation']); ?>"> <?php echo $row['BreedingLocation']; ?> </option>
+                                        <?php } ?>
+
+                                    </select>
+                                </div>     
+
+                                <div class="col-md-2">
+                                  <h6 class="input-title mt-0">Employee Name</h6>
+                                    <select class="mutiselect mb-3" multiple name="TFA_Reqno[]" id="name" style="width: 100%; height:36px;" data-placeholder="Choose Employee">
+                                        <?php
+                                        $Sql   = "SELECT TFA_Reqno,Name from BreedingAdmin_TFA_Details
+                                        where Rejectionstatus IS NULL";
+                                        $Sql_Connection = sqlsrv_query($conn,$Sql);
+                                        while($row = sqlsrv_fetch_array($Sql_Connection)){
+                                          ?>
+                                          <option value="<?php echo utf8_encode($row['TFA_Reqno']); ?>"> <?php echo $row['TFA_Reqno'].' - '.utf8_encode($row['Name']); ?> </option>
+                                        <?php } ?>
+
+                                    </select>
+                                </div>  
+
+
+                                <div class="col-md-3">
+                                   <button type="button" class="btn btn-primary addbtn" id="addbtn" style="margin-top: 23px;">Add</button>
+                                   <!-- <button type="button" class="btn btn-info direct_add" id="direct_add" style="margin-top: 20px;">Direct Add</button> -->
+
+                                   <!-- <button type="button" class="btn btn-info singleseletion" id="singleseletion" style="margin-top: 20px;"> Single </button> -->
+
+                                   <!-- <button type="reset" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button> 
+
+
+                                   <button type="button" class="btn btn-warning completedrecord" style="margin-top: 20px;"> Completed </button>  -->                                             
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+
+               <form method="POST" class="TFA_tablewisedata">   
+
+                 <div class="row">
+                  <div class="col-lg-12">
+                    <div class="card">
+                      <div class="card-body">
+
+                        <h4 class="mt-0 header-title ml-5">Labour rate</h4>
+
+
+                        <!-- <div class="table-responsive"> -->
+                          <table class="table table-bordered" id="TFA_labour_rate_tbl" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead >
+                              <tr>                    
+                                <th style="font-size: 11px !important;">S.No</th>
+                                <th style="font-size: 11px !important;">Location</th>
+                                <th style="font-size: 11px !important;">Name</th>
+                                <th style="font-size: 11px !important;">Crop</th>
+                                <th style="font-size: 11px !important;">Existing Rate</th>
+                                <th style="font-size: 11px !important;">Current Rate</th>
+                                <th style="font-size: 11px !important;">From Month</th>
+                                <th style="font-size: 11px !important;">To Month</th>
+                                <th style="font-size: 11px !important;">Action</th>
+                              </tr>
+                            </thead >
+
+
+                            <tbody class="">
+
+
+                            </tbody>
+
+                          </table>
+                        <!-- </div> --> 
+                          <div align="center">
+                            <button type="button" class="btn btn-sm btn-success finalassumptionsubmit">Submit</button>
+                            <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton">Cancel</button>
+                          </div> 
+                      </div>
+                    </div>
+                  </div> 
+
+                </div>
+              </form>
+
+
+                <?php include "footer.php"; ?>
+
             </div>
-          </div> <!-- end col -->
 
-        </div> <!-- end row -->
-      </form>
+        </div> 
 
-
-      <div align="center">
-        <button type="button" class="btn btn-sm btn-success finalassumptionsubmit">Submit</button>
-        <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton">Cancel</button>
-      </div>
-
-
-    </div>                                
-  </div> <!-- end col -->
-</div> <!-- end row --> 
+    </div>  
+    <!-- End Page-content -->
 
 
 
+<!-- JAVASCRIPT -->
+<script src="assets/libs/jquery/jquery.min.js"></script>
+<script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/libs/metismenu/metisMenu.min.js"></script>
+<script src="assets/libs/simplebar/simplebar.min.js"></script>
+<script src="assets/libs/node-waves/waves.min.js"></script>
 
+<script src="assets/libs/select2/js/select2.min.js"></script>
+<script src="assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
+<script src="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+<script src="assets/libs/admin-resources/bootstrap-filestyle/bootstrap-filestyle.min.js"></script>
+<script src="assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
 
-</div> <!-- end container -->
-</div>
+<script src="assets/js/pages/form-advanced.init.js"></script>
 
-
-
-<!-- end wrapper -->
-
-
-
-
-
-
-
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/modernizr.min.js"></script>
-<script src="assets/js/waves.js"></script>
-<script src="assets/js/jquery.slimscroll.js"></script>
-<script src="assets/js/jquery.nicescroll.js"></script>
-<script src="assets/js/jquery.scrollTo.min.js"></script>
-
-<!-- KNOB JS -->
-<script src="assets/plugins/jquery-knob/excanvas.js"></script>
-<script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
-
-<!-- Plugins js -->
-<script src="assets/plugins/timepicker/moment.js"></script>
-<script src="assets/plugins/timepicker/tempusdominus-bootstrap-4.js"></script>
-<script src="assets/plugins/timepicker/bootstrap-material-datetimepicker.js"></script>
-<script src="assets/plugins/clockpicker/jquery-clockpicker.min.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asColor.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asGradient.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asColorPicker.min.js"></script>
-<script src="assets/plugins/select2/select2.min.js"></script>
-
-<script src="assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
-<script src="assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script src="assets/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
-<script src="assets/plugins/bootstrap-touchspin/js/jquery.bootstrap-touchspin.min.js"></script>
-
-
-<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-<!-- Buttons examples -->
-<script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-<script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-<script src="assets/plugins/datatables/jszip.min.js"></script>
-<script src="assets/plugins/datatables/pdfmake.min.js"></script>
-<script src="assets/plugins/datatables/vfs_fonts.js"></script>
-<script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-<script src="assets/plugins/datatables/buttons.print.min.js"></script>
-<script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
-<!-- Responsive examples -->
-<script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-<script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-<!-- Plugins Init js -->
-<script src="assets/pages/form-advanced.js"></script> 
-
-<!-- App js -->
 <script src="assets/js/app.js"></script>
 
-<script src="../../../common/checkSession.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.js"></script>
+
+<script src="../common/checkSession.js"></script>
 
 <!-- Required datatable js -->
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+
+<!-- Required datatable js -->
+<script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+<!-- Buttons examples -->
+<script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="assets/libs/jszip/jszip.min.js"></script>
+<script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+<script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+<!-- Responsive examples -->
+<script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+
+<!-- Datatable init js -->
+<script src="assets/js/pages/datatables.init.js"></script> 
 
 <script>
-
 $(document).ready(function(){
  $('.js-example-basic-single').select2();
-
+ $('.mutiselect').multiselect({
+  includeSelectAllOption: true,
+  enableFiltering: true,
+  maxHeight: 350,
+  enableCaseInsensitiveFiltering: true,
+  buttonWidth: 250
+ });
 
  var user_input={};
 
 
  Get_TFA_Details("no");
- Get_Completed_TFA_Details("no");
 
 });
 
@@ -562,8 +544,6 @@ $(document).ready(function(){
     var locationvalue=$("#location").val();
 
     var name=$("#name").val();
-
-    var no_of_persons=$("#no_of_persons").val();
 
     if(locationvalue ==''){
 
@@ -576,13 +556,10 @@ $(document).ready(function(){
      Alert_Msg("Please enter name.","warning");
      return false;
    }
-   if(no_of_persons ==''){
-
-     Alert_Msg("Please enter no of persons.","warning");
-     return false;
-   }
 
    let Uset_Input=$(".TFA_add_form").serializeArray();
+
+
 
    Uset_Input.push({"name":"Action","value":"Add_TFA"});
 
@@ -606,7 +583,6 @@ $(document).ready(function(){
 
           Get_TFA_Details("yes");
 
-          window.location.href ='TFA.php';
 
         }else{
          Alert_Msg("Something Went Wrong.","error");
@@ -617,7 +593,6 @@ $(document).ready(function(){
 
    return false;
  });
-
 
 
   function Get_TFA_Details(destroy_status)
@@ -648,6 +623,37 @@ $(document).ready(function(){
         "type": "POST",
         "data": {Action:"Get_TFA_Details"}         
       }
+    });
+
+    table.on('draw.dt', function () {
+      $('.select2').select2();
+      //breeding current business year get start
+      var currentDate = new Date();
+      var currentYear = currentDate.getFullYear();
+      var startYear = currentYear;
+      var endYear = currentYear + 1;
+      var startDate = new Date(startYear, 3);
+      var endDate = new Date(endYear, 4);
+      //breeding current business year get end 
+
+      $('.from_month').datepicker({
+        format: 'mm-yyyy', 
+        minViewMode: 1,
+        autoclose: true,
+        todayHighlight: true,
+        startDate: startDate,
+        endDate: endDate
+      });
+
+      $('.to_month').datepicker({
+        format: 'mm-yyyy', 
+        minViewMode: 1,
+        autoclose: true,
+        todayHighlight: true,
+        startDate: startDate,
+        endDate: endDate
+      });
+
     });
 
   }
@@ -1081,8 +1087,23 @@ $(document).on("click",".finalassumptionsubmit",function(){
 
 });
 
+$(document).on("click",".final_tfa_submit",function(){
+   $('#ajax_loader').show();
+   $('#TFA_completed_table').DataTable().page.len(50000).draw();
+   var table = $('#TFA_completed_table').DataTable();
+   table.on('draw.dt', function () {
+      let Uset_Input=$(".Completed_TFA_tablewisedata").serializeArray();
+
+      Uset_Input.push({"name":"Action","value":"TFA_finaldata"});
+
+      submit_tfa_finaldata(Uset_Input);
+    });
+
+});
+
 function submit_tfa_finaldata(Uset_Input)
 {
+  alert();
     $.ajax 
     ({
       type: "POST",
@@ -1116,14 +1137,10 @@ function submit_tfa_finaldata(Uset_Input)
 }
 
 
-$(document).on("click", ".completedrecord", function (){
+// $(document).on("click", ".direct_add", function (){
+//   $("#Completedrecordpopup").modal('show');
 
-
-  Get_Completed_TFA_Details("yes");
-
-  $("#Completedrecordpopup").modal('show');
-
-});
+// });
 
   function Get_Completed_TFA_Details(destroy_status)
   {
@@ -1154,43 +1171,153 @@ $(document).on("click", ".completedrecord", function (){
 
   }
 
+  $(document).on('change','#location',function() {
+      var location = $(this).val();
+      $.ajax({
+        type: "POST",
+        url: "Common_Ajax.php",
+        data: { Action: "Get_tfa_employees",location : location },
+        success: function(data){
+          var result = JSON.parse(data);
+          var html = '';
+          for(i in result['data']) {
+            html +=  `<option value="${result['data'][i].TFA_Reqno}">${result['data'][i].Name} - ${result['data'][i].TFA_Reqno}</option>`;
+          }
+          $('#name').html(html);
+          $('#name').multiselect('rebuild');
+        }
+      });
+  });
+
+  $(document).on('change','.crop',function() {
+    var crop   = $(this).val();
+    var tfa_id = $(this).parents('tr').find('#tfa_id').val();
+     $.ajax({
+        type: "POST",
+        url: "Common_Ajax.php",
+        data: { Action: "TFA_fields_update",from : 'crop',crop : crop,id : tfa_id },
+        success: function(data){
+        }
+      });
+  });
+
+  $(document).on('keyup','.current_rate',function() {
+    var current_rate = $(this).val();
+    var tfa_id = $(this).parents('tr').find('#tfa_id').val();
+     $.ajax({
+        type: "POST",
+        url: "Common_Ajax.php",
+        data: { Action: "TFA_fields_update",from : 'current_rate',current_rate : current_rate,id : tfa_id },
+        success: function(data){
+        }
+      });
+  });
+
+
+  $(document).on('change','.from_month',function() {
+    var current_element = $(this);
+    var from_month = $(this).val();
+    var tfa_id = $(this).parents('tr').find('#tfa_id').val();
+    var location = $(this).parents('tr').find('#location').val();
+    var TFA_Reqno = $(this).parents('tr').find('#TFA_Reqno').val();
+     $.ajax({
+        type: "POST",
+        url: "Common_Ajax.php",
+        data: { Action: "TFA_fields_update",from : 'from_month',from_month : from_month,id : tfa_id,location : location,TFA_Reqno : TFA_Reqno},
+        success: function(data){
+          var result = JSON.parse(data); 
+          if(result.status == 0){
+               swal({
+                title: "Something Went Wrong.",
+                icon: "error",
+              });
+          }
+        }
+      });
+  });
+
+  $(document).on('change','.to_month',function() {
+    var to_month   = $(this).val();
+    var from_month = $(this).parents('tr').find('.from_month').val();
+    var tfa_id = $(this).parents('tr').find('#tfa_id').val();
+     $.ajax({
+        type: "POST",
+        url: "Common_Ajax.php",
+        data: { Action: "TFA_fields_update",from : 'to_month',to_month : to_month,from_month : from_month,id : tfa_id },
+        success: function(data){
+          var result = JSON.parse(data); 
+          if(result.status == 0){
+               swal({
+                title: "Something Went Wrong.",
+                icon: "error",
+            });
+          } 
+        }
+      });
+  });
+
+
+  $(document).on('click','.tfa_delete',function(){
+    var tfa_id = $(this).data('tfaid');
+
+    $.ajax 
+    ({
+      type: "POST",
+      url: "Common_Ajax.php",
+      data: { Action: "Delete_TFA", tfa_id : tfa_id },
+      success: function(data){
+       result=JSON.parse(data);
+
+       if(result.Status == 1){
+        Alert_Msg("TFA deleted successfully.","success");
+        Get_TFA_Details('yes');
+      }else{
+        Alert_Msg("Something Went Wrong.","error");
+        return false;
+      }
+    }
+  });
+  });
+
+  $(document).on('click','.tfa_add_row',function(){
+    var TFA_Reqno = $(this).data('tfa_reqno');
+    var location = $(this).data('location');
+    var name = $(this).data('name');
+    var from_month = $(this).parents('tr').find('.from_month').val();
+    var to_month   = $(this).parents('tr').find('.to_month').val();
+    if(from_month == '') {
+      Alert_Msg("Please Choose From Month for this row","error");
+      return;
+    } 
+    if(to_month == '') {
+      Alert_Msg("Please Choose To Month for this row","error");
+      return;
+    } 
+
+    $.ajax({
+      type: "POST",
+      url: "Common_Ajax.php",
+      data: { Action: "Add_TFA_row", TFA_Reqno : TFA_Reqno,location : location,name: name },
+      success: function(data){
+        result=JSON.parse(data);
+        if(result.Status == 1){
+          Get_TFA_Details('yes');
+        }else{
+          Alert_Msg("Something Went Wrong.","error");
+          return false;
+        }
+      }
+    });
+
+
+  });
+
+  
 
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-<!-- jQuery  -->
-
-
-<!-- Required datatable js -->
-<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-<!-- Buttons examples -->
-<script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-<script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-<script src="assets/plugins/datatables/jszip.min.js"></script>
-<script src="assets/plugins/datatables/pdfmake.min.js"></script>
-<script src="assets/plugins/datatables/vfs_fonts.js"></script>
-<script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-<script src="assets/plugins/datatables/buttons.print.min.js"></script>
-<script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
-<!-- Responsive examples -->
-<script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-<script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
 
 
 
 
-<!-- Datatable init js -->
-<script src="assets/pages/datatables.init.js"></script>
-
-<!-- App js -->
-<script src="assets/js/app.js"></script>
-
-
-
-<?php include "footer.php"; ?>
-
-
-
-
-
-
+</body>
+</html>

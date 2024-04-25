@@ -1,0 +1,27 @@
+//  default
+:root {
+    --#{$prefix}bg-gradient: linear-gradient(to right, #7f59dc, #655be6);
+}
+
+// Red
+[data-theme-mode="red"] {
+
+    --#{$prefix}bg-gradient: linear-gradient(to right, #c9576a, #e2595f);
+    --bs-primary: #e2595f !important;
+    --bs-primary-rgb: 226, 89, 95 !important;
+    
+    --bs-danger: #655be6 !important;
+    --bs-danger-rgb: 101, 91, 230 !important;
+
+}
+
+// Green
+[data-theme-mode="green"] {
+    
+    --#{$prefix}bg-gradient: linear-gradient(to right, #5b9c80, #35bf84);
+    --bs-primary: #35bf84 !important;
+    --bs-primary-rgb: 53, 191, 132 !important;
+
+    --bs-success:  #655be6 !important;
+    --bs-success-rgb: 101, 91, 230 !important;
+}

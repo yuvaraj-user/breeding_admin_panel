@@ -1,0 +1,31 @@
+// 
+// _card.scss
+// 
+
+.card {
+  border: none;
+  box-shadow: 0 0 1.25rem rgba(108, 118, 134, 0.1);
+  margin-bottom: $grid-gutter-width;
+}
+
+
+.card-drop {
+  color: $body-color;
+}
+
+.card-title {
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.card-title-desc {
+  color: var(--#{$prefix}secondary-color);
+  margin-bottom: 24px;  
+}
+.card-subtitle {
+  margin-top: -6px;
+  margin-bottom: 0;
+}

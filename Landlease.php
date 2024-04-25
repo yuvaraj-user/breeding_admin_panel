@@ -1,7 +1,7 @@
-
-
-<?php include "Header.php"; 
-
+<?php 
+include "header.php";
+include "topmenubar.php";
+include "sidebarmenu.php";
 function Generate_Document_No($id)
 {
     global $conn;
@@ -29,26 +29,18 @@ $stmt = sqlsrv_query($conn, $sql);
 $Header_data = sqlsrv_fetch_array($stmt,SQLSRV_FETCH_ASSOC);
 
 
-
-
-
 ?>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css">
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 
+<script>
+    function Alert_Msg(Msg,Type){
+        swal({
+          title: Msg,
+          icon: Type,
+      });
+    }
 
-
-<link href="assets/plugins/select2/select2.min.css" rel="stylesheet" type="text/css" />
-
-<!-- DataTables -->
-<link href="assets/plugins/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="assets/plugins/datatables/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<!-- Responsive datatable examples -->
-<link href="assets/plugins/datatables/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-
+</script>
 
 <style>
     .bg-secondary {
@@ -79,7 +71,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
     color: blue;
     font-weight: 900;
 }
-
+input:focus {
+        outline: none;
+}
 </style>
 
 
@@ -131,16 +125,16 @@ href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css">
 .close {
   color: white;
   float: right;
-  font-size: 28px;
+  font-size: 14px;
   font-weight: bold;
 }
 
-.close:hover,
+/*.close:hover,
 .close:focus {
   color: #000;
   text-decoration: none;
   cursor: pointer;
-}
+}*/
 
 .modal-header {
 
@@ -205,116 +199,92 @@ input[type=number]::-webkit-outer-spin-button {
 }
 </style>
 
-<script>
-    function Alert_Msg(Msg,Type){
-        swal({
-          title: Msg,
-          icon: Type,
-      });
-    }
 
-</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/css/bootstrap-multiselect.css"/>
+<body data-sidebar="colored" class="sidebar-enable vertical-collpsed">
+    <!-- Loader -->
+    <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
 
-<div class="modal fade" id="Completedrecordpopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Completed Data</h6>
-      </div>
-      <div class="modal-body">
-       <form method="POST" class="Completed_tabledetailsland">   
-         <div class="row">
-          <div class="col-lg-12">
-            <div class="card">
-              <div class="card-body">
+    <!-- Begin page -->
+    <div id="layout-wrapper">
 
-                <h4 class="mt-0 header-title ml-5">Land Lease</h4>
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
 
-                    <table class="table table-bordered nowrap completed_locationwisland" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                        <thead>
-                          <tr >                    
-                            <th>S.No</th>
-                            <th>Location</th>
-                            <th>Name</th>
-                            <th>No of Acres</th>
-                            <th>Per Acre</th>       
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-
-
-                    <tbody>
-
-                    </tbody>
-                </table>
-
+            <div class="page-content">
+              <!-- Modal -->
+              <div class="modal" id="monthwisedetails" role="dialog" style="z-index: 2000;">
+                <form method="POST" class="monthwisedetails">
+                  <div class="modal-dialog modal-lg" style="max-width: 1200px !important">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
+                        <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Land Lease (Month Wise)</h6> 
+                      </div>
+                      <div class="Conformation-body">
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </div>
-            </div>
-          </div> <!-- end col -->
 
-        </div> <!-- end row -->
-      </form>
-        <div align="center">
-            <button type="button" class="btn btn-sm btn-success completed_finalsubmittion">Submit</button>
-            <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton">Cancel</button>
-        </div>
-      </div>
-   </div>
- </div>
-</div>
-
-
-
-
-
-
-<div class="wrapper">
-    <div class="container-fluid">
-
-        <!-- Page-Title -->
-
-
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="page-title-box">
-                    <div class="float-right hide-phone">
-                        <ul class="list-inline">
-
-
-                        </ul>                                
+              <!-- Modal -->
+              <div class="modal fade" id="Completedrecordpopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document" style="max-width: 1200px !important;">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                      <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Completed Data</h6>
                     </div>
+                    <div class="modal-body">
+                      <form method="POST" class="Completed_tabledetailsland">   
+                         <div class="row">
+                          <div class="col-lg-12">
+                            <div class="card">
+                              <div class="card-body">
 
-                    <div class="btn-group mt-2">
-                        <ol class="breadcrumb hide-phone p-0 m-0">
-                            <li class="breadcrumb-item"><a href="#">Breeding</a></li>
-                            <li class="breadcrumb-item active">Project Acrage</li>
-                        </ol>
+                                <h4 class="mt-0 header-title ml-5">Land Lease</h4>
+
+                                <table class="table table-bordered nowrap completed_locationwisland" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                  <thead>
+                                    <tr >                    
+                                      <th>S.No</th>
+                                      <th>Location</th>
+                                      <th>Name</th>
+                                      <th>No of Acres</th>
+                                      <th>Per Acre</th>       
+                                      <th>Action</th>
+                                    </tr>
+                                  </thead>
+
+
+                                  <tbody>
+
+                                  </tbody>
+                                </table>
+
+                              </div>
+                            </div>
+                          </div> <!-- end col -->
+
+                        </div> <!-- end row -->
+                      </form>
+                      <div align="center">
+                        <button type="button" class="btn btn-sm btn-success completed_finalsubmittion">Submit</button>
+                        <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton" data-bs-dismiss='modal'>Cancel</button>
+                      </div>
                     </div>
-
+                  </div>
                 </div>
-            </div>
-        </div>
+              </div>
 
-
-
-        <!-- end page title end breadcrumb -->
-
-
-
-        <div class="row">
-            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body bootstrap-select-1">
-
-
-
-
                         <form method="POST"  class="locationwiseacrageland" >
-
-
 
                           <input type="hidden" class="autonum" name="autonum" value="<?php echo $Doc_No;  ?>">  
 
@@ -325,330 +295,102 @@ input[type=number]::-webkit-outer-spin-button {
 
                           <input type="hidden" class="Autonumid" name="Autonumid" >     
 
-
-
-
-
-
-
-
-
-
-
-
                           <h4 class="header-title mt-0">Land Lease</h4>
-
-                          <div class="form-group row">
-
-
-                          </div> <!--end row-->    
 
                           <div class="row">
                             <div class="col-md-4">
                                 <h6 class="input-title mt-0">Location</h6>
                                 <select class="select2 mb-3 select2-multiple" name="location[]" id="location"  multiple="multiple" style="width: 100%; height:36px;" data-placeholder="Choose">
-
-                                 <?php
-                                 $Sql   = "SELECT Distinct Territory from Budget_CostCenter_Mapping_Finance where Territory!='-'";
-                                 $Sql_Connection = sqlsrv_query($conn,$Sql);
-                                 while($row = sqlsrv_fetch_array($Sql_Connection)){
+                                   <?php
+                                   $Sql   = "SELECT  DISTINCT BreedingAdmin_Location.BreedingLocation from BreedingAdmin_Location
+                                   where BreedingAdmin_Location.CreatedBy='".$_SESSION['EmpID']."' AND BreedingAdmin_Location.Rejectionstatus IS NULL";
+                                   $Sql_Connection = sqlsrv_query($conn,$Sql);
+                                   while($row = sqlsrv_fetch_array($Sql_Connection)){
                                     ?>
-                                    <option value="<?php echo trim($row['Territory']); ?>"> <?php echo $row['Territory']; ?> </option>
-                                <?php } ?>
+                                    <option value="<?php echo trim($row['BreedingLocation']); ?>"> <?php echo $row['BreedingLocation']; ?> </option>
+                                    <?php } ?>
 
-                            </select>
-                        </div>                                    
+                                </select>
+                            </div>                                    
 
+                            <div class="col-md-3">
 
+                             <button type="button" class="btn btn-primary addbtn" style="margin-top: 20px;"> Add </button>
 
-                        <div class="col-md-3">
+                             <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button>    
 
+                             <button type="button" class="btn btn-warning completedrecord" style="margin-top: 20px;"> Completed </button>  
 
-
-                           <button type="button" class="btn btn-primary addbtn" style="margin-top: 20px;"> Add </button>
-
-
-
-
-                           <button type="button" class="btn btn-secondary resetbtn" style="margin-top: 20px;"> Reset </button>    
-
-
-                           <button type="button" class="btn btn-danger completedrecord" style="margin-top: 20px;"> Completed Record </button>  
+                            </div>                                             
+                          </div>
+                        </form>
+                    </div>
+                </div>
 
 
-                       </div>                                             
-                   </div>
-               </div>
-
-
-           </form>
-
-
-
-
-
-           <div class="row projectwisehide" >
-            <div class="col-12">
                 <div class="card">
-                    <div class="card-body">
-
-                        <h4 class="mt-0 header-title">Land Lease</h4>
-
-                    </p>
-
+                  <div class="card-body">
+                    <h4 class="mt-0 header-title">Land Lease</h4>
                     <form method="post" class="Finaltabledetailsland">
 
-                        <table class="table table-bordered nowrap locationwisland" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                            <thead>
-                              <tr >                    
-                                <th>S.No</th>
-                                <th>Location</th>
-                                <th>Name</th>
-                                <th>No of Acres</th>
-                                <th>Per Acre</th>       
-
-                                <th>Action</th>
-
-
-
-
-
-
-
-                            </tr>
+                      <table class="table table-bordered nowrap locationwisland" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <thead>
+                          <tr >                    
+                            <th>S.No</th>
+                            <th>Location</th>
+                            <th>Name</th>
+                            <th>No of Acres</th>
+                            <th>Per Acre</th>       
+                            <th>Action</th>
+                          </tr>
                         </thead>
-
-
                         <tbody>
-
                         </tbody>
-                    </table>
-                </form>
-
-
-
-
-
-                <div class="modal" id="monthwisedetails" role="dialog">
-
-
-                    <form method="POST" class="monthwisedetails">
-
-                        <div class="modal-dialog modal-lg" style="max-width: 1200px !important">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
-                              <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Land Lease (Month Wise)</h6> 
-                          </div>
-                          <div class="Conformation-body">
-
-
-
-
-
-
-                          </div>
-
-                      </div>
+                      </table>
+                    </form>
                   </div>
+                </div>
 
-              </form>
 
+                <div align="center">
+                  <button type="button" class="btn btn-sm btn-success finalsubmittion">Submit</button>
+                  <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton">Cancel</button>
+                </div>
 
-          </div>
 
+                <?php include "footer.php"; ?>
 
+            </div>
 
+        </div> 
 
+    </div>  
+    <!-- End Page-content -->
 
 
-          <div align="center">
-            <button type="button" class="btn btn-sm btn-success finalsubmittion">Submit</button>
-            <button type="button" class="btn btn-sm btn-danger deleterow cancelbutton">Cancel</button>
-        </div>
 
-    </div>
-</div>
-</div> <!-- end col -->
-</div> <!-- end row -->
+<!-- JAVASCRIPT -->
+<script src="assets/libs/jquery/jquery.min.js"></script>
+<script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/libs/metismenu/metisMenu.min.js"></script>
+<script src="assets/libs/simplebar/simplebar.min.js"></script>
+<script src="assets/libs/node-waves/waves.min.js"></script>
 
+<script src="assets/libs/select2/js/select2.min.js"></script>
+<script src="assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="assets/libs/spectrum-colorpicker2/spectrum.min.js"></script>
+<script src="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+<script src="assets/libs/admin-resources/bootstrap-filestyle/bootstrap-filestyle.min.js"></script>
+<script src="assets/libs/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
 
-<!--<div class="modal" id="Completedrecordpopup" role="dialog">
+<script src="assets/js/pages/form-advanced.init.js"></script>
 
-
-    <form method="POST" class="Completedrecordpopup">
-
-        <div class="modal-dialog modal-lg" style="max-width: 1200px !important">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
-              <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Location Wise Project</h6> 
-          </div>
-          <div class="Conformation-body-completed">
-
-           <form method="post" class="FinaltabledetailsCompleted">
-             <table  class="table table-bordered dt-responsive nowrap locationwisecomppleted" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                <thead>
-                  <tr >                    
-                    <th>S.No</th>
-                    <th>Location</th>
-                    <th>Project</th>
-                    <th> Type</th>
-                    <th>Acrage</th>       
-                    <th>Sowing and <br> Harvesting<br>(Month Wise)</th>
-                    <th>Land Block<br> Selection</th>
-                    <th>Responsible<br>Person</th>
-                    <th></th>
-
-
-
-
-
-
-                    
-                </tr>
-            </thead>
-
-
-            <tbody>
-
-            </tbody>
-
-
-        </table>
-
-
-
-    </form>
-
-
-    <div align="center">
-        <button type="button" class="btn btn-sm btn-success finalsubmittioncompleted">Submit</button>
-
-
-
-        <button type="button" class="btn btn-sm btn-danger " data-dismiss='modal'>Cancel</button>
-
-
-
-    </div>
-</div>
-
-</div>
-</div>
-
-</form>
-
-
-</div>  -->
-
-
-<!-- Modal -->
-<!--<div class="modal" id="monthwisedetails" role="dialog">
-
-
-    <form method="POST" class="monthwisedetails">
-
-        <div class="modal-dialog modal-lg" style="max-width: 1200px !important">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-bs-dismiss='modal'>&times;</button>
-              <h6 style="color: #b48608; font-family: 'Droid serif', serif; font-size: 15px; font-weight: 400; font-style: italic; line-height: 44px;  text-align: center;margin-right: 465px;">Sowing and  Harvesting(Month Wise)</h6> 
-          </div>
-          <div class="Conformation-body">
-
-
-
-
-
-
-          </div>
-
-      </div>
-  </div>
-
-</form>
-
-
-</div>-->
-
-
-
-
-
-</div>                                
-</div> <!-- end col -->
-</div> <!-- end row --> 
-
-
-<!-- Modal -->
-
-
-
-</div> <!-- end container -->
-</div>
-
-
-
-<!-- end wrapper -->
-
-
-
-
-
-
-
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/modernizr.min.js"></script>
-<script src="assets/js/waves.js"></script>
-<script src="assets/js/jquery.slimscroll.js"></script>
-<script src="assets/js/jquery.nicescroll.js"></script>
-<script src="assets/js/jquery.scrollTo.min.js"></script>
-
-<!-- KNOB JS -->
-<script src="assets/plugins/jquery-knob/excanvas.js"></script>
-<script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
-
-<!-- Plugins js -->
-<script src="assets/plugins/timepicker/moment.js"></script>
-<script src="assets/plugins/timepicker/tempusdominus-bootstrap-4.js"></script>
-<script src="assets/plugins/timepicker/bootstrap-material-datetimepicker.js"></script>
-<script src="assets/plugins/clockpicker/jquery-clockpicker.min.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asColor.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asGradient.js"></script>
-<script src="assets/plugins/colorpicker/jquery-asColorPicker.min.js"></script>
-<script src="assets/plugins/select2/select2.min.js"></script>
-
-<script src="assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
-<script src="assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
-<script src="assets/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js"></script>
-<script src="assets/plugins/bootstrap-touchspin/js/jquery.bootstrap-touchspin.min.js"></script>
-
-
-<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-<!-- Buttons examples -->
-<script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-<script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-<script src="assets/plugins/datatables/jszip.min.js"></script>
-<script src="assets/plugins/datatables/pdfmake.min.js"></script>
-<script src="assets/plugins/datatables/vfs_fonts.js"></script>
-<script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-<script src="assets/plugins/datatables/buttons.print.min.js"></script>
-<script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
-<!-- Responsive examples -->
-<script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-<script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-<!-- Plugins Init js -->
-<script src="assets/pages/form-advanced.js"></script> 
-
-<!-- App js -->
 <script src="assets/js/app.js"></script>
 
-<script src="../../../common/checkSession.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.js"></script>
+
+<script src="../common/checkSession.js"></script>
 
 <!-- Required datatable js -->
 
@@ -656,9 +398,6 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 <script>
-
-
-
     $(document).on("click",".addbtn",function(){
 
 
@@ -673,21 +412,21 @@ input[type=number]::-webkit-outer-spin-button {
 
         if(locationvalue =='' || locationvalue ==null){
 
-         Alert_Msg("Please Select Location.","warning");
-         return false;
-     }
+           Alert_Msg("Please Select Location.","warning");
+           return false;
+       }
 
 
 
-     let Uset_Input=$(".locationwiseacrageland").serializeArray();
+       let Uset_Input=$(".locationwiseacrageland").serializeArray();
 
-     Uset_Input.push({"name":"Action","value":"locationwiseacrageland"});
+       Uset_Input.push({"name":"Action","value":"locationwiseacrageland"});
 
-     $.ajax 
-     ({
-      type: "POST",
-      url: "Common_Ajax.php",
-      data:Uset_Input,
+       $.ajax 
+       ({
+          type: "POST",
+          url: "Common_Ajax.php",
+          data:Uset_Input,
        async:false,//
        success: function(data){
 
@@ -725,7 +464,7 @@ input[type=number]::-webkit-outer-spin-button {
         }else if(result.Status == 2){
 
           Alert_Msg("Already Location Project Available.","error");
-            window.location.href ='Landlease.php';
+          window.location.href ='Landlease.php';
 
           return false;
 
@@ -733,15 +472,15 @@ input[type=number]::-webkit-outer-spin-button {
       }else{
 
            // alert("Wrong");
-       Alert_Msg("Something Went Wrong.","error");
-       return false;
-   }
-}
+         Alert_Msg("Something Went Wrong.","error");
+         return false;
+     }
+ }
 });
 
-     return false;
+       return false;
 
- });
+   });
 
 
 
@@ -842,21 +581,21 @@ input[type=number]::-webkit-outer-spin-button {
 
 
 
-     let Uset_Input=$(".monthwisedetails").serializeArray();
+       let Uset_Input=$(".monthwisedetails").serializeArray();
 
-     Uset_Input.push({"name":"Action","value":"monthwiselandleasedata"});
+       Uset_Input.push({"name":"Action","value":"monthwiselandleasedata"});
 
-     $.ajax 
-     ({
-      type: "POST",
-      url: "Common_Ajax.php",
-      data:Uset_Input,
+       $.ajax 
+       ({
+          type: "POST",
+          url: "Common_Ajax.php",
+          data:Uset_Input,
        async:false,//
        success: function(data){
 
-         result=JSON.parse(data);
+           result=JSON.parse(data);
 
-         if(result.Status == 1){
+           if(result.Status == 1){
 
 
             Alert_Msg("Added Month Wise.","success");
@@ -867,7 +606,7 @@ input[type=number]::-webkit-outer-spin-button {
 
             var Autoincnum=$(".Autonumloc").val();
             var  autoid=$(".Autonumid").val();
-         window.location.href ='Landlease.php';
+            window.location.href ='Landlease.php';
             var user_input={};
 
 
@@ -881,39 +620,39 @@ input[type=number]::-webkit-outer-spin-button {
         }else if(result.Status == 2){
 
 
-           Alert_Msg("Updated.","success");
+         Alert_Msg("Updated.","success");
 
-           var Autoincnum=$(".Autonumloc").val();
-           var  autoid=$(".Autonumid").val();
+         var Autoincnum=$(".Autonumloc").val();
+         var  autoid=$(".Autonumid").val();
          // window.location.href ='VechicleRequest.php';
          window.location.href ='Landlease.php';
 
-           var user_input={};
+         var user_input={};
 
 
-           user_input.Autoincnum=Autoincnum;
-           user_input.autoid=autoid;
+         user_input.Autoincnum=Autoincnum;
+         user_input.autoid=autoid;
 
-           LocationwiseprojectDetailslandlease("yes",user_input);
+         LocationwiseprojectDetailslandlease("yes",user_input);
 
 
-       } else{
+     } else{
 
            // alert("Wrong");
-           Alert_Msg("Something Went Wrong.","error");
-           return false;
-       }
-   }
+         Alert_Msg("Something Went Wrong.","error");
+         return false;
+     }
+ }
 });
 
 
 
 
-     return false;
+       return false;
 
 
 
- });
+   });
 
 
 
@@ -926,7 +665,7 @@ input[type=number]::-webkit-outer-spin-button {
             Uset_Input.push({"name":"Action","value":"Finaltabledetailsland"});
 
             submitdatafinal(Uset_Input)
-        
+            
         });
 
     });
@@ -957,9 +696,9 @@ input[type=number]::-webkit-outer-spin-button {
        async:false,//
        success: function(data){
 
-         result=JSON.parse(data);
+           result=JSON.parse(data);
 
-         if(result.Status == 1){
+           if(result.Status == 1){
 
 
             Alert_Msg("Added Month Wise.","success");
@@ -970,7 +709,7 @@ input[type=number]::-webkit-outer-spin-button {
 
             var Autoincnum=$(".Autonumloc").val();
             var  autoid=$(".Autonumid").val();
-         window.location.href ='Landlease.php';
+            window.location.href ='Landlease.php';
             var user_input={};
 
 
@@ -984,85 +723,85 @@ input[type=number]::-webkit-outer-spin-button {
         }else if(result.Status == 2){
 
 
-           Alert_Msg("Updated.","success");
+         Alert_Msg("Updated.","success");
 
-           var Autoincnum=$(".Autonumloc").val();
-           var  autoid=$(".Autonumid").val();
+         var Autoincnum=$(".Autonumloc").val();
+         var  autoid=$(".Autonumid").val();
          window.location.href ='Landlease.php';
-           var user_input={};
+         var user_input={};
 
 
-           user_input.Autoincnum=Autoincnum;
-           user_input.autoid=autoid;
+         user_input.Autoincnum=Autoincnum;
+         user_input.autoid=autoid;
 
-           LocationwiseprojectDetailslandlease("yes",user_input);
+         LocationwiseprojectDetailslandlease("yes",user_input);
 
 
-       } else{
+     } else{
 
            // alert("Wrong");
-           Alert_Msg("Something Went Wrong.","error");
-           return false;
-       }
-   }
+         Alert_Msg("Something Went Wrong.","error");
+         return false;
+     }
+ }
 });
         return false;
 
-}
-
-
-$(document).on('keyup','.emp_name',function(){
-  var emp_name = $(this).val();
-  var lease_id = $(this).parents('tr').find('.lease_id').val();
-  $.ajax ({
-    type: "POST",
-    url: "Common_Ajax.php",
-    data: { Action: 'land_lease_keyup_update',lease_id : lease_id,emp_name : emp_name,type : 'name' },
-    success: function(data){
     }
+
+
+    $(document).on('keyup','.emp_name',function(){
+      var emp_name = $(this).val();
+      var lease_id = $(this).parents('tr').find('.lease_id').val();
+      $.ajax ({
+        type: "POST",
+        url: "Common_Ajax.php",
+        data: { Action: 'land_lease_keyup_update',lease_id : lease_id,emp_name : emp_name,type : 'name' },
+        success: function(data){
+        }
+    });
   });
-});
 
-$(document).on('keyup','.no_of_acres',function(){
-  var no_of_acres = $(this).val();
-  var lease_id = $(this).parents('tr').find('.lease_id').val();
-  $.ajax ({
-    type: "POST",
-    url: "Common_Ajax.php",
-    data: { Action: 'land_lease_keyup_update',lease_id : lease_id,no_of_acres : no_of_acres,type : 'no_of_acres' },
-    success: function(data){
-    }
+    $(document).on('keyup','.no_of_acres',function(){
+      var no_of_acres = $(this).val();
+      var lease_id = $(this).parents('tr').find('.lease_id').val();
+      $.ajax ({
+        type: "POST",
+        url: "Common_Ajax.php",
+        data: { Action: 'land_lease_keyup_update',lease_id : lease_id,no_of_acres : no_of_acres,type : 'no_of_acres' },
+        success: function(data){
+        }
+    });
   });
-});
 
-$(document).on('keyup','.per_acre',function(){
-  var per_acre = $(this).val();
-  var lease_id = $(this).parents('tr').find('.lease_id').val();
-  $.ajax ({
-    type: "POST",
-    url: "Common_Ajax.php",
-    data: { Action: 'land_lease_keyup_update',lease_id : lease_id,per_acre : per_acre,type : 'per_acre' },
-    success: function(data){
-    }
+    $(document).on('keyup','.per_acre',function(){
+      var per_acre = $(this).val();
+      var lease_id = $(this).parents('tr').find('.lease_id').val();
+      $.ajax ({
+        type: "POST",
+        url: "Common_Ajax.php",
+        data: { Action: 'land_lease_keyup_update',lease_id : lease_id,per_acre : per_acre,type : 'per_acre' },
+        success: function(data){
+        }
+    });
   });
-});
 
-$(document).on("click", ".completedrecord", function (){
+    $(document).on("click", ".completedrecord", function (){
 
 
-  Get_Completed_land_Details("yes");
+      Get_Completed_land_Details("yes");
 
-  $("#Completedrecordpopup").modal('show');
+      $("#Completedrecordpopup").modal('show');
 
-});
+  });
 
-  function Get_Completed_land_Details(destroy_status)
-  {
-    var data_table='completed_locationwisland'
-    if(destroy_status == "yes")
+    function Get_Completed_land_Details(destroy_status)
     {
-      $('.'+data_table).DataTable().destroy();
-    }
+        var data_table='completed_locationwisland'
+        if(destroy_status == "yes")
+        {
+          $('.'+data_table).DataTable().destroy();
+      }
 
     // setTimeout(function(){ 
       var table = $('.'+data_table).DataTable({
@@ -1078,101 +817,39 @@ $(document).on("click", ".completedrecord", function (){
           "url": "Common_Ajax.php", 
           "type": "POST",
           "data": {Action:"landleasedata",function: "get_completed_landleasedata"}         
-        }
-      });
+      }
+  });
     // },500);
 
 
   }
 
-
-/*
-
-
-
- jQuery.fn.DataTable.Api.register( 'buttons.exportData()', function ( options ){
-            if ( this.context.length ) {
-                var jsonResult = $.ajax({
-                    url: 'Production_CropAge_Table.php',
-                    type:'POST',
-                    dataType:'json',
-
-                    data: {Crop_Code:Crop_Code,Year_Code:Year_Code,Plant:Plant,Process_code:Process_code,Material_Code:Material_Code,Place_wise:Place_wise,Talk_wise:Talk_wise,Action:'Get_Crop_QC_OutIn_Recod',Season_Code:Season_Code,Type:Type,length:'All'},
-                    async: false
-                });
-
-                header_array = [];
-       
-
-        //header_array.push('"\r\n"');
-        header_array.push('S.No');
-        header_array.push('Batch Num');
-        header_array.push('Material');
-        header_array.push('Process Code');
-        header_array.push('Qc Lot Num');
-        header_array.push('Receipt Date');
-        header_array.push('In Date');
-        header_array.push('Out Date');
-
-            return {
-                  
-         body: jsonResult.responseJSON.data,
-        header: header_array
-        };
-            }
-        });
-
-*/
-
-
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
-<!-- jQuery  -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/popper.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/modernizr.min.js"></script>
-<script src="assets/js/waves.js"></script>
-<script src="assets/js/jquery.slimscroll.js"></script>
-<script src="assets/js/jquery.nicescroll.js"></script>
-<script src="assets/js/jquery.scrollTo.min.js"></script>
 
-<!-- KNOB JS -->
-<script src="assets/plugins/jquery-knob/excanvas.js"></script>
-<script src="assets/plugins/jquery-knob/jquery.knob.js"></script> 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.2/js/bootstrap-multiselect.min.js"></script>
 
 <!-- Required datatable js -->
-<script src="assets/plugins/datatables/jquery.dataTables.min.js"></script>
-<script src="assets/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <!-- Buttons examples -->
-<script src="assets/plugins/datatables/dataTables.buttons.min.js"></script>
-<script src="assets/plugins/datatables/buttons.bootstrap4.min.js"></script>
-<script src="assets/plugins/datatables/jszip.min.js"></script>
-<script src="assets/plugins/datatables/pdfmake.min.js"></script>
-<script src="assets/plugins/datatables/vfs_fonts.js"></script>
-<script src="assets/plugins/datatables/buttons.html5.min.js"></script>
-<script src="assets/plugins/datatables/buttons.print.min.js"></script>
-<script src="assets/plugins/datatables/buttons.colVis.min.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+<script src="assets/libs/jszip/jszip.min.js"></script>
+<script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+<script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
 <!-- Responsive examples -->
-<script src="assets/plugins/datatables/dataTables.responsive.min.js"></script>
-<script src="assets/plugins/datatables/responsive.bootstrap4.min.js"></script>
-
-
-
-
+<script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
 
 <!-- Datatable init js -->
-<script src="assets/pages/datatables.init.js"></script>
+<script src="assets/js/pages/datatables.init.js"></script> 
 
-<!-- App js -->
-<script src="assets/js/app.js"></script>
-
-
-
-<?php include "footer.php"; ?>
-
-
-
-
-
-
+</body>
+</html>

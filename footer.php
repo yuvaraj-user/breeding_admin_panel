@@ -1,16 +1,3 @@
-     <!-- Footer -->
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        Rasi Seeds Private Limited . All rights reserved.
-                    </div>
-                </div>
-            </div>
-        </footer>
-        <!-- End Footer -->
-
-
-       
-    </body>
-</html>
+ <footer class="footer text-center">
+                    © <script>document.write(new Date().getFullYear())</script> Rasi Seeds (P) Ltd  <i class="mdi mdi-heart text-danger"></i> </span>
+                </footer>

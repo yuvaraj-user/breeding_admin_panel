@@ -1,7 +1,7 @@
 <?php
 //production_summary_table
 
-include '../../../auto_load.php';
+include '../../auto_load.php';
 
 
 //$locbaseproject=@$_POST['locbaseproject'];
@@ -51,10 +51,23 @@ $Details  = sqlsrv_query($conn,$Sql);
 	//$option='<option value="">Select</option>';		
 	$option.='<option value="'.trim($result['CostElementName']).'" selected>'.$result['CostElementName'].'</option>';
     }
-}if($Action=="Get_Location_Based_Project_Consumables") /* Crop_Code Based on Year_Code  Display  */
+}
+
+if($Action=="Get_Location_Based_Project_Consumables") /* Crop_Code Based on Year_Code  Display  */
 {
-	$Sql="SELECT DISTINCT Project from BreedingAdmin_Type Inner Join BreedingAdmin_location On BreedingAdmin_location.Docid=BreedingAdmin_Type.id
-Inner Join BreedingAdmin_project On BreedingAdmin_project.Docid=BreedingAdmin_Type.id AND BreedingAdmin_project.ordernum=BreedingAdmin_location.ordernum Where 1=1 and BreedingAdmin_Type.Currentstatus='2' and BreedingAdmin_project.Rejectionstatus is NULL AND BreedingLocation in ('".@$locbaseproject."') AND  BreedingAdmin_Type.CreatedBy='" . @$_SESSION['EmpID']. "' ";
+	$Sql=" SELECT  DISTINCT BreedingAdmin_Project.Project   from BreedingAdmin_Location
+
+LEFT Join BreedingAdmin_Project On BreedingAdmin_Project.Docid=BreedingAdmin_Location.Docid
+
+LEFT JOIN (Select * from BreedingAdmin_Consumables Where Rejectionstatus is NULL)BreedingAdmin_Consumables On BreedingAdmin_Consumables.ConsumLocation=BreedingAdmin_Location.BreedingLocation and BreedingAdmin_Project.Project=BreedingAdmin_Consumables.ConsumProject
+where  BreedingAdmin_project.Rejectionstatus is NULL AND BreedingLocation in ('".@$locbaseproject."') AND  BreedingAdmin_Location.CreatedBy='" . @$_SESSION['EmpID']. "'  and BreedingAdmin_Consumables.ConsumProject is NULL and BreedingAdmin_project.Rejectionstatus is NULL and BreedingAdmin_Location.Currentstatus='2'
+
+
+ ";
+
+
+
+
 echo $Sql;
 
 
@@ -68,8 +81,6 @@ $Details  = sqlsrv_query($conn,$Sql);
 	$option.='<option value="'.trim($result['Project']).'" selected>'.$result['Project'].'</option>';
     }
 }
-
-
 
 echo $option;
 
